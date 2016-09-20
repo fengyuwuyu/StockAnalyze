@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+validator.Checked=WebRoot/js/toolbar/jquery.toolbar.min.js,WebRoot/js/jquery-easyui-1.4.0/jquery.min.js
+validator.Unchecked=

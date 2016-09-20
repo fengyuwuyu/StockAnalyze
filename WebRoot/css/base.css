@@ -1,0 +1,80 @@
+@charset "utf-8";
+
+* {font-size:12px;}
+
+body {font-family:helvetica,tahoma,verdana,sans-serif;padding:0px;font-size:13px;margin:0;}
+body {width:100%!important;height:100%!important;}
+a {text-decoration:none;color:#2786D6;}
+form,h1 {margin:0;padding:0;}
+h2 {font-size:18px;color:#333;font-weight:bold;margin:0;margin-bottom:15px;}
+
+.warp {padding:10px;}
+.hidden {display:none;}
+.readonly{background-color:#eee;}
+.show {display:block;}
+.red {color:#FF1E00!important;}
+.green {color:#090!important;}
+.orange {color:#F60!important;}
+.blue {color:#337ab7!important;}
+.datagrid-row-selected a {color:white;}
+
+
+.ftitle {font-size:14px;font-weight:bold;padding:5px 0;margin-bottom:10px;border-bottom:1px solid #ccc;  }  
+.fitem {margin-bottom:5px;}  
+.fitem textarea { width:120;
+		  		  height:50;
+		  		  padding:0 5px;
+				  vertical-align:middle;		  		  
+				}
+.fitem label {display:inline-block;vertical-align:middle;width:100px;text-align:right;}
+
+.ui-form {margin:0;padding:10px 15px;}  
+.ui-fields {vertical-align:middle;display:inline-block;float:left;margin:0;padding:3px}
+.ui-label {vertical-align:middle;padding-right:3px}
+.ui-text { width:120px;
+		   height:22px;
+		   font-size:12px;
+		   line-height:22px;
+		   vertical-align:middle;			   
+		   padding-left:5px;	   
+		  }
+
+.ui-search-panel {padding:8px;border-bottom:none;}
+
+.menu-tree { width:250px;
+			 height:170px;
+			 margin-left:105px;
+			 overflow:auto;	 
+			}
+			
+.readCardMessage {	width:332px;
+					height:120px;
+					color:#337ab7;
+					margin-left:105px;					
+					padding:5px;
+					overflow:auto;				
+				}
+.left { float:left;}
+.right {
+		float:right;
+		-moz-border-radius:5px;
+	    -webkit-border-radius:5px;
+	    border-radius:5px;
+		border:solid 1px #ccc;
+		margin-top:10px;
+    	margin-right:40px;
+}
+.clear {
+		clear:both;
+}
+.cover {
+   	 	border-radius: 5px;
+    	width: 171px;
+    	height: 122px;
+    	padding:4px;
+}
+.cover img {
+		width: 100%;
+   	 	height:100%;
+   	 	background-color:#eee;
+}

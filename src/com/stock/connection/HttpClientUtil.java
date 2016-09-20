@@ -1,0 +1,64 @@
+package com.stock.connection;
+
+import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class HttpClientUtil {
+	
+
+	public static HttpEntity get(String url) throws Exception {
+		HttpEntity entity = null;
+		try {
+			HttpClient client = HttpClients.createDefault();
+			HttpGet get = new HttpGet(url);
+			HttpResponse response = client.execute(get);
+			entity = response.getEntity();
+		} catch (Exception e) {
+			Thread.sleep(3000);
+			return get(url);
+		}
+		
+//		if (entity != null) {
+//			LinkedHashMap<String,Object> detail = mapper.readValue(EntityUtils.toString(entity,"utf-8"), LinkedHashMap.class);
+//			List<LinkedHashMap<String,Object>> list = (List<LinkedHashMap<String,Object>>) detail.get("list");
+//			System.out.println(list.get(0));
+//		}
+		return entity;
+	}
+	
+	public static void get1(String url) throws Exception {
+		HttpClient client = HttpClients.createDefault();
+		HttpGet get = new HttpGet(url);
+		HttpResponse response = client.execute(get);
+		HttpEntity entity = response.getEntity();
+		System.out.println(entity.getContentEncoding());
+		System.out.println(entity.getContentType());
+		if (entity != null) {
+			InputStream in = entity.getContent();
+			IOUtils.copy(in, System.out);
+		}
+	}
+
+	public static void main(String[] args) {
+		try {
+			get("http://quotes.money.163.com/hs/service/diyrank.php?host=http://quotes.money.163.com/hs/service/diyrank.php&count=24&"
+					+ "field=SNAME,CODE,"
+					+ "ANNOUNMT,UVSNEWS&order=desc&page=0&count=2880"
+					+ "&query=STYPE:EQA;EXCHANGE:CNSESH&sort=PERCENT&type=query");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

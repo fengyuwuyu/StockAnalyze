@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+	<!-- 开启SpringMVC注解 -->
+  	<mvc:annotation-driven />   
+  	
+  	<!-- 扫描注解 -->
+	<context:component-scan base-package="com.stock.controller" />  
+  	
+  	<!-- 对模型视图名称的解析,即在模型视图名称添加前后缀 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- 通用多部分解析器,用于上传文件 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="maxUploadSize" value="32505856" /><!-- 上传文件大小限制为31M -->
+		<property name="maxInMemorySize" value="4096" />
+	</bean>
+	
+	<!-- 注册拦截器 -->
+<!-- 	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/login.jsp" />
+			<mvc:exclude-mapping path="/main/login.do" />
+			<bean class="com.stock.interceptor.SessionExpireInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors> -->
+	
+	 <!-- service方法异常时记录异常日志 -->
+	<bean id="log" class="com.stock.aop.ExceptionAspect">
+		<property name="exceptionLogMapper" ref="exceptionLogMapper"></property>
+	</bean>
+
+	<aop:config>
+		<aop:aspect id="logAspect" ref="log"><!--调用日志类 -->
+			<aop:pointcut id="logPoint" expression="execution(* com.stock.controller..*.*(..))" /><!--配置在controller包下所有的类在调用之前都会被拦截 -->
+			<aop:after-throwing method="afterThrowing" pointcut-ref="logPoint" throwing="e"/>
+		</aop:aspect>
+	</aop:config>
+
+	<!-- 配置静态资源
+	<mvc:resources mapping="/css/**" location="/css/" />
+	<mvc:resources mapping="/js/**" location="/js/" />
+	<mvc:resources mapping="/images/**" location="/images/" /> -->
+	
+	<!-- 处理异常
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+	        <props>
+	             <prop key="java.lang.Exception">main/error</prop>
+	        </props>
+	    </property>
+	</bean> -->
+	
+</beans>

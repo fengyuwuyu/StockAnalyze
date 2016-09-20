@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stock.dao.StockDetailMapper">
+	<resultMap id="BaseResultMap" type="com.stock.model.StockDetail">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="HIGH" property="high" jdbcType="REAL" />
+		<result column="LOW" property="low" jdbcType="REAL" />
+		<result column="MCAP" property="mcap" jdbcType="BIGINT" />
+		<result column="OPEN" property="open" jdbcType="REAL" />
+		<result column="PE" property="pe" jdbcType="DOUBLE" />
+		<result column="PERCENT" property="percent" jdbcType="DOUBLE" />
+		<result column="PRICE" property="price" jdbcType="REAL" />
+		<result column="SNAME" property="sname" jdbcType="VARCHAR" />
+		<result column="SYMBOL" property="symbol" jdbcType="VARCHAR" />
+		<result column="TIME" property="time" jdbcType="DATE" />
+		<result column="TURNOVER" property="turnover" jdbcType="INTEGER" />
+		<result column="UPDOWN" property="updown" jdbcType="REAL" />
+		<result column="VOLUME" property="volume" jdbcType="INTEGER" />
+		<result column="YESTCLOSE" property="yestclose" jdbcType="REAL" />
+	</resultMap>
+
+	<resultMap id="StockVol" type="com.stock.model.StockVol">
+		<id  column="SYMBOL" property="symbol" jdbcType="VARCHAR"  />
+		<result column="SNAME" property="sname" jdbcType="VARCHAR" />
+		<collection property="volume" column="VOLUME"
+			ofType="com.stock.model.StockVolume" javaType="java.util.List">
+			<result column="VOLUME" property="volume" jdbcType="BIGINT" />
+			<result column="price" property="price1" jdbcType="FLOAT" />
+			<result column="TIME" property="time" jdbcType="DATE" />
+		</collection>
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, HIGH, LOW, MCAP, OPEN, PE, PERCENT, PRICE, SNAME, SYMBOL, TIME,
+		TURNOVER, UPDOWN, VOLUME, YESTCLOSE
+	</sql>
+
+	<!-- 股票个数2682 -->
+	<select id="dataList" resultMap="StockVol">
+		select a.symbol,a.sname,b.volume,b.time,b.price from stock a
+		LEFT JOIN stock_detail b
+		on a.symbol=b.symbol
+		order by a.symbol,b.time desc
+	</select>
+	
+	<select id="dataList1" resultMap="StockVol">
+		select a.symbol,a.sname,b.volume,b.time,b.price from stock a
+		LEFT JOIN stock_detail b
+		on a.symbol=b.symbol
+		order by a.symbol,b.time
+	</select>
+	
+	<insert id="saveBigIncrease" parameterType="com.stock.model.StockVol">
+		insert into stock_vol_increase(symbol,sname,volumeIncrease,increaseVol) 
+		values(#{symbol},#{sname},#{volumeIncrease},#{increaseVol})
+	</insert>
+
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select 'true' as QUERYID,
+		<include refid="Base_Column_List" />
+		from stock_detail
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from stock_detail
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insertSelective" parameterType="java.util.Map">
+		insert into stock_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="HIGH != null">
+				HIGH,
+			</if>
+			<if test="LOW != null">
+				LOW,
+			</if>
+			<if test="MCAP != null">
+				MCAP,
+			</if>
+			<if test="OPEN != null">
+				OPEN,
+			</if>
+			<if test="PE != null">
+				PE,
+			</if>
+			<if test="PERCENT != null">
+				PERCENT,
+			</if>
+			<if test="PRICE != null">
+				PRICE,
+			</if>
+			<if test="SNAME != null">
+				SNAME,
+			</if>
+			<if test="SYMBOL != null">
+				SYMBOL,
+			</if>
+			<if test="TIME != null">
+				TIME,
+			</if>
+			<if test="TURNOVER != null">
+				TURNOVER,
+			</if>
+			<if test="UPDOWN != null">
+				UPDOWN,
+			</if>
+			<if test="VOLUME != null">
+				VOLUME,
+			</if>
+			<if test="YESTCLOSE != null">
+				YESTCLOSE,
+			</if>
+			<if test="type != null">
+				type
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="HIGH != null">
+				#{HIGH,jdbcType=REAL},
+			</if>
+			<if test="LOW != null">
+				#{LOW,jdbcType=REAL},
+			</if>
+			<if test="MCAP != null">
+				#{MCAP,jdbcType=BIGINT},
+			</if>
+			<if test="OPEN != null">
+				#{OPEN,jdbcType=REAL},
+			</if>
+			<if test="PE != null">
+				#{PE,jdbcType=DOUBLE},
+			</if>
+			<if test="PERCENT != null">
+				#{PERCENT,jdbcType=DOUBLE},
+			</if>
+			<if test="PRICE != null">
+				#{PRICE,jdbcType=REAL},
+			</if>
+			<if test="SNAME != null">
+				#{SNAME,jdbcType=VARCHAR},
+			</if>
+			<if test="SYMBOL != null">
+				#{SYMBOL,jdbcType=VARCHAR},
+			</if>
+			<if test="TIME != null">
+				left(#{TIME,jdbcType=TIMESTAMP},10),
+			</if>
+			<if test="TURNOVER != null">
+				#{TURNOVER,jdbcType=INTEGER},
+			</if>
+			<if test="UPDOWN != null">
+				#{UPDOWN,jdbcType=REAL},
+			</if>
+			<if test="VOLUME != null">
+				#{VOLUME,jdbcType=INTEGER},
+			</if>
+			<if test="YESTCLOSE != null">
+				#{YESTCLOSE,jdbcType=REAL},
+			</if>
+			<if test="type != null">
+				#{type}
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.stock.model.StockDetail">
+		update stock_detail
+		<set>
+			<if test="high != null">
+				HIGH = #{high,jdbcType=REAL},
+			</if>
+			<if test="low != null">
+				LOW = #{low,jdbcType=REAL},
+			</if>
+			<if test="mcap != null">
+				MCAP = #{mcap,jdbcType=BIGINT},
+			</if>
+			<if test="open != null">
+				OPEN = #{open,jdbcType=REAL},
+			</if>
+			<if test="pe != null">
+				PE = #{pe,jdbcType=DOUBLE},
+			</if>
+			<if test="percent != null">
+				PERCENT = #{percent,jdbcType=DOUBLE},
+			</if>
+			<if test="price != null">
+				PRICE = #{price,jdbcType=REAL},
+			</if>
+			<if test="sname != null">
+				SNAME = #{sname,jdbcType=VARCHAR},
+			</if>
+			<if test="symbol != null">
+				SYMBOL = #{symbol,jdbcType=VARCHAR},
+			</if>
+			<if test="time != null">
+				TIME = #{time,jdbcType=TIMESTAMP},
+			</if>
+			<if test="turnover != null">
+				TURNOVER = #{turnover,jdbcType=INTEGER},
+			</if>
+			<if test="updown != null">
+				UPDOWN = #{updown,jdbcType=REAL},
+			</if>
+			<if test="volume != null">
+				VOLUME = #{volume,jdbcType=INTEGER},
+			</if>
+			<if test="yestclose != null">
+				YESTCLOSE = #{yestclose,jdbcType=REAL},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.stock.model.StockDetail">
+	</update>
+	
+	<select id="selectCountByTime" parameterType="java.lang.String" resultType="int">
+		select count(*) from stock_detail where time=#{day}
+	</select>
+</mapper>

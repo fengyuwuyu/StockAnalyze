@@ -138,4 +138,32 @@
       increase = #{increase,jdbcType=REAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="dataList" parameterType="com.stock.model.StockQuery" resultMap="BaseResultMap">
+  	select c.symbol,c.increase from (select m.symbol,(n.close-m.close)/n.close increase
+		from (select a.symbol,b.close from stock_main_id a
+		LEFT JOIN stock_main b on a.symbol=b.symbol
+		where b.day=#{begin}) m,
+		(select a.symbol,max(b.close) close
+		 from stock_main_id a
+		LEFT JOIN stock_main b on a.symbol=b.symbol
+		where b.day BETWEEN #{begin} and #{end} GROUP BY a.symbol) n
+		where m.symbol=n.symbol) c where c.increase>0 ORDER BY c.increase DESC 
+  </select>
+  
+  <select id="getTotal" parameterType="com.stock.model.StockQuery" resultType="int">
+  	select count(*) from (select m.symbol,(n.close-m.close)/n.close increase
+		from (select a.symbol,b.close from stock_main_id a
+		LEFT JOIN stock_main b on a.symbol=b.symbol
+		where b.day=#{begin}) m,
+		(select a.symbol,max(b.close) close
+		 from stock_main_id a
+		LEFT JOIN stock_main b on a.symbol=b.symbol
+		where b.day BETWEEN #{begin} and #{end} GROUP BY a.symbol) n
+		where m.symbol=n.symbol) c where c.increase>0 ORDER BY c.increase DESC
+  </select>
+  
+  <select id="showChart" parameterType="com.stock.model.StockQuery" resultMap="BaseResultMap" >
+  	select * from stock_main where symbol=#{symbol} limit 0,50
+  </select>
 </mapper>

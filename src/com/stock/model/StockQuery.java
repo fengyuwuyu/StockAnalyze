@@ -6,9 +6,9 @@ import java.sql.Date;
  * @author lilei
  * 
  */
-public class StockQuery {
+public class StockQuery extends PageModel {
 
-	private Date start;
+	private Date begin;
 	private Date end;
 	private Boolean down = true;
 	private String symbol;
@@ -22,12 +22,12 @@ public class StockQuery {
 		this.type = type;
 	}
 
-	public Date getStart() {
-		return start;
+	public Date getBegin() {
+		return begin;
 	}
 
-	public void setStart(Date start) {
-		this.start = start;
+	public void setBegin(Date begin) {
+		this.begin = begin;
 	}
 
 	public Date getEnd() {
@@ -56,8 +56,9 @@ public class StockQuery {
 
 	@Override
 	public String toString() {
-		return "StockQuery [start=" + start + ", end=" + end + ", down=" + down
-				+ ", symbol=" + symbol + ", type=" + type + "]";
+		return "StockQuery [begin=" + begin + ", end=" + end + ", down=" + down
+				+ ", symbol=" + symbol + ", type=" + type + ", toString()="
+				+ super.toString() + "]";
 	}
 
 }

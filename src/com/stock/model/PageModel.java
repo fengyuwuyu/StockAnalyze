@@ -33,7 +33,7 @@ public class PageModel {
 	}
 	
 	public Integer getStart() {
-		return this.page == null ? this.start : (this.page - 1) * this.rows + 1;
+		return (this.page - 1) * this.rows;
 	}
 	
 	public void setStart(Integer start) {

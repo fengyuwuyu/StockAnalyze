@@ -20,4 +20,10 @@ public interface StockMainMapper {
     int updateByPrimaryKey(StockMain record);
 
 	List<StockMain> selectBy1(StockQuery query);
+
+	List<StockMain> dataList(StockQuery query);
+
+	int getTotal(StockQuery query);
+
+	List<StockMain> showChart(StockQuery query);
 }

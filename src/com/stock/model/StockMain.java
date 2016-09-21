@@ -2,11 +2,14 @@ package com.stock.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class StockMain {
 	private Integer id;
 
 	private String symbol;
 
+	@JsonFormat(pattern="YYYY-MM-dd")
 	private Date day;
 
 	private Float open;
@@ -110,4 +113,13 @@ public class StockMain {
 	public void setIncrease(Float increase) {
 		this.increase = increase;
 	}
+
+	@Override
+	public String toString() {
+		return "StockMain [id=" + id + ", symbol=" + symbol + ", day=" + day
+				+ ", open=" + open + ", close=" + close + ", max=" + max
+				+ ", min=" + min + ", volume=" + volume + ", increase="
+				+ increase + "]";
+	}
+
 }

@@ -54,7 +54,6 @@ public class MapUtils {
 		Map<String,Object> successMap = null;
 		if(args!=null){
 			successMap = createMap(args);
-			successMap.put("success", true);
 		}else{
 			successMap = new HashMap<String, Object>();
 		}
@@ -71,7 +70,6 @@ public class MapUtils {
 		Map<String,Object> failedMap = null;
 		if(args!=null){
 			failedMap = createMap(args);
-			failedMap.put("success", false);
 		}else{
 			failedMap = new HashMap<String, Object>();
 		}

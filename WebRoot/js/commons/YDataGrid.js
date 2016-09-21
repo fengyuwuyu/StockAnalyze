@@ -279,6 +279,9 @@ var YDataGrid = function(config){
 					Grid.datagrid('clearChecked');
 				}
 			};
+			if(dataGrid.onDblClickRow){
+				dataconfig.onDblClickRow = dataGrid.onDblClickRow;
+			}
 			Grid.datagrid(dataconfig);
 		};	
 		//为查询按钮绑定事件

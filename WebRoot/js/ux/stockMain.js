@@ -13,12 +13,12 @@ YiYa.stockMain = function(){
 							{field : 'increase',title:'增长比',align:'center',width:200}
 						]],
 				onDblClickRow : function(index,row){
-					var symbol = row.symbol;
-					YiYa.ajaxJson(urls['msUrl']+"stockMain/showChart.do", {'symbol':symbol}, function(data){
-						if(data.data){
-							
-						}
-					});
+					var config = YiYa.stockMain.getQueryTime();
+					config.symbol = row.symbol;
+					$('#edit-win').window('open');
+					$('#stockPanel').panel({'url':urls['msUrl']+''});
+					
+					
 				}
 			}
 		},
@@ -26,9 +26,20 @@ YiYa.stockMain = function(){
 			$('#begin').datebox('setValue','2000-01-05');
 			$('#end').datebox('setValue','2000-01-20');
 		},
+		getQueryTime : function(){
+			var begin = $('#begin').datebox('getValue');
+			var end = $('#end').datebox('getValue');
+			return {"begin" : begin,"end":end};
+		},
+		checkTime : function(){
+			var time = this.getQueryTime();
+			if(!time.begin||!begin.end){
+				return false;
+			}
+			return true;
+		},
 		init : function(){
 			this.initDateBox();
-			console.log($('#begin').datebox('getValue'))
 			_box = new YDataGrid(this.config);
 			_box.init();
 		}

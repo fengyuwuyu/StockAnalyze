@@ -26,4 +26,6 @@ public interface StockMainMapper {
 	int getTotal(StockQuery query);
 
 	List<StockMain> showChart(StockQuery query);
+
+	List<String> selectSymbols();
 }

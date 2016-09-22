@@ -34,12 +34,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    </form> 
 	</div>	
 	
-		<div id="edit-win" class="easyui-dialog" title="股票详情" data-options="width:550,height:470,closed:true,iconCls:'icon-window',modal:true" >  
-     		<div id="stockPanel" class="easyui-panel"   
-		        style="width:500px;height:150px;padding:10px;background:#fafafa;"   
-		        data-options="iconCls:'icon-save',closable:true,    
-		                collapsible:true,minimizable:true,maximizable:true">   
-			</div>  
-  	 	</div> 
+		<div id="stock-win"> </div> 
   </body>
 </html>

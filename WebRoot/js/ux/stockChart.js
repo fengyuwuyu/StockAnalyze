@@ -1,10 +1,26 @@
 $(function () {
+	$('#aa').hide();
+	$('#bb').hide();
     Highcharts.setOptions({
         lang: {
             rangeSelectorZoom: ''
         }
     });
-    $.getJSON(urls['msUrl']+'stockMain/showChart.do?symbol=000023', function (result) {
+    var symbol = $('#symbol').val();
+    var a = $('#b').val();
+    var b = $('#e').val();
+    
+    a = '2000-01-06';
+    b = '2000-02-26';
+    
+    $('#bb').datebox('setValue',a);
+    $('#aa').datebox('setValue',b);
+    var begin = $('#bb').datebox('getValue');
+	var end = $('#aa').datebox('getValue');
+	
+	symbol = '000026';
+	
+    $.getJSON(urls['msUrl']+'stockMain/showChart.do?symbol='+symbol+'&begin='+begin+'&end='+end, function (result) {
     	var data = result.data;
         var ohlc = [],
             volume = [],
@@ -39,7 +55,7 @@ $(function () {
                 inputDateFormat: '%Y-%m-%d'
             },
             title: {
-                text: '苹果历史股价'
+                text: data[0].symbol
             },
             xAxis: {
                 dateTimeLabelFormats: {
@@ -93,5 +109,6 @@ $(function () {
                 }
             }]
         });
+        console.log($('#container'))
     });
 });

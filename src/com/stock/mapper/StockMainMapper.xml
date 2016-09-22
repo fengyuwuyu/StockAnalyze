@@ -164,6 +164,10 @@
   </select>
   
   <select id="showChart" parameterType="com.stock.model.StockQuery" resultMap="BaseResultMap" >
-  	select * from stock_main where symbol=#{symbol} limit 0,50
+  	select * from stock_main where symbol=#{symbol} and day between #{begin} and #{end} 
+  </select>
+  
+  <select id="selectSymbols" resultType="java.lang.String">
+  	select symbol from stock_main_id
   </select>
 </mapper>

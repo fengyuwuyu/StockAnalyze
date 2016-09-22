@@ -77,6 +77,15 @@
 		<url-pattern>/main/main.html</url-pattern>
 	</servlet-mapping>
 	
+	<filter>
+		<filter-name>jspParam</filter-name>
+		<filter-class>com.stock.filter.JspParamFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>jspParam</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	
 	<!-- 会话过期时间 -->
 	<session-config>
 		<session-timeout>45</session-timeout>

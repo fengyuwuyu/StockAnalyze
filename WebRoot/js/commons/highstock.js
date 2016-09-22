@@ -21458,7 +21458,7 @@
                     halfWidth = mathRound(point.shapeArgs.width / 2);
                     hasTopWhisker = mathRound(topBox) !== mathRound(point.plotY);
                     hasBottomWhisker = bottomBox !== point.yBottom;
-                    topBox = mathRound(topBox) + crispCorr-increase/2;
+                    topBox = mathRound(topBox) + crispCorr+increase/2;
                     bottomBox = mathRound(bottomBox) + crispCorr;
                     // Create the path. Due to a bug in Chrome 49, the path is first instanciated
                     // with no values, then the values pushed. For unknown reasons, instanciated

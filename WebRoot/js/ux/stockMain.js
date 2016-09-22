@@ -14,17 +14,23 @@ YiYa.stockMain = function(){
 						]],
 				onDblClickRow : function(index,row){
 					var config = YiYa.stockMain.getQueryTime();
-					config.symbol = row.symbol;
-					$('#edit-win').window('open');
-					$('#stockPanel').panel({'url':urls['msUrl']+''});
-					
-					
+					$('#stock-win').window({
+						title : '个股详情',
+						width : 1200,
+						height : 500,
+						href : urls['msUrl']+'view/stockChart.jsp?symbol='+row.symbol+'&begin='+config.begin+'&end='+config.end,
+						draggable : false,
+						minimizable : false,
+						maximizable : false,
+						closable : true,
+						modal : true
+					});
 				}
 			}
 		},
 		initDateBox : function(){
 			$('#begin').datebox('setValue','2000-01-05');
-			$('#end').datebox('setValue','2000-01-20');
+			$('#end').datebox('setValue','2000-02-26');
 		},
 		getQueryTime : function(){
 			var begin = $('#begin').datebox('getValue');
@@ -39,6 +45,7 @@ YiYa.stockMain = function(){
 			return true;
 		},
 		init : function(){
+//			$('#stock-win').window('close');
 			this.initDateBox();
 			_box = new YDataGrid(this.config);
 			_box.init();

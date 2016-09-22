@@ -57,8 +57,7 @@ public class StockQuery extends PageModel {
 	@Override
 	public String toString() {
 		return "StockQuery [begin=" + begin + ", end=" + end + ", down=" + down
-				+ ", symbol=" + symbol + ", type=" + type + ", toString()="
-				+ super.toString() + "]";
+				+ ", symbol=" + symbol + ", type=" + type + "]";
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.stock.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

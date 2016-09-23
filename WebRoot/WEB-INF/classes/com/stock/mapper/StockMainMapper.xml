@@ -170,4 +170,8 @@
   <select id="selectSymbols" resultType="java.lang.String">
   	select symbol from stock_main_id
   </select>
+  
+  <insert id="insertStockAyalyseResult" parameterType="com.stock.model.StockAnalyseResult">
+  	insert into stock_analyse_result(symbol,begin,end,type,increase) values(#{symbol},#{begin},#{end},#{type},#{increase})
+  </insert>
 </mapper>

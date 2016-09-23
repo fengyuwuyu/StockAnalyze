@@ -3,6 +3,7 @@ package com.stock.dao;
 import java.util.List;
 import java.util.Map;
 
+import com.stock.model.StockAnalyseResult;
 import com.stock.model.StockMain;
 import com.stock.model.StockQuery;
 
@@ -28,4 +29,6 @@ public interface StockMainMapper {
 	List<StockMain> showChart(StockQuery query);
 
 	List<String> selectSymbols();
+
+	void insertStockAyalyseResult(StockAnalyseResult stockAnalyseResult);
 }

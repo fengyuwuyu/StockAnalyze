@@ -102,7 +102,6 @@ public class StockMainServiceImpl implements StockMainServiceI {
 	private void initStockAnalyse(StockAnalyse analyseFirst,
 			StockAnalyse analyseSecond) {
 		int type1 = analyseFirst.getZsType();
-		StockMain beginStock = analyseFirst.getBeginStock();
 		StockMain endStock = analyseFirst.getMaxStock();
 		switch (type1) {
 			case StockConstant.BEGIN_MIN_MAX_END:
@@ -129,6 +128,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 						if(type2 == StockConstant.MIN_MAX){
 							sub2 = analyseSecond.getMaxStock().getClose()-analyseSecond.getMinStock().getClose();
 						}
+						
 						break;
 				}
 				break;

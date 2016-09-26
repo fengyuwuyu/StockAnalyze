@@ -164,7 +164,15 @@
   </select>
   
   <select id="showChart" parameterType="com.stock.model.StockQuery" resultMap="BaseResultMap" >
-  	select * from stock_main where symbol=#{symbol} and day between #{begin} and #{end} 
+  	select * from stock_main where 
+  	<trim suffixOverrides="and">
+  		<if test="symbol!=null">
+  			symbol=#{symbol} and
+  		</if>
+  		<if test="begin!=null and end!=null">
+  			day between #{begin} and #{end} 
+  		</if>
+  	</trim>
   </select>
   
   <select id="selectSymbols" resultType="java.lang.String">
@@ -174,4 +182,5 @@
   <insert id="insertStockAyalyseResult" parameterType="com.stock.model.StockAnalyseResult">
   	insert into stock_analyse_result(symbol,begin,end,type,increase) values(#{symbol},#{begin},#{end},#{type},#{increase})
   </insert>
+  
 </mapper>

@@ -9,4 +9,6 @@ public interface StockMainServiceI {
 	Map<String,Object> dataList(StockQuery query);
 
 	Map<String, Object> showChart(StockQuery query);
+	
+	void initStock();
 }

@@ -323,7 +323,6 @@ public class StockServiceimpl implements StockServiceI {
 		List<StockMain> list = null;
 		switch (type) {
 		case 1:
-			list = this.mainMapper.selectBy1(query);
 			break;
 		case 2:
 			

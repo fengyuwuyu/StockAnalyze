@@ -11,4 +11,6 @@ public interface StockMainServiceI {
 	Map<String, Object> showChart(StockQuery query);
 	
 	void initStock();
+
+	Map<String, Object> updateIncreaseRate();
 }

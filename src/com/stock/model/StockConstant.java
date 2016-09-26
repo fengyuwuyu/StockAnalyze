@@ -2,6 +2,8 @@ package com.stock.model;
 
 public class StockConstant {
 	
+	public static final int COUNT = 7;
+	
 	/** 股票一段时间的趋势*/
 	/** 股价上涨*/
 	public static final int UP = 1;

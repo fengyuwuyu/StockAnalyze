@@ -1,6 +1,5 @@
 package com.stock.service.impl;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +83,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 				List<StockMain> stocks = this.stockMainMapper.showChart(query);
 				if (stocks != null && stocks.size() > 0) {
 					StockAnalyse analyseFirst = this.getStockAnalyse(stocks);
-					while (index < stocks.size() - 20) {
+					while (index < stocks.size() - StockConstant.COUNT) {
 						StockAnalyse analyseSecond = this
 								.getStockAnalyse(stocks);
 						this.initStockAnalyse(analyseFirst, analyseSecond);
@@ -170,7 +169,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 		StockMain maxStock = null;
 		StockMain minStock = null;
 		Integer begin = index;
-		Integer end = index + 19;
+		Integer end = index + StockConstant.COUNT-1;
 		Integer max = 0;
 		Integer min = 0;
 		if (end < list.size()) {
@@ -211,7 +210,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 				}
 			}
 		}
-		index += 20;
+		index += StockConstant.COUNT;
 		return new StockAnalyse(begin, end, maxStock, minStock, max, min,
 				qsType, beginStock, endStock);
 	}
@@ -238,25 +237,6 @@ public class StockMainServiceImpl implements StockMainServiceI {
 						/ maxStock.getClose(), minPrice, maxPrice));
 	}
 
-
-	/**
-	 * 找到list中股价最低的
-	 * 
-	 * @param list
-	 * @return
-	 */
-	private StockMain getMinStock(List<StockMain> list, int index) {
-		StockMain mix = null;
-		if (index + 19 < list.size()) {
-			mix = list.get(index);
-			for (int i = index + 1; i < index + 19; i++) {
-				if (list.get(i).getClose() < mix.getClose()) {
-					mix = list.get(i);
-				}
-			}
-		}
-		return mix;
-	}
 
 	public Map<String, Object> rankStock(StockQuery query) {
 		int type = query.getType();
@@ -297,6 +277,13 @@ public class StockMainServiceImpl implements StockMainServiceI {
 
 	private List<StockMain> getLineUp(StockQuery query) {
 
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> updateIncreaseRate() {
+		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

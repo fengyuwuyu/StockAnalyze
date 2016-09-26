@@ -32,4 +32,10 @@ public class StockMainController {
 	public Map<String,Object> showChart(StockQuery query){
 		return this.stockMainServiceI.showChart(query);
 	}
+	
+	@RequestMapping("updateIncreaseRate.do")
+	@ResponseBody
+	public Map<String,Object> updateIncreaseRate(){
+		return this.stockMainServiceI.updateIncreaseRate();
+	}
 }

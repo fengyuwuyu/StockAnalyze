@@ -163,6 +163,14 @@
 		where m.symbol=n.symbol) c where c.increase>0 ORDER BY c.increase DESC
   </select>
   
+   <select id="dataList1" parameterType="map" resultMap="BaseResultMap">
+  		select * from stock_main where day = #{stock.begin} ORDER BY increase DESC limit #{start},#{rows}
+  </select>
+  
+  <select id="getTotal1" parameterType="com.stock.model.StockQuery" resultType="int">
+  		select count(*) from stock_main where day = #{begin} 
+  </select>
+  
   <select id="showChart" parameterType="com.stock.model.StockQuery" resultMap="BaseResultMap" >
   	select * from stock_main where 
   	<trim suffixOverrides="and">

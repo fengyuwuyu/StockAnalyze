@@ -13,4 +13,6 @@ public interface StockMainServiceI {
 	void initStock();
 
 	Map<String, Object> updateIncreaseRate();
+	
+	Map<String, Object> dataList1(StockQuery query);
 }

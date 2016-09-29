@@ -3,6 +3,8 @@ package com.stock.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.stock.model.StockAnalyseResult;
 import com.stock.model.StockMain;
 import com.stock.model.StockQuery;
@@ -23,6 +25,10 @@ public interface StockMainMapper {
 	List<StockMain> dataList(StockQuery query);
 
 	int getTotal(StockQuery query);
+	
+	List<StockMain> dataList1(@Param("stock")StockQuery query,@Param("start")Integer start,@Param("rows")Integer rows);
+
+	int getTotal1(StockQuery query);
 
 	List<StockMain> showChart(StockQuery query);
 

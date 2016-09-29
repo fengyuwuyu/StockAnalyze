@@ -27,6 +27,12 @@ public class StockMainController {
 		return stockMainServiceI.dataList(query);
 	}
 	
+	@RequestMapping("dataList1.do")
+	@ResponseBody
+	public Map<String, Object> dataList1(StockQuery query) {
+		return stockMainServiceI.dataList1(query);
+	}
+	
 	@RequestMapping("showChart.do")
 	@ResponseBody
 	public Map<String,Object> showChart(StockQuery query){

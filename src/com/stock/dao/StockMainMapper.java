@@ -26,7 +26,7 @@ public interface StockMainMapper {
 
 	int getTotal(StockQuery query);
 	
-	List<StockMain> dataList1(@Param("stock")StockQuery query,@Param("start")Integer start,@Param("rows")Integer rows);
+	List<StockMain> dataList1(StockQuery query);
 
 	int getTotal1(StockQuery query);
 

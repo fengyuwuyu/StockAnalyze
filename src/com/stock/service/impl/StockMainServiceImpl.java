@@ -42,7 +42,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 			return MapUtils.createSuccessMap("rows",
 					new ArrayList<StockMain>(), "total", 0);
 		}
-		List<StockMain> list = this.stockMainMapper.dataList1(query,query.getStart(),query.getRows());
+		List<StockMain> list = this.stockMainMapper.dataList1(query);
 		int total = this.stockMainMapper.getTotal1(query);
 		return MapUtils.createSuccessMap("rows", list, "total", total);
 	}

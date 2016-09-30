@@ -9,7 +9,7 @@ public class StockMain {
 
 	private String symbol;
 
-	@JsonFormat(pattern="yyyy-MM-dd", timezone = "GMT+8")
+//	@JsonFormat(pattern="yyyy-MM-dd", timezone = "GMT+8")
 	private Date day;
 
 	private Float open;

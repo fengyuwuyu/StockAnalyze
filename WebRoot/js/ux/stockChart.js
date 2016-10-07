@@ -8,19 +8,17 @@ $(function () {
     });
     var symbol = $('#symbol').val();
     var a = $('#b').val();
-    var b = $('#e').val();
-    
-    a = '2000-01-06';
-    b = '2000-02-26';
-    
-    $('#bb').datebox('setValue',a);
-    $('#aa').datebox('setValue',b);
-    var begin = $('#bb').datebox('getValue');
-	var end = $('#aa').datebox('getValue');
+//    var b = $('#e').val();
+//    console.log(a+'---'+b)
+//    a = '2000-01-06';
+//    b = '2000-02-26';
+//    
+//    $('#bb').datebox('setValue',a);
+//    $('#aa').datebox('setValue',b);
+//    var begin = $('#bb').datebox('getValue');
+//	var end = $('#aa').datebox('getValue');
 	
-	symbol = '000026';
-	
-    $.getJSON(urls['msUrl']+'stockMain/showChart.do?symbol='+symbol+'&begin='+begin+'&end='+end, function (result) {
+    $.getJSON(urls['msUrl']+'stockMain/showChart.do?symbol='+symbol+'&begin='+a, function (result) {
     	var data = result.data;
         var ohlc = [],
             volume = [],
@@ -109,6 +107,5 @@ $(function () {
                 }
             }]
         });
-        console.log($('#container'))
     });
 });

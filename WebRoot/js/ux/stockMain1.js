@@ -12,19 +12,23 @@ YiYa.stockMain = function(){
 							{field : 'symbol',title:'股票编号',align:'center',width:200},
 							{field : 'increase',title:'增长比',align:'center',width:200}
 						]],
-				onDblClickRow : function(index,row){
-					var config = YiYa.stockMain.getQueryTime();
-					$('#stock-win').window({
-						title : '个股详情',
-						width : 1200,
-						height : 500,
-						href : urls['msUrl']+'view/stockChart.jsp?symbol='+row.symbol+'&begin='+config.begin+'&end='+config.end,
-						draggable : false,
-						minimizable : false,
-						maximizable : false,
-						closable : true,
-						modal : true
-					});
+						onDblClickRow : function(index,row){
+//					var config = YiYa.stockMain.getQueryTime();
+					var begin = $('#begin').datebox('getValue'),
+					end = $('#end').datebox('getValue');
+					window.open(urls['msUrl']+'view/stockChart.jsp?symbol='+row.symbol+'&begin='+begin+'&end='+end);
+//					$('#stock-win').window({
+//						title : '个股详情',
+//						width : 1200,
+//						height : 500,
+//						href : urls['msUrl']+'view/stockChart.jsp?symbol='+row.symbol+'&begin='+begin+'&end='+end,
+//						draggable : false,
+//						minimizable : false,
+//						maximizable : false,
+//						closable : true,
+//						modal : true
+//					});
+//					$('#stock-win').window('show');
 				}
 			}
 		},
@@ -33,9 +37,7 @@ YiYa.stockMain = function(){
 			$('#end').datebox('setValue','2000-02-26');
 		},
 		getQueryTime : function(){
-			var begin = $('#begin').datebox('getValue');
-			var end = $('#end').datebox('getValue');
-			return {"begin" : begin,"end":end};
+			return {"begin" : $('#begin').datebox('getValue'),"end":$('#end').datebox('getValue')};
 		},
 		checkTime : function(){
 			var time = this.getQueryTime();
@@ -45,10 +47,9 @@ YiYa.stockMain = function(){
 			return true;
 		},
 		init : function(){
-//			$('#stock-win').window('close');
-			this.initDateBox();
 			_box = new YDataGrid(this.config);
 			_box.init();
+			$('#begin').datebox('setValue','2000-01-28');
 		}
 	};
 	return _this;

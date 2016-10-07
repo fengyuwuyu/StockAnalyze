@@ -21437,9 +21437,10 @@
                 graphic,
                 path,
                 halfWidth,
-                increase;
-
-
+                increase,
+                increase1,
+                price;
+            price = points[0].open;
             each(points, function (point) {
                 graphic = point.graphic;
                 if (point.plotY !== UNDEFINED) {
@@ -21448,22 +21449,32 @@
 
                     // crisp vector coordinates
                     increase = point.increase*2;
+                    var open1 = point.open;
+                    var close1 = point.close;
                     
+                    var sub1 = open1 - price;
+                    var sub2 = close1 - price;
+//                    var max = math.max(sub1,sub2)*100/price;
+                    var min = math.min(sub1,sub2)*100/price;
                     crispCorr = (pointAttr['stroke-width'] % 2) / 2;
                     crispX = mathRound(point.plotX) - crispCorr; // #2596
                     plotOpen = point.plotOpen;
                     plotClose = point.plotClose;
                     topBox = math.min(plotOpen, plotClose);
                     bottomBox = math.max(plotOpen, plotClose);
-                    halfWidth = mathRound(point.shapeArgs.width / 2);
+                    halfWidth = 5;
                     hasTopWhisker = mathRound(topBox) !== mathRound(point.plotY);
                     hasBottomWhisker = bottomBox !== point.yBottom;
-                    topBox = mathRound(topBox) + crispCorr+increase/2;
+                    topBox = mathRound(topBox) + crispCorr;
                     bottomBox = mathRound(bottomBox) + crispCorr;
+                    bottomBox = 110-min;
+                    topBox = bottomBox - math.abs((open1-close1)*300/((open1+close1)/2));
                     // Create the path. Due to a bug in Chrome 49, the path is first instanciated
                     // with no values, then the values pushed. For unknown reasons, instanciated
                     // the path array with all the values would lead to a crash when updating
                     // frequently (#5193).
+                    var topLine_1 = (point.high-open1)*300/open1;
+                    var topLine_2 = (point.low-close1)*300/close1;
                     path = [];
                     path.push(
                         'M',
@@ -21478,13 +21489,12 @@
                         'M',
                         crispX, topBox,
                         'L',
-                        crispX, hasTopWhisker ? mathRound(point.plotY) : topBox, // #460, #2094
+                        crispX,  topBox-topLine_1, // #460, #2094    hasTopWhisker ? mathRound(point.plotY) :
                         'M',
                         crispX, bottomBox,
                         'L',
-                        crispX, hasBottomWhisker ? mathRound(point.yBottom) : bottomBox // #460, #2094
+                        crispX, bottomBox-topLine_2 // #460, #2094   hasBottomWhisker ? mathRound(point.yBottom) : 
                     );
-
                     if (graphic) {
                         graphic
                             .attr(pointAttr) // #3897

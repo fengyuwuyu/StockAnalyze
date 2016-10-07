@@ -38,7 +38,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 	}
 	
 	public Map<String, Object> dataList1(StockQuery query) {
-		if (query.getBegin() == null || query.getEnd() == null) {
+		if (query.getBegin() == null) {
 			return MapUtils.createSuccessMap("rows",
 					new ArrayList<StockMain>(), "total", 0);
 		}

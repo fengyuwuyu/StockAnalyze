@@ -19,7 +19,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
  	 			<form id="searchForm" method="post">
  	 			<p class="ui-fields">	 	    		
  	 	    		<label class="ui-label">开始日期：</label>
- 	 	    		<input name="begin" id="begin" type="text" class="easyui-datebox">&nbsp;&nbsp;&nbsp;
+ 	 	    		<input name="begin" id="begin" type="text" class="easyui-datebox" data-options="editable:false">&nbsp;&nbsp;&nbsp;
  	 	    		<label class="ui-label">结束日期：</label>
  	 	    		<input name="end" id="end" type="text" class="easyui-datebox">&nbsp;&nbsp;&nbsp;	 	    		
         		</p>

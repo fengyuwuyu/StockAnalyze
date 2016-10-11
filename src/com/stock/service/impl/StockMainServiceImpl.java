@@ -182,8 +182,8 @@ public class StockMainServiceImpl implements StockMainServiceI {
 		StockMain minStock = null;
 		Integer begin = index;
 		Integer end = index + StockConstant.COUNT-1;
-		Integer max = 0;
-		Integer min = 0;
+		Integer max = begin;
+		Integer min = begin;
 		if (end < list.size()) {
 			maxStock = list.get(begin);
 			minStock = list.get(begin);
@@ -191,7 +191,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 				if (list.get(i).getClose() > maxStock.getClose()) {
 					maxStock = list.get(i);
 					max = i;
-				} else if (list.get(i).getClose() > minStock.getClose()) {
+				} else if (list.get(i).getClose() < minStock.getClose()) {
 					minStock = list.get(i);
 					min = i;
 				}
@@ -200,8 +200,8 @@ public class StockMainServiceImpl implements StockMainServiceI {
 		int qsType = 0;
 		StockMain beginStock = list.get(begin);
 		StockMain endStock = list.get(end);
-		if (max == 0) {
-			if (min == 0) {
+		if (max == begin) {
+			if (min == begin) {
 				if (endStock.getClose() < beginStock.getClose()) {
 					qsType = StockConstant.MAX_MIN;
 				} else {
@@ -212,7 +212,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 
 			}
 		} else {
-			if (min == 0) {
+			if (min == begin) {
 				qsType = StockConstant.BEGIN_MAX_END;
 			} else {
 				if (max > min) {
@@ -228,11 +228,11 @@ public class StockMainServiceImpl implements StockMainServiceI {
 	}
 
 	private void insertStockAyalyseResult(StockMain minStock, StockMain maxStock) {
-		float sub = maxStock.getClose() - minStock.getClose();
+		float sub = (maxStock.getClose() - minStock.getClose())*100/minStock.getClose();
 		int type = 0;
-		if (sub > 0.1) {
+		if (sub > 10) {
 			type = StockConstant.UP;
-		} else if (sub < -0.1) {
+		} else if (sub < -10) {
 			type = StockConstant.DOWN;
 		} else {
 			type = StockConstant.LINE;
@@ -245,8 +245,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 		}
 		this.stockMainMapper.insertStockAyalyseResult(new StockAnalyseResult(
 				minStock.getSymbol(), minStock.getDay(), maxStock.getDay(),
-				type, (maxStock.getClose() - minStock.getClose())
-						/ maxStock.getClose(), minPrice, maxPrice));
+				type, sub, minPrice, maxPrice));
 	}
 
 

@@ -7,9 +7,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.stock.dao.StockAnalyseResult1Mapper;
 import com.stock.dao.StockMainMapper;
 import com.stock.model.StockAnalyse;
 import com.stock.model.StockAnalyseResult;
+import com.stock.model.StockAnalyseResult1;
 import com.stock.model.StockConstant;
 import com.stock.model.StockMain;
 import com.stock.model.StockQuery;
@@ -36,7 +38,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 		int total = this.stockMainMapper.getTotal(query);
 		return MapUtils.createSuccessMap("rows", list, "total", total);
 	}
-	
+
 	public Map<String, Object> dataList1(StockQuery query) {
 		if (query.getBegin() == null) {
 			return MapUtils.createSuccessMap("rows",
@@ -46,8 +48,6 @@ public class StockMainServiceImpl implements StockMainServiceI {
 		int total = this.stockMainMapper.getTotal1(query);
 		return MapUtils.createSuccessMap("rows", list, "total", total);
 	}
-	
-	
 
 	public Map<String, Object> showChart(StockQuery query) {
 		List<StockMain> list = this.stockMainMapper.showChart(query);
@@ -104,6 +104,8 @@ public class StockMainServiceImpl implements StockMainServiceI {
 					index = 0;
 				}
 			}
+			this.stockMainMapper.updateStatus(MapUtils.createMap("symbols",
+					symbols));
 		}
 	}
 
@@ -181,7 +183,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 		StockMain maxStock = null;
 		StockMain minStock = null;
 		Integer begin = index;
-		Integer end = index + StockConstant.COUNT-1;
+		Integer end = index + StockConstant.COUNT - 1;
 		Integer max = begin;
 		Integer min = begin;
 		if (end < list.size()) {
@@ -228,7 +230,8 @@ public class StockMainServiceImpl implements StockMainServiceI {
 	}
 
 	private void insertStockAyalyseResult(StockMain minStock, StockMain maxStock) {
-		float sub = (maxStock.getClose() - minStock.getClose())*100/minStock.getClose();
+		float sub = (maxStock.getClose() - minStock.getClose()) * 100
+				/ minStock.getClose();
 		int type = 0;
 		if (sub > 10) {
 			type = StockConstant.UP;
@@ -248,54 +251,50 @@ public class StockMainServiceImpl implements StockMainServiceI {
 				type, sub, minPrice, maxPrice));
 	}
 
+	private StockAnalyseResult1Mapper stockAnalyseResult1Mapper;
 
-	public Map<String, Object> rankStock(StockQuery query) {
-		int type = query.getType();
-		List<StockMain> list = null;
-		switch (type) {
-		case StockConstant.LINE_UP:
-			list = this.getLineUp(query);
-			break;
-		case StockConstant.LINE_DOWN:
-			list = this.getDownLineUp(query);
-			break;
-		case StockConstant.DOWN_UP:
-			list = this.getDownUp(query);
-			break;
-		case StockConstant.DOWN_LINE:
-			list = this.getUpLineOrDown(query);
-			break;
-		default:
-			throw new IllegalArgumentException("query type exception...");
+	@Autowired
+	public void setStockAnalyseResult1Mapper(
+			StockAnalyseResult1Mapper stockAnalyseResult1Mapper) {
+		this.stockAnalyseResult1Mapper = stockAnalyseResult1Mapper;
+	}
+
+	/***
+	 * 初始化
+	 */
+	public Map<String, Object> initIncreaseStock() {
+		List<String> symbols = this.stockMainMapper.selectAll();
+		if (symbols != null && symbols.size() > 0) {
+			String type = null;
+			StockAnalyseResult1 result1 = null;
+			for (String symbol : symbols) {
+				List<StockAnalyseResult> list = this.stockMainMapper
+						.select1(symbol);
+				if (list != null && list.size() > 0) {
+					for (int i = 3; i < list.size(); i++) {
+						if(list.get(i).getIncrease()<15){
+							continue;
+						}
+						type = getType(list.get(i - 3).getIncrease())+","
+								+ getType(list.get(i - 2).getIncrease())+","
+								+ getType(list.get(i - 1).getIncrease());
+						result1 = new StockAnalyseResult1(
+								symbol, list.get(i).getBegin(), list.get(i)
+										.getEnd(), type, list.get(i)
+										.getIncrease(), list.get(i - 3)
+										.getIncrease(), list.get(i - 2)
+										.getIncrease(), list.get(i - 1)
+										.getIncrease());
+						this.stockAnalyseResult1Mapper.insertSelective(result1);
+					}
+				}
+			}
 		}
-		return MapUtils.createSuccessMap("data", list);
+		return MapUtils.createSuccessMap();
 	}
 
-	private List<StockMain> getUpLineOrDown(StockQuery query) {
-
-		return null;
-	}
-
-	private List<StockMain> getDownUp(StockQuery query) {
-
-		return null;
-	}
-
-	private List<StockMain> getDownLineUp(StockQuery query) {
-
-		return null;
-	}
-
-	private List<StockMain> getLineUp(StockQuery query) {
-
-		return null;
-	}
-
-	@Override
-	public Map<String, Object> updateIncreaseRate() {
-		// TODO Auto-generated method stub
-		
-		return null;
+	private int getType(float f) {
+		return Math.abs((int) f / 5 + 1);
 	}
 
 }

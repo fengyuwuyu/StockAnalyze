@@ -21,4 +21,6 @@ public interface StockShortMapper {
 	void insertSelectiveMap(LinkedHashMap<String, Object> map);
 
 	List<String> selectAll();
+	
+	void updateStatus(String symbol);
 }

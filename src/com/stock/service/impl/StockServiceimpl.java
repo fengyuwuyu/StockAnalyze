@@ -242,7 +242,7 @@ public class StockServiceimpl implements StockServiceI {
 	 * 
 	 * http://img1.money.126.net/data/hs/kline/day/history/2016/1000755.json
 	 * 返回股票的收盘价
-	 * 
+	 * http://img1.money.126.net/data/hs/kline/day/history/2016/0603887.json
 	 * @return
 	 * @throws Exception 
 	 */
@@ -267,33 +267,13 @@ public class StockServiceimpl implements StockServiceI {
 						if (detail != null) {
 							List<List<Object>> list = (List<List<Object>>) detail
 									.get("data");
-							int end = 0;
 							if (list != null && list.size() > 0) {
-								log.info("---------list.size()-------"+list.size());
-								log.info("--------list--------"+list);
-//								for (int i = 0; i < list.size(); i+=100) {
-//									end = i+100;
-//									end = end<list.size()?end:list.size();
-//									List<List<Object>> sub = list.subList(i, end);
-//									log.info("--------sub--------"+sub);
-//									List<Object> s = list.get(i);
-//									StockMain main = new StockMain(symbol,
-//											CommonsUtil.formatStringToDate1(s
-//													.get(0).toString()),
-//											Float.valueOf(s.get(1).toString()),
-//											Float.valueOf(s.get(2).toString()),
-//											Float.valueOf(s.get(3).toString()),
-//											Float.valueOf(s.get(4).toString()),
-//											Long.valueOf(s.get(5).toString()),
-//											Float.valueOf(s.get(6).toString()));
-//									if(sub!=null&&sub.size()>0){
-										this.mainMapper.insert(MapUtils.createMap("list",list,"symbol",symbol));
-//									}
-//								}
+								this.mainMapper.insert(MapUtils.createMap("list",list,"symbol",symbol));
 							}
 						}
 					}
 				}
+				shortMapper.updateStatus(symbol);
 			}
 		return MapUtils.createSuccessMap();
 	}

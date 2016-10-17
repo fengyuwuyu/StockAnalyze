@@ -189,11 +189,27 @@
   </select>
   
   <select id="selectSymbols" resultType="java.lang.String">
-  	select symbol from stock_main_id
+  	select  symbol from stock_main_id where status=0 LIMIT 0,80
   </select>
+  
+  <update id="updateStatus" parameterType="java.util.Map" >
+  		update stock_main_id set status = 1
+  		where symbol in 
+  		<foreach collection="symbols" item="item" open="(" close=")" separator=",">
+  			#{item}
+  		</foreach>
+  </update>
   
   <insert id="insertStockAyalyseResult" parameterType="com.stock.model.StockAnalyseResult">
   	insert into stock_analyse_result(symbol,begin,end,type,increase) values(#{symbol},#{begin},#{end},#{type},#{increase})
   </insert>
   
+  <select id="selectAll" resultType="java.lang.String">
+  	select distinct symbol from stock_analyse_result_1
+  </select>
+  
+  
+  <select id="select1" parameterType="java.lang.String" resultType="com.stock.model.StockAnalyseResult">
+  	select * from stock_analyse_result_1 where symbol = #{symbol}
+  </select>
 </mapper>

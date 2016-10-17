@@ -32,7 +32,7 @@ public class TestController {
 	@ResponseBody
 	public Map<String, Object> test()  {
 		try {
-			this.detailSaveServiceI.test();
+			this.stockMainServiceI.initIncreaseStock();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

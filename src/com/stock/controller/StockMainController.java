@@ -42,6 +42,7 @@ public class StockMainController {
 	@RequestMapping("updateIncreaseRate.do")
 	@ResponseBody
 	public Map<String,Object> updateIncreaseRate(){
-		return this.stockMainServiceI.updateIncreaseRate();
+//		return this.stockMainServiceI.updateIncreaseRate();
+		return null;
 	}
 }

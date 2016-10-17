@@ -35,4 +35,10 @@ public interface StockMainMapper {
 	List<String> selectSymbols();
 
 	void insertStockAyalyseResult(StockAnalyseResult stockAnalyseResult);
+	
+	void updateStatus(Map<String,Object> map);
+
+	List<String> selectAll();
+
+	List<StockAnalyseResult> select1(String symbol);
 }

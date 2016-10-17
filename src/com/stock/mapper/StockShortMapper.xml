@@ -93,10 +93,14 @@
   </update>
   
   <select id="selectAll" resultType="string">
-  	select distinct symbol from stock_short where symbol not in (select symbol from stock_temp)
+  	select distinct symbol from stock_short where status=0
   </select>
   
   <select id="selectAll1" resultMap="BaseResultMap">
   	select <include refid="Base_Column_List" /> from stock_short
   </select>
+  
+  <update id="updateStatus" parameterType="java.lang.String">
+  		update stock_short set status=1 where symbol=#{symbol}
+  </update>
 </mapper>

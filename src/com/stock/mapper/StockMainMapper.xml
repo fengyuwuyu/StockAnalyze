@@ -212,4 +212,25 @@
   <select id="select1" parameterType="java.lang.String" resultType="com.stock.model.StockAnalyseResult">
   	select * from stock_analyse_result_1 where symbol = #{symbol}
   </select>
+  
+  <select id="selectTop100" resultType="com.stock.model.StockTop100" parameterType="java.util.Date">
+  	select symbol,increase incre from stock_main where day=#{day} ORDER BY increase desc LIMIT 100
+  </select>
+  
+  <resultMap type="com.stock.model.StockTop100" id="IncreaseTop100">
+  	<result column="symbol" property="symbol" />
+  	<result column="incre" property="incre" />
+  	<collection property="increases" ofType="java.lang.Float" >
+  		<result column="increase" property="value"/>
+  	</collection>
+  </resultMap>
+  
+  <select id="selectTop100Dl" parameterType="java.util.Map" resultMap="IncreaseTop100">
+  	select symbol,increase from stock_main
+  	 where symbol in 
+  	<foreach collection="symbols" item="item" open="(" close=")" separator=",">
+  		#{item}
+  	</foreach> and day BETWEEN DATE_ADD(#{day},INTERVAL -30 day)  and DATE_ADD(#{day},INTERVAL 10 day)
+  	
+  </select>
 </mapper>

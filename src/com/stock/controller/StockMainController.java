@@ -1,5 +1,6 @@
 package com.stock.controller;
 
+import java.sql.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,4 +46,11 @@ public class StockMainController {
 //		return this.stockMainServiceI.updateIncreaseRate();
 		return null;
 	}
+	
+	@RequestMapping("analyseQuery.do")
+	@ResponseBody
+	public Map<String,Object> analyseQuery(Date begin){
+		return this.stockMainServiceI.analyseQuery(begin);
+	}
+	
 }

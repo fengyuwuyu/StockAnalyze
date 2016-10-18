@@ -1,5 +1,6 @@
 package com.stock.dao;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import com.stock.model.StockAnalyseResult;
 import com.stock.model.StockMain;
 import com.stock.model.StockQuery;
+import com.stock.model.StockTop100;
 
 public interface StockMainMapper {
     int deleteByPrimaryKey(Integer id);
@@ -41,4 +43,8 @@ public interface StockMainMapper {
 	List<String> selectAll();
 
 	List<StockAnalyseResult> select1(String symbol);
+
+	List<StockTop100> selectTop100(Date day);
+
+	List<StockTop100> selectTop100Dl(Map<String, Object> createMap);
 }

@@ -1,8 +1,10 @@
 package com.stock.service.impl;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import com.stock.model.StockAnalyseResult1;
 import com.stock.model.StockConstant;
 import com.stock.model.StockMain;
 import com.stock.model.StockQuery;
+import com.stock.model.StockTop100;
 import com.stock.service.StockMainServiceI;
 import com.stock.util.MapUtils;
 
@@ -275,9 +278,10 @@ public class StockMainServiceImpl implements StockMainServiceI {
 						if(list.get(i).getIncrease()<15){
 							continue;
 						}
-						type = getType(list.get(i - 3).getIncrease())+","
-								+ getType(list.get(i - 2).getIncrease())+","
-								+ getType(list.get(i - 1).getIncrease());
+//						type = getType(list.get(i - 3).getIncrease())+","
+//								+ getType(list.get(i - 2).getIncrease())+","
+//								+ getType(list.get(i - 1).getIncrease());
+						type = list.get(i - 3).getType()+""+list.get(i - 2).getType()+list.get(i - 1).getType();
 						result1 = new StockAnalyseResult1(
 								symbol, list.get(i).getBegin(), list.get(i)
 										.getEnd(), type, list.get(i)
@@ -296,5 +300,29 @@ public class StockMainServiceImpl implements StockMainServiceI {
 	private int getType(float f) {
 		return Math.abs((int) f / 5 + 1);
 	}
+	
+	public Map<String,Object> analyse(){
+		
+		return MapUtils.createSuccessMap();
+	}
 
+	public Map<String,Object> analyseQuery(Date day){
+		if(day==null){
+			return MapUtils.createSuccessMap();
+		}
+		List<StockTop100> symbols = this.stockMainMapper.selectTop100(day);
+		List<StockTop100> list = this.stockMainMapper.selectTop100Dl(MapUtils.createMap("symbols",symbols,"day",day));
+		if(list!=null&&list.size()>0){
+			TreeMap<String, Float> map = new TreeMap<String, Float>();
+			for(StockTop100 top100 : symbols){
+				map.put(top100.getSymbol(), top100.getIncre());
+			}
+			for (StockTop100 stockTop100 : list) {
+				stockTop100.setIncre(map.get(stockTop100.getSymbol()));
+			}
+		}
+		return MapUtils.createSuccessMap("rows",list);
+	}
+
+	
 }

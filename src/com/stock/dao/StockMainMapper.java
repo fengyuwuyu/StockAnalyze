@@ -47,4 +47,6 @@ public interface StockMainMapper {
 	List<StockTop100> selectTop100(Date day);
 
 	List<StockTop100> selectTop100Dl(Map<String, Object> createMap);
+
+	Map<String, Date> selectDays(Date day);
 }

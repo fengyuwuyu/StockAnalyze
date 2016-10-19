@@ -3,6 +3,7 @@ package com.stock.dao;
 import java.sql.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.stock.model.StockDetail;
 import com.stock.model.StockVol;
@@ -10,7 +11,7 @@ import com.stock.model.StockVol;
 public interface StockDetailMapper {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(StockDetail record);
+    int insert(Map<String, Object> map);
 
     int insertSelective(LinkedHashMap<String, Object> record);
 

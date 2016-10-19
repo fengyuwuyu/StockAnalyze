@@ -66,10 +66,31 @@
 		delete from stock_detail
 		where id = #{id,jdbcType=INTEGER}
 	</delete>
+	
+	<insert id="insert" parameterType="java.util.Map">
+		insert into stock_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				CODE,NAME,HIGH,LOW,MCAP,OPEN,PE,PERCENT,PRICE,SNAME,SYMBOL,TIME,TURNOVER,
+				UPDOWN,VOLUME,YESTCLOSE
+		</trim>
+		values 
+		<foreach collection="list" item="item" separator=",">
+		(#{item.CODE},#{item.NAME},#{item.HIGH,jdbcType=REAL},#{item.LOW,jdbcType=REAL},#{item.MCAP,jdbcType=BIGINT},#{item.OPEN,jdbcType=REAL},
+			#{item.PE,jdbcType=DOUBLE},#{item.PERCENT,jdbcType=DOUBLE},#{item.PRICE,jdbcType=REAL},#{item.SNAME,jdbcType=VARCHAR},
+			#{item.SYMBOL,jdbcType=VARCHAR},#{item.TIME,jdbcType=TIMESTAMP},#{item.TURNOVER,jdbcType=INTEGER},
+			#{item.UPDOWN,jdbcType=REAL},#{item.VOLUME,jdbcType=INTEGER},#{item.YESTCLOSE,jdbcType=REAL})
+		</foreach>
+	</insert>
 
 	<insert id="insertSelective" parameterType="java.util.Map">
 		insert into stock_detail
 		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="CODE != null">
+				CODE,
+			</if>
+			<if test="NAME!=NULL">
+				NAME,
+			</if>
 			<if test="HIGH != null">
 				HIGH,
 			</if>
@@ -112,11 +133,17 @@
 			<if test="YESTCLOSE != null">
 				YESTCLOSE,
 			</if>
-			<if test="type != null">
-				type
+			<if test="TIME!=null">
+				TIME
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="CODE != null">
+				#{CODE},
+			</if>
+			<if test="NAME!=NULL">
+				#{NAME},
+			</if>
 			<if test="HIGH != null">
 				#{HIGH,jdbcType=REAL},
 			</if>
@@ -159,8 +186,8 @@
 			<if test="YESTCLOSE != null">
 				#{YESTCLOSE,jdbcType=REAL},
 			</if>
-			<if test="type != null">
-				#{type}
+			<if test="TIME!=null">
+				#{TIME}
 			</if>
 		</trim>
 	</insert>

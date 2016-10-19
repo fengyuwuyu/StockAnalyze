@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.stock.service.InitStockServiceI;
 import com.stock.service.StockMainServiceI;
 import com.stock.service.StockServiceI;
 import com.stock.util.MapUtils;
@@ -17,7 +18,13 @@ public class TestController {
 	private StockServiceI detailSaveServiceI;
 	
 	private StockMainServiceI stockMainServiceI;
+	private InitStockServiceI initStockServiceI;
 	
+	@Autowired
+	public void setInitStockServiceI(InitStockServiceI initStockServiceI) {
+		this.initStockServiceI = initStockServiceI;
+	}
+
 	@Autowired
 	public void setStockMainServiceI(StockMainServiceI stockMainServiceI) {
 		this.stockMainServiceI = stockMainServiceI;
@@ -32,11 +39,11 @@ public class TestController {
 	@ResponseBody
 	public Map<String, Object> test()  {
 		try {
-			this.stockMainServiceI.initIncreaseStock();
+			return this.initStockServiceI.initStock();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return MapUtils.createSuccessMap();
+		return MapUtils.createFailedMap();
 	}
 	
 	@RequestMapping("test1.do")

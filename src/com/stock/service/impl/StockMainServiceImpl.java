@@ -2,6 +2,7 @@ package com.stock.service.impl;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -311,7 +312,8 @@ public class StockMainServiceImpl implements StockMainServiceI {
 			return MapUtils.createSuccessMap();
 		}
 		List<StockTop100> symbols = this.stockMainMapper.selectTop100(day);
-		List<StockTop100> list = this.stockMainMapper.selectTop100Dl(MapUtils.createMap("symbols",symbols,"day",day));
+		Map<String,Date> days = this.stockMainMapper.selectDays(day);
+		List<StockTop100> list = this.stockMainMapper.selectTop100Dl(MapUtils.createMap("list",symbols,"begin",day));
 		if(list!=null&&list.size()>0){
 			TreeMap<String, Float> map = new TreeMap<String, Float>();
 			for(StockTop100 top100 : symbols){
@@ -321,8 +323,8 @@ public class StockMainServiceImpl implements StockMainServiceI {
 				stockTop100.setIncre(map.get(stockTop100.getSymbol()));
 			}
 		}
-		return MapUtils.createSuccessMap("rows",list);
+		Collections.sort(list);
+		return MapUtils.createSuccessMap("rows",list,"days",days);
 	}
 
-	
 }

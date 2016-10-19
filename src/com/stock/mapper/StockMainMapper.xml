@@ -219,8 +219,8 @@
   
   <resultMap type="com.stock.model.StockTop100" id="IncreaseTop100">
   	<result column="symbol" property="symbol" />
-  	<result column="incre" property="incre" />
-  	<collection property="increases" ofType="java.lang.Float" >
+  	<result column="incre" property="incre" jdbcType="VARCHAR"/>
+  	<collection property="increases" ofType="java.lang.Float">
   		<result column="increase" property="value"/>
   	</collection>
   </resultMap>
@@ -228,9 +228,12 @@
   <select id="selectTop100Dl" parameterType="java.util.Map" resultMap="IncreaseTop100">
   	select symbol,increase from stock_main
   	 where symbol in 
-  	<foreach collection="symbols" item="item" open="(" close=")" separator=",">
-  		#{item}
-  	</foreach> and day BETWEEN DATE_ADD(#{day},INTERVAL -30 day)  and DATE_ADD(#{day},INTERVAL 10 day)
-  	
+  	<foreach collection="list" item="item" open="(" close=")" separator=",">
+  		#{item.symbol}
+  	</foreach> and day BETWEEN DATE_ADD(#{begin},INTERVAL -30 day)  and DATE_ADD(#{begin},INTERVAL 10 day) order by symbol,day
+  </select>
+  
+  <select id="selectDays" parameterType="java.sql.Date" resultType="java.util.Map">
+  	select DATE_ADD(#{begin},INTERVAL -30 day) begin,DATE_ADD(#{begin},INTERVAL 10 day) end
   </select>
 </mapper>

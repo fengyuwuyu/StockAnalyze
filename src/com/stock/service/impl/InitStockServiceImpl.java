@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stock.connection.HttpClientUtil;
+import com.stock.dao.HolidayMapper;
 import com.stock.dao.StockDetailMapper;
 import com.stock.service.InitStockServiceI;
 import com.stock.util.MapUtils;
@@ -19,8 +20,14 @@ import com.stock.util.MapUtils;
 public class InitStockServiceImpl implements InitStockServiceI {
 	private static ObjectMapper mapper = new ObjectMapper();
 	private StockDetailMapper stockDetailMapper;
+	private HolidayMapper holidayMapper;
 	private String timeBak = "";
 	
+	@Autowired
+	public void setHolidayMapper(HolidayMapper holidayMapper) {
+		this.holidayMapper = holidayMapper;
+	}
+
 	@Autowired
 	public void setStockDetailMapper(StockDetailMapper stockDetailMapper) {
 		this.stockDetailMapper = stockDetailMapper;

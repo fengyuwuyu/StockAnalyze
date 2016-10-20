@@ -16,10 +16,10 @@ import com.stock.util.MapUtils;
 public class TestController {
 
 	private StockServiceI detailSaveServiceI;
-	
+
 	private StockMainServiceI stockMainServiceI;
 	private InitStockServiceI initStockServiceI;
-	
+
 	@Autowired
 	public void setInitStockServiceI(InitStockServiceI initStockServiceI) {
 		this.initStockServiceI = initStockServiceI;
@@ -37,7 +37,7 @@ public class TestController {
 
 	@RequestMapping("test.do")
 	@ResponseBody
-	public Map<String, Object> test()  {
+	public Map<String, Object> test() {
 		try {
 			return this.initStockServiceI.initStock();
 		} catch (Exception e) {
@@ -45,12 +45,13 @@ public class TestController {
 		}
 		return MapUtils.createFailedMap();
 	}
-	
+
 	@RequestMapping("test1.do")
 	@ResponseBody
 	public Map<String, Object> test1() throws Exception {
-		this.stockMainServiceI.initStock();;
-//		this.detailSaveServiceI.volBigIncrease();
+		this.stockMainServiceI.initStock();
+		;
+		// this.detailSaveServiceI.volBigIncrease();
 		return MapUtils.createSuccessMap();
 	}
 }

@@ -542,7 +542,7 @@ function drawCld(SY, SM) {
 				success : function(data) {
 					if (data.success==true){	
 					   					
-				    	if(data.vacations!=""){
+				    	if(data.vacations){
 						  hDays=data.vacations.split(",");
 						}
 						

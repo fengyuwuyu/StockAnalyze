@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.stock.dao.ExceptionLogMapper;
+import com.stock.dao.HolidayMapper;
 import com.stock.model.ExceptionLog;
 import com.stock.model.StockConstant;
 import com.stock.service.InitStockServiceI;
@@ -15,6 +16,13 @@ public class TaskJob {
 
 	private InitStockServiceI initStockServiceI;
 	private ExceptionLogMapper exceptionLogMapper;
+	private HolidayMapper holidayMapper;
+	
+	@Autowired
+	public void setHolidayMapper(HolidayMapper holidayMapper) {
+		this.holidayMapper = holidayMapper;
+	}
+	
 //	public static boolean download = true;
 
 	@Autowired
@@ -59,9 +67,10 @@ public class TaskJob {
 	@SuppressWarnings("deprecation")
 	private boolean checkTime() {
 		Date now = new Date();
-//		if(isHoliday(now)){
-//			return false;
-//		}
+		//如果是节假日，则直接返回false
+		if(isHoliday(now)){
+			return false;
+		}
 		int hour = now.getHours();
 		int minute = now.getMinutes();
 		if(hour>=9 &&hour<12){
@@ -86,8 +95,11 @@ public class TaskJob {
 	}
 
 	private boolean isHoliday(Date now) {
-		
-		return false;
+		String day = this.holidayMapper.queryByDay(new java.sql.Date(now.getTime()));
+		if(day==null||"".equals(day)){
+			return false;
+		}
+		return true;
 	}
 	
 }

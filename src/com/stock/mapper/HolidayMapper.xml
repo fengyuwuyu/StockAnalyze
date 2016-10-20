@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stock.dao.HolidayMapper">
+	<resultMap id="BaseResultMap" type="com.stock.model.Holiday">
+		<id column="holiday_id" property="id" />
+		<result column="holiday_time" property="holidayTime" />
+	</resultMap>
+
+	<select id="getVacations" parameterType="map" resultMap="BaseResultMap">
+		select holiday_time from holiday where holiday_time like '%${param}%'
+	</select>
+	
+	<select id="getVacationsByCondition" parameterType="map" resultType="string">
+		select holiday_time from holiday where holiday_time between #{kssj} and 
+		<if test="jssj!=null">
+			#{jssj}
+		</if>
+		<if test="jssj==null">
+			DATEADD(day, 1,#{jssj})
+		</if>
+	</select>
+
+	<delete id="delete" parameterType="map">
+		delete from holiday where holiday_time like '%${param}%'
+	</delete>
+	
+	<insert id="save" parameterType="java.lang.reflect.Array">
+		insert into holiday(holiday_time) values  
+		<trim suffixOverrides=",">
+			<foreach collection="array" index="index" item="item" >
+			(#{item}),
+		</foreach>
+		</trim>
+	</insert>
+	
+	<select id="queryByDay" parameterType="java.sql.Date" resultType="java.lang.String">
+		select holiday_time from holiday where holiday_time=#{kssj}
+	</select>
+</mapper>

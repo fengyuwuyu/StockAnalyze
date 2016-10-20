@@ -19,7 +19,7 @@
     
     <!-- 注册定时器  -->
     <task:scheduled-tasks> 
-    	<task:scheduled ref="taskJob" method="execute" cron="0 20 17 ? * 1-5"/> 
+    	<task:scheduled ref="taskJob" method="execute" cron="0 0 9 * * *"/> 
 	</task:scheduled-tasks>
     
 

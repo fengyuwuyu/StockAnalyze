@@ -1,6 +1,6 @@
 /*封装变量（利用JSONP）*/
 var urls= {
-	'msUrl':'http://localhost:8999/StockAnalyze/'
+	'msUrl':'http://localhost:8080/StockAnalyze/'
 };
 
 $.ajaxSetup({   

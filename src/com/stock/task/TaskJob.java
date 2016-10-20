@@ -34,8 +34,13 @@ public class TaskJob {
 				while(!checkTime()){
 					Thread.sleep(StockConstant.INIT_STOCK_SLEEP_TIME);
 				}
+				long begin = System.currentTimeMillis();
 				initStockServiceI.initStock();
-				Thread.sleep(StockConstant.INIT_STOCK_SLEEP_TIME);
+				long host = System.currentTimeMillis()-begin;
+				long sleep = StockConstant.INIT_STOCK_SLEEP_TIME-host;
+				if(sleep>0){
+					Thread.sleep(StockConstant.INIT_STOCK_SLEEP_TIME);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -53,8 +58,10 @@ public class TaskJob {
 	 */
 	@SuppressWarnings("deprecation")
 	private boolean checkTime() {
-		
 		Date now = new Date();
+//		if(isHoliday(now)){
+//			return false;
+//		}
 		int hour = now.getHours();
 		int minute = now.getMinutes();
 		if(hour>=9 &&hour<12){
@@ -75,6 +82,11 @@ public class TaskJob {
 		}else if(hour>=13 &&hour<15){
 			return true;
 		}
+		return false;
+	}
+
+	private boolean isHoliday(Date now) {
+		
 		return false;
 	}
 	

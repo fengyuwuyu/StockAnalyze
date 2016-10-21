@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,7 @@ import com.stock.model.StockAnalyseResult;
 import com.stock.model.StockAnalyseResult1;
 import com.stock.model.StockConstant;
 import com.stock.model.StockMain;
+import com.stock.model.StockMainAnalyse;
 import com.stock.model.StockQuery;
 import com.stock.model.StockTop100;
 import com.stock.service.StockMainServiceI;
@@ -27,6 +31,12 @@ public class StockMainServiceImpl implements StockMainServiceI {
 
 	private StockMainMapper stockMainMapper;
 	private static Integer index = 0;
+	private SqlSessionFactory sqlSessionFactory;
+	
+	@Autowired
+	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSessionFactory = sqlSessionFactory;
+	}
 
 	@Autowired
 	public void setStockMainMapper(StockMainMapper stockMainMapper) {
@@ -327,4 +337,46 @@ public class StockMainServiceImpl implements StockMainServiceI {
 		return MapUtils.createSuccessMap("rows",list,"days",days);
 	}
 
+	/**
+	 * 一、找出涨幅较大的股票，分析其前若干天股票的类型
+		1、将当天股票涨幅大于0的进行累加，若遇到小于0的则停止计算，判断总涨幅是否大于20，若大于
+			20，计算其前若干天的股票走势；
+		2、20天内的股票走势计算：
+			1）找到最高及最低点，根据4个点将其分为3段，根据这3段最高及最低之差，判断其走势属于
+				上涨（1）、下跌（2）、震荡（3）；因此共有9中类型
+			2）统计其9中类型所占据的比例
+	 * @return
+	 */
+	public boolean analyse1(int count){
+		SqlSession sqlSession = getSqlSession();
+		StockMainMapper mainMapper = sqlSession.getMapper(StockMainMapper.class);
+		List<String> days = mainMapper.selectAllDay(count);
+		if(days!=null&&days.size()>0){
+			for (String day : days) {
+				List<StockMainAnalyse> stocks = mainMapper.selectAnalyse(day);
+				List<StockMainAnalyse> inserts = new ArrayList<StockMainAnalyse>();
+				if(stocks!=null&&stocks.size()>0){
+					for(StockMainAnalyse analyse : stocks){
+						analyse.analyse(day, count);
+						inserts.add(analyse);
+					}
+					mainMapper.insertStockMainAnalyse(MapUtils.createMap("list",inserts));
+					inserts.clear();
+				}
+			}
+			this.stockMainMapper.updateStockMainDays(MapUtils.createMap("list",days,"type",count));
+			}
+		days = mainMapper.selectAllDay(count);
+		sqlSession.commit(true);
+		sqlSession.clearCache();
+		sqlSession.close();
+		if(days!=null&&days.size()>0){
+			return true;
+		}
+		return false;
+	}
+	
+	private SqlSession getSqlSession(){
+		return this.sqlSessionFactory.openSession(ExecutorType.BATCH,false);
+	}
 }

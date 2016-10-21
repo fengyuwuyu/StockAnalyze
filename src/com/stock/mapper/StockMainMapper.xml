@@ -236,4 +236,37 @@
   <select id="selectDays" parameterType="java.sql.Date" resultType="java.util.Map">
   	select DATE_ADD(#{begin},INTERVAL -30 day) begin,DATE_ADD(#{begin},INTERVAL 10 day) end
   </select>
+  
+  <select id="selectAllDay" resultType="string">
+  	select day from stock_main_days where day &gt; '2000-02-14' and type!=#{count} limit 200
+  </select>
+  
+  <update id="updateStockMainDays" parameterType="java.util.Map">
+  	update stock_main_days set type=#{type} where day in 
+  	<foreach collection="list" item="item" open="(" close=")" separator=",">
+  		#{item}
+  	</foreach>
+  </update>
+  
+  <resultMap type="com.stock.model.StockMainAnalyse" id="StockMainAnalyse">
+  	<result column="symbol" property="symbol"/>
+  	<collection property="dayIncreases" ofType="com.stock.model.DayIncrease" javaType="java.util.List">
+  		<result column="day" property="day"/>
+  		<result column="increase" property="increase"/>
+  		<result column="close" property="close"/>
+  	</collection>
+  	
+  </resultMap>
+  
+  <select id="selectAnalyse" resultMap="StockMainAnalyse" parameterType="string">
+  		select symbol,increase,day,close from stock_main
+  		   where day BETWEEN DATE_ADD(#{begin},INTERVAL -60 day)  and DATE_ADD(#{begin},INTERVAL 20 day) order by symbol,day
+  </select>
+  
+  <insert id="insertStockMainAnalyse" parameterType="java.util.Map">
+  	insert into stock_main_analyse(symbol,now,nowIncrease,lastIncrease,type,analyseType) values
+  	<foreach collection="list" item="item" separator=",">
+  		(#{item.symbol},#{item.now},#{item.nowIncrease},#{item.lastIncrease},#{item.type},#{item.analyseType})
+  	</foreach>
+  </insert>
 </mapper>

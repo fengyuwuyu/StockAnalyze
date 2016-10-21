@@ -39,7 +39,12 @@ public class TestController {
 	@ResponseBody
 	public Map<String, Object> test() {
 		try {
-			return this.initStockServiceI.initStock();
+			boolean run = true;
+			for(int i = 20;i>0;i--){
+				while(run){
+					run = this.stockMainServiceI.analyse1(i);
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

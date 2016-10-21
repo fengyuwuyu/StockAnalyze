@@ -9,6 +9,7 @@ import com.stock.dao.HolidayMapper;
 import com.stock.model.ExceptionLog;
 import com.stock.model.StockConstant;
 import com.stock.service.InitStockServiceI;
+import com.stock.service.StockMainServiceI;
 import com.stock.service.StockServiceI;
 import com.stock.util.CommonsUtil;
 
@@ -17,7 +18,13 @@ public class TaskJob {
 	private InitStockServiceI initStockServiceI;
 	private ExceptionLogMapper exceptionLogMapper;
 	private HolidayMapper holidayMapper;
+	private StockMainServiceI stockMainServiceI;
 	
+	@Autowired
+	public void setStockMainServiceI(StockMainServiceI stockMainServiceI) {
+		this.stockMainServiceI = stockMainServiceI;
+	}
+
 	@Autowired
 	public void setHolidayMapper(HolidayMapper holidayMapper) {
 		this.holidayMapper = holidayMapper;
@@ -37,27 +44,39 @@ public class TaskJob {
 
 	public void execute() {
 		try {
-			while(true){
-				//如果当前不在股市的交易时间
-				while(!checkTime()){
-					Thread.sleep(StockConstant.INIT_STOCK_SLEEP_TIME);
-				}
-				long begin = System.currentTimeMillis();
-				initStockServiceI.initStock();
-				long host = System.currentTimeMillis()-begin;
-				long sleep = StockConstant.INIT_STOCK_SLEEP_TIME-host;
-				if(sleep>0){
-					Thread.sleep(StockConstant.INIT_STOCK_SLEEP_TIME);
+			boolean run = true;
+			for(int i = 20;i>0;i--){
+				while(run){
+					run = this.stockMainServiceI.analyse1(i);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			ExceptionLog record = new ExceptionLog(
-					CommonsUtil.formatDateToString3(new Date()), this
-							.getClass().getName(), "", e.getMessage(),
-					CommonsUtil.join(e.getStackTrace(), ",\r\n"));
-			this.exceptionLogMapper.insert(record);
 		}
+		
+		
+//		try {
+//			while(true){
+//				//如果当前不在股市的交易时间
+//				while(!checkTime()){
+//					Thread.sleep(StockConstant.INIT_STOCK_SLEEP_TIME);
+//				}
+//				long begin = System.currentTimeMillis();
+//				initStockServiceI.initStock();
+//				long host = System.currentTimeMillis()-begin;
+//				long sleep = StockConstant.INIT_STOCK_SLEEP_TIME-host;
+//				if(sleep>0){
+//					Thread.sleep(StockConstant.INIT_STOCK_SLEEP_TIME);
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			ExceptionLog record = new ExceptionLog(
+//					CommonsUtil.formatDateToString3(new Date()), this
+//							.getClass().getName(), "", e.getMessage(),
+//					CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+//			this.exceptionLogMapper.insert(record);
+//		}
 	}
 
 	/**

@@ -18,4 +18,6 @@ public interface StockMainServiceI {
 	Map<String, Object> initIncreaseStock() ;
 
 	Map<String, Object> analyseQuery(Date day);
+	
+	boolean analyse1(int count);
 }

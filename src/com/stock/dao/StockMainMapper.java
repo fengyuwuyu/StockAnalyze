@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.stock.model.StockAnalyseResult;
 import com.stock.model.StockMain;
+import com.stock.model.StockMainAnalyse;
 import com.stock.model.StockQuery;
 import com.stock.model.StockTop100;
 
@@ -49,4 +50,12 @@ public interface StockMainMapper {
 	List<StockTop100> selectTop100Dl(Map<String, Object> createMap);
 
 	Map<String, Date> selectDays(Date day);
+
+	List<String> selectAllDay(int count);
+
+	List<StockMainAnalyse> selectAnalyse(String day);
+
+	void insertStockMainAnalyse(Map<String, Object> createMap);
+
+	void updateStockMainDays(Map<String, Object> createMap);
 }

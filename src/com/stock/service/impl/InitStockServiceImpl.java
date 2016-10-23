@@ -51,7 +51,6 @@ public class InitStockServiceImpl implements InitStockServiceI {
 				}
 				timeBak = time;
 				List<LinkedHashMap<String, Object>> list= (List<LinkedHashMap<String, Object>>) detail.get("list");
-				
 				 for (LinkedHashMap<String, Object> map : list) {
 					 map.put("TIME", time);
 				 }

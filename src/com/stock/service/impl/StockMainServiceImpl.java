@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 	private StockMainMapper stockMainMapper;
 	private static Integer index = 0;
 	private SqlSessionFactory sqlSessionFactory;
+	private Logger log = Logger.getLogger(StockMainServiceImpl.class);
 	
 	@Autowired
 	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
@@ -353,6 +355,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 		List<String> days = mainMapper.selectAllDay(count);
 		if(days!=null&&days.size()>0){
 			for (String day : days) {
+				log.info("count -- "+count+"  --day--  "+day);
 				List<StockMainAnalyse> stocks = mainMapper.selectAnalyse(day);
 				List<StockMainAnalyse> inserts = new ArrayList<StockMainAnalyse>();
 				if(stocks!=null&&stocks.size()>0){
@@ -364,7 +367,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 					inserts.clear();
 				}
 			}
-			this.stockMainMapper.updateStockMainDays(MapUtils.createMap("list",days,"type",count));
+			mainMapper.updateStockMainDays(MapUtils.createMap("list",days,"type",count));
 			}
 		days = mainMapper.selectAllDay(count);
 		sqlSession.commit(true);

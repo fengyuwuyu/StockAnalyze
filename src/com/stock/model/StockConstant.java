@@ -44,7 +44,7 @@ public class StockConstant {
 	/** 震荡走势*/
 	public static final int BEGIN_LINE_END = 7;
 
-	public static final long INIT_STOCK_SLEEP_TIME = 15000;
+	public static final long INIT_STOCK_SLEEP_TIME = 60000;
 	
 
 }

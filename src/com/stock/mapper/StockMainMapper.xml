@@ -238,7 +238,7 @@
   </select>
   
   <select id="selectAllDay" resultType="string">
-  	select day from stock_main_days where day &gt; '2000-02-14' and type!=#{count} limit 200
+  	select day from stock_main_days where day &gt; '2000-02-14' and type!=#{count} limit 100
   </select>
   
   <update id="updateStockMainDays" parameterType="java.util.Map">
@@ -264,9 +264,9 @@
   </select>
   
   <insert id="insertStockMainAnalyse" parameterType="java.util.Map">
-  	insert into stock_main_analyse(symbol,now,nowIncrease,lastIncrease,type,analyseType) values
+  	insert into stock_main_analyse(symbol,now,nowIncrease,lastIncrease,type,analyseType,data) values
   	<foreach collection="list" item="item" separator=",">
-  		(#{item.symbol},#{item.now},#{item.nowIncrease},#{item.lastIncrease},#{item.type},#{item.analyseType})
+  		(#{item.symbol},#{item.now},#{item.nowIncrease},#{item.lastIncrease},#{item.type},#{item.analyseType},#{item.data})
   	</foreach>
   </insert>
 </mapper>

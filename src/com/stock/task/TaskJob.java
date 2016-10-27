@@ -2,6 +2,7 @@ package com.stock.task;
 
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.stock.dao.ExceptionLogMapper;
@@ -18,6 +19,7 @@ public class TaskJob {
 	private ExceptionLogMapper exceptionLogMapper;
 	private HolidayMapper holidayMapper;
 	private StockMainServiceI stockMainServiceI;
+	private Logger log = Logger.getLogger(TaskJob.class);
 
 	@Autowired
 	public void setStockMainServiceI(StockMainServiceI stockMainServiceI) {
@@ -58,14 +60,17 @@ public class TaskJob {
 		try {
 			// 如果当前不在股市的交易时间
 			while (checkTime()) {
+				log.info("开始下载每天股票详情。。。");
 				long begin = System.currentTimeMillis();
 				initStockServiceI.initStock();
 				long host = System.currentTimeMillis() - begin;
 				long sleep = StockConstant.INIT_STOCK_SLEEP_TIME - host;
 				if (sleep > 0) {
+					log.info("休眠时间是："+sleep);
 					Thread.sleep(sleep);
 				}
 			}
+			log.info("下载每天股票详情任务结束");
 		} catch (Exception e) {
 			e.printStackTrace();
 			ExceptionLog record = new ExceptionLog(
@@ -83,6 +88,7 @@ public class TaskJob {
 	 */
 	@SuppressWarnings("deprecation")
 	private boolean checkTime() {
+		log.info("检查是否在股市交易期间");
 		Date now = new Date();
 		// 如果是节假日，则直接返回false
 		if (isHoliday(now)) {

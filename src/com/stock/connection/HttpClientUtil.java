@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -22,11 +23,12 @@ public class HttpClientUtil {
 		try {
 			HttpClient client = HttpClients.createDefault();
 			HttpGet get = new HttpGet(url);
+			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build();//设置请求和传输超时时间
+			get.setConfig(requestConfig);
 			HttpResponse response = client.execute(get);
 			entity = response.getEntity();
 		} catch (Exception e) {
-			Thread.sleep(3000);
-			return get(url);
+			return null;
 		}
 		
 //		if (entity != null) {
@@ -61,4 +63,5 @@ public class HttpClientUtil {
 			e.printStackTrace();
 		}
 	}
+	
 }

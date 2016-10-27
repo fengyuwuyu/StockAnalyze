@@ -11,13 +11,15 @@ public class CommonsUtil {
 			"yyyy-MM-dd");
 	/** yyyy-MM-dd*/
 	private static SimpleDateFormat dateFormat4 = new SimpleDateFormat(
-			"yyyyMMdd");
+			"yyyy-MM-dd");
 	/** yyyy-MM-dd HH:mm:ss*/
 	private static SimpleDateFormat dateFormat2 = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");
 	/** HH:mm:ss*/
 	private static SimpleDateFormat dateFormat3 = new SimpleDateFormat(
 			"HH:mm:ss");
+	private static SimpleDateFormat dateFormat5 = new SimpleDateFormat(
+			"yyyy");
 
 	/**
 	 * 以separate为分隔符，返回String类型，数组中的对象需要实现toString方法
@@ -88,5 +90,10 @@ public class CommonsUtil {
 	
 	public static Date formatStringToDate1(String time) throws ParseException{
 		return dateFormat4.parse(time);
+	}
+
+	public static String formatDateToString5(Date date) {
+		// TODO Auto-generated method stub
+		return dateFormat5.format(date);
 	}
 }

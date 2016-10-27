@@ -37,7 +37,7 @@ public class ContextListener implements ServletContextListener {
 				
 				@Override
 				public void run() {
-					job.execute();
+					job.downLoad1();
 					log.info("TaskJob启动了！");
 				}
 			});

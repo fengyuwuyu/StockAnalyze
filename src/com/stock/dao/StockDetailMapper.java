@@ -28,4 +28,10 @@ public interface StockDetailMapper {
 	void saveBigIncrease(StockVol vol);
 
 	int selectCountByTime(String day);
+
+	List<String> selectAllCode();
+
+	void insertStockMain(Map<String, Object> createMap);
+
+	String selectLastDay(String symbol);
 }

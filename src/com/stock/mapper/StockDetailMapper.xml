@@ -245,4 +245,29 @@
 	<select id="selectCountByTime" parameterType="java.lang.String" resultType="int">
 		select count(*) from stock_detail where time=#{day}
 	</select>
+	
+	<select id="selectAllCode" resultType="string">
+		select code from stock
+	</select>
+	
+	 <insert id="insertStockMain" parameterType="com.stock.model.StockMain" >
+    insert into stock_main ( symbol, day, 
+      open, close, max, min, 
+      volume, increase)
+    values 
+		<foreach collection="list" item="item" separator=",">
+			<foreach collection="item" open="(" close=")" separator="," item="it" index="index">
+				<if test="index==0">
+					#{symbol},#{it}
+				</if>
+				<if test="index!=0">
+					#{it}
+				</if>
+			</foreach>
+		</foreach>
+  </insert>
+  
+  <select id="selectLastDay" parameterType="string" resultType="string">
+  	select max(day) from stock_main where symbol = #{symbol}
+  </select>
 </mapper>

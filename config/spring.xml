@@ -16,7 +16,7 @@
        
     <!-- 定义工作类 -->
     <bean id="taskJob" class="com.stock.task.TaskJob"></bean>
-    <bean id="taskJob" class="com.stock.task.TestJob"></bean>
+    <bean id="teskJob" class="com.stock.task.TestJob"></bean>
     
     <!-- 注册定时器  -->
     <task:scheduled-tasks> 

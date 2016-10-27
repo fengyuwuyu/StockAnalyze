@@ -269,4 +269,8 @@
   		(#{item.symbol},#{item.now},#{item.nowIncrease},#{item.lastIncrease},#{item.type},#{item.analyseType},#{item.data})
   	</foreach>
   </insert>
+  
+  <select id="findStock" resultMap="StockMainAnalyse">
+  	select * from stock_main where day between DATE_ADD(CURDATE(),INTERVAL -70 day) and CURDATE() order by day
+  </select>
 </mapper>

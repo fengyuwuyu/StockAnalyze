@@ -32,10 +32,10 @@ public class MailUtils {
 		String username = sender.getUsername();
 		String password = sender.getPassword();
 		List<CecepEmail> receivers = cecepEmailMapper.selectReveivers();
-		info.setFrom(sender.getEamilAddr());
-		info.setToAddress(receivers.get(0).getEamilAddr());
+		info.setFrom(sender.getEmailAddr());
+		info.setToAddress(receivers.get(0).getEmailAddr());
 		for (int i = 1; i < receivers.size(); i++) {
-			info.setCcAddress(receivers.get(i).getEamilAddr());
+			info.setCcAddress(receivers.get(i).getEmailAddr());
 		}
 		SendMail.send(host, username, password, info);
 		saveEmailInfo(receivers, new Date(), content, cecepEmailLogMapper);

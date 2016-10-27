@@ -123,6 +123,20 @@ public class StockMainAnalyse {
 		}
 		this.type = "" + type1 + type2 + type3;
 	}
+	
+	/**
+	 * 判断连续的50天内波动情况
+	 * @return
+	 */
+	public boolean analyse1(){
+		if(dayIncreases==null||dayIncreases.size()<20){
+			return false;
+		}
+		
+		
+		
+		return true;
+	}
 
 	public String getSymbol() {
 		return symbol;
@@ -192,7 +206,8 @@ public class StockMainAnalyse {
 				+ ", nowIncrease=" + nowIncrease + ", dayIncreases="
 				+ dayIncreases + ", lastIncrease=" + lastIncrease + ", type="
 				+ type + ", count=" + count + ", index=" + index
-				+ ", analyseType=" + analyseType + "]";
+				+ ", analyseType=" + analyseType + ", builder=" + builder
+				+ ", data=" + data + "]";
 	}
 
 }

@@ -9,7 +9,7 @@ public class CecepEmail {
 
     private String password;
 
-    private String eamilAddr;
+    private String emailAddr;
 
     private Integer type;
 
@@ -45,12 +45,12 @@ public class CecepEmail {
         this.password = password == null ? null : password.trim();
     }
 
-    public String getEamilAddr() {
-        return eamilAddr;
+    public String getEmailAddr() {
+        return emailAddr;
     }
 
-    public void setEamilAddr(String eamilAddr) {
-        this.eamilAddr = eamilAddr == null ? null : eamilAddr.trim();
+    public void setEmailAddr(String emailAddr) {
+        this.emailAddr = emailAddr == null ? null : emailAddr.trim();
     }
 
     public Integer getType() {

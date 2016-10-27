@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.stock.dao.eamil.CecepEmailLogMapper" >
-  <resultMap id="BaseResultMap" type="com.stock.model.eamil.CecepEmailLog" >
+<mapper namespace="com.stock.dao.email.CecepEmailLogMapper" >
+  <resultMap id="BaseResultMap" type="com.stock.model.email.CecepEmailLog" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="receiver" property="receiver" jdbcType="VARCHAR" />
     <result column="message" property="message" jdbcType="VARCHAR" />
@@ -20,7 +20,7 @@
     delete from email_log
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.stock.model.eamil.CecepEmailLog" >
+  <insert id="insert" parameterType="com.stock.model.email.CecepEmailLog" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
       SELECT SCOPE_IDENTITY()
     </selectKey>
@@ -35,7 +35,7 @@
     	(#{item.receiver},#{msg},#{date},#{item.username})
     </foreach>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.stock.model.eamil.CecepEmailLog" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.stock.model.email.CecepEmailLog" >
     update email_log
     <set >
       <if test="receiver != null" >
@@ -50,7 +50,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.stock.model.eamil.CecepEmailLog" >
+  <update id="updateByPrimaryKey" parameterType="com.stock.model.email.CecepEmailLog" >
     update email_log
     set receiver = #{receiver,jdbcType=VARCHAR},
       message = #{message,jdbcType=VARCHAR},

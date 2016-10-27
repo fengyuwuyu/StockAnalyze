@@ -4,8 +4,6 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.stock.model.StockAnalyseResult;
 import com.stock.model.StockMain;
 import com.stock.model.StockMainAnalyse;
@@ -58,4 +56,6 @@ public interface StockMainMapper {
 	void insertStockMainAnalyse(Map<String, Object> createMap);
 
 	void updateStockMainDays(Map<String, Object> createMap);
+
+	List<StockMainAnalyse> findStock();
 }

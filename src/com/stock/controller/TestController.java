@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.stock.service.InitStockServiceI;
+import com.stock.service.StockAnalyseJobI;
 import com.stock.service.StockMainServiceI;
 import com.stock.service.StockServiceI;
 import com.stock.util.MapUtils;
@@ -19,6 +20,12 @@ public class TestController {
 
 	private StockMainServiceI stockMainServiceI;
 	private InitStockServiceI initStockServiceI;
+	private StockAnalyseJobI stockAnalyseJobI;
+	
+	@Autowired
+	public void setStockAnalyseJobI(StockAnalyseJobI stockAnalyseJobI) {
+		this.stockAnalyseJobI = stockAnalyseJobI;
+	}
 
 	@Autowired
 	public void setInitStockServiceI(InitStockServiceI initStockServiceI) {
@@ -54,7 +61,8 @@ public class TestController {
 	@RequestMapping("test1.do")
 	@ResponseBody
 	public Map<String, Object> test1() throws Exception {
-		return this.initStockServiceI.initStockEveryDay();
+		this.stockAnalyseJobI.findStock();
+		return MapUtils.createSuccessMap();
 		// this.detailSaveServiceI.volBigIncrease();
 	}
 }

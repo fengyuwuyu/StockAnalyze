@@ -1,8 +1,6 @@
 package com.stock.connection;
 
 import java.io.InputStream;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -11,14 +9,18 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stock.util.CommonsUtil;
 
 public class HttpClientUtil {
 	
+	private static Logger log = Logger.getLogger(HttpClientUtil.class);
+	public static boolean hasException = false;
+	
 
-	public static HttpEntity get(String url) throws Exception {
+	public static HttpEntity get(String url) {
+		hasException = false;
 		HttpEntity entity = null;
 		try {
 			HttpClient client = HttpClients.createDefault();
@@ -28,14 +30,11 @@ public class HttpClientUtil {
 			HttpResponse response = client.execute(get);
 			entity = response.getEntity();
 		} catch (Exception e) {
+			hasException = true;
+			log.info("http请求失败");
+			log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
 			return null;
 		}
-		
-//		if (entity != null) {
-//			LinkedHashMap<String,Object> detail = mapper.readValue(EntityUtils.toString(entity,"utf-8"), LinkedHashMap.class);
-//			List<LinkedHashMap<String,Object>> list = (List<LinkedHashMap<String,Object>>) detail.get("list");
-//			System.out.println(list.get(0));
-//		}
 		return entity;
 	}
 	

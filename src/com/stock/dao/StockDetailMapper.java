@@ -31,7 +31,5 @@ public interface StockDetailMapper {
 
 	List<String> selectAllCode();
 
-	void insertStockMain(Map<String, Object> createMap);
-
 	String selectLastDay(String symbol);
 }

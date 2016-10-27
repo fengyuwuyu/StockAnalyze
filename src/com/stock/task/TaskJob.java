@@ -49,7 +49,12 @@ public class TaskJob {
 				run = this.stockMainServiceI.analyse1(i);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+			ExceptionLog record = new ExceptionLog(
+					CommonsUtil.formatDateToString3(new Date()), this
+							.getClass().getName(), "execute", e.getMessage(),
+					CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+			this.exceptionLogMapper.insert(record);
 		}
 	}
 
@@ -72,10 +77,23 @@ public class TaskJob {
 			}
 			log.info("下载每天股票详情任务结束");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
 			ExceptionLog record = new ExceptionLog(
 					CommonsUtil.formatDateToString3(new Date()), this
-							.getClass().getName(), "", e.getMessage(),
+							.getClass().getName(), "downLoad1", e.getMessage(),
+					CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+			this.exceptionLogMapper.insert(record);
+		}
+	}
+	
+	public void initStockEveryDay(){
+		try {
+			initStockServiceI.initStockEveryDay();
+		} catch (Exception e) {
+			log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+			ExceptionLog record = new ExceptionLog(
+					CommonsUtil.formatDateToString3(new Date()), this
+							.getClass().getName(), "initStockEveryDay", e.getMessage(),
 					CommonsUtil.join(e.getStackTrace(), ",\r\n"));
 			this.exceptionLogMapper.insert(record);
 		}

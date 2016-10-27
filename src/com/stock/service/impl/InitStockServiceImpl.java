@@ -54,11 +54,21 @@ public class InitStockServiceImpl implements InitStockServiceI {
 				+ "2CMFRATIO.MFRATIO2%2CMFRATIO.MFRATIO10%2CSNAME%2CCODE%2CANNOUNMT%2CUVSNEWS&s"
 				+ "ort=PERCENT&order=desc&count=2953&type=query";
 		try {
-			HttpEntity entity = null;
-			while(entity==null){
-				entity = HttpClientUtil.get(url);
+			HttpEntity entity = HttpClientUtil.get(url);
+			while(entity==null&&HttpClientUtil.hasException){
+				log.info("http请求出现异常，将再次尝试3次");
+				int times = 0;
+				while(times<3){
+					times++;
+					log.info("http请求出现异常，第 "+times+"次尝试。。。");
+					entity = HttpClientUtil.get(url);
+				}
 			}
-			download(entity);
+			if(entity!=null){
+				download(entity);
+			}else{
+				log.info("连续4次http请求都失败了。。。");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info("json解析失败");
@@ -100,7 +110,9 @@ public class InitStockServiceImpl implements InitStockServiceI {
 		return !timeBak.equals(time);
 	}
 
-	
+	/**
+	 * day, open, close, max, min, volume, increase
+	 */
 	@SuppressWarnings("unchecked")
 	public Map<String,Object> initStockEveryDay() throws Exception{
 		List<String> codes = this.stockDetailMapper.selectAllCode();
@@ -110,35 +122,45 @@ public class InitStockServiceImpl implements InitStockServiceI {
 						.get("http://img1.money.126.net/data/hs/kline/day/history/"+year+"/"
 								+ code + ".json");
 				if (entity != null) {
+					log.info("解析json数据。。。");
 					LinkedHashMap<String, Object> detail = null;
 					try {
 						detail = mapper.readValue(
 								EntityUtils.toString(entity, "utf-8"),
 								LinkedHashMap.class);
 					} catch (Exception e) {
-						continue;
+						log.info("解析json数据失败");
+						log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
 					}
 					if (detail != null) {
+						log.info("开始判断数据正确性");
 						List<List<Object>> list = (List<List<Object>>) detail
 								.get("data");
 						if (list != null && list.size() > 0) {
 							String symbol = code.substring(1);
 							String lastDay = this.stockDetailMapper.selectLastDay(symbol);
-							List<List<Object>> inserts = new ArrayList<List<Object>>();
-							for(int i=list.size();i>=0;i--){
-								
+							if(lastDay!=null){
+								lastDay = lastDay.replaceAll("-", "");
+								List<List<Object>> inserts = new ArrayList<List<Object>>();
+								for(int i=list.size()-1;i>=0;i--){
+									if(lastDay.equals(list.get(i).get(0))){
+										break;
+									}
+									inserts.add(list.get(i));
+								}
+								if(inserts.size()>0){
+									this.stockMainMapper.insert(MapUtils.createMap("list",inserts,"symbol",symbol));
+									log.info("更新数据成功！插入的数据时 ： "+inserts);
+								}
+							}else{
+								log.info("发现新的股票数据，开始插入，  "+list);
+								this.stockMainMapper.insert(MapUtils.createMap("list",list,"symbol",symbol));
 							}
-							this.stockMainMapper.insert(MapUtils.createMap("list",list,"symbol",symbol));
-							String now = CommonsUtil.formatDateToString1(new Date());
-							for(List<Object> objects : list){
-								log.info(objects);
-							}
-							this.stockDetailMapper.insertStockMain(MapUtils.createMap("list",list,"symbol",symbol));
 						}
 					}
 				}
 		}
-	return MapUtils.createSuccessMap();
+		return MapUtils.createSuccessMap();
 	}
 	
 	//
@@ -154,4 +176,5 @@ public class InitStockServiceImpl implements InitStockServiceI {
 		return null;
 		
 	}
+	
 }

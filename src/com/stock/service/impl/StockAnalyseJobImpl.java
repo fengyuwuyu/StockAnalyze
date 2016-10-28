@@ -2,7 +2,6 @@ package com.stock.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -32,6 +31,7 @@ public class StockAnalyseJobImpl implements StockAnalyseJobI {
 	 */
 	@Override
 	public void findStock() {
+		log.info("开始分析当天股票。。。");
 		List<StockMainAnalyse> stocks = this.stockMainMapper.findStock();
 		List<StockMainAnalyse> result = new ArrayList<StockMainAnalyse>();
 		for (StockMainAnalyse stockMainAnalyse : stocks) {
@@ -39,15 +39,7 @@ public class StockAnalyseJobImpl implements StockAnalyseJobI {
 				result.add(stockMainAnalyse);
 			}
 		}
-		Collections.sort(result, new Comparator<StockMainAnalyse>() {
-
-			@Override
-			public int compare(StockMainAnalyse o1, StockMainAnalyse o2) {
-				
-				return 0;
-			}
-			
-		});
+		Collections.sort(result, new StockAnalyseComparator());
 	}
 
 }

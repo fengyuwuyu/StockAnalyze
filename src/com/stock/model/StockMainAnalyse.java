@@ -129,7 +129,7 @@ public class StockMainAnalyse {
 	 * @return
 	 */
 	public boolean analyse1(){
-		if(dayIncreases==null||dayIncreases.size()<20){
+		if(dayIncreases==null||dayIncreases.size()<30){
 			return false;
 		}
 		

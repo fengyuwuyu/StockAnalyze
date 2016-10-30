@@ -96,4 +96,47 @@ public class CommonsUtil {
 		// TODO Auto-generated method stub
 		return dateFormat5.format(date);
 	}
+	
+	public static int getDayDiff(String date1,String date2){
+		String strs1[] = date1.split("-");
+		String strs2[] = date1.split("-");
+		int year1 = Integer.valueOf(strs1[0]);
+		int month1 = Integer.valueOf(strs1[1]);
+		int day1 = Integer.valueOf(strs1[2]);
+		int year2 = Integer.valueOf(strs2[0]);
+		int month2 = Integer.valueOf(strs2[1]);
+		int day2 = Integer.valueOf(strs2[2]);
+		int days1 = getDays(year1,month1,day1);
+		int days2 = getDays(year2,month2,day2);
+		return days2-days1;
+		
+	}
+	
+	private static int getDays(int year, int month, int day) {
+		int count1 = year*365;
+		int count2 = getMonthCount(month);
+		return count1+count2+day;
+	}
+
+	private static int getMonthCount(int month) {
+		switch(month){
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 8:
+		case 10:
+		case 12:
+			return 31*month;
+		case 2:
+			return 28*month;
+		default:
+			return 30*month;
+			
+		}
+	}
+
+	public static int getDayDiff(Date date1,Date date2){
+		return getDayDiff(dateFormat1.format(date1),dateFormat1.format(date2));
+	}
 }

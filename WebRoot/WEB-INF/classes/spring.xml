@@ -22,7 +22,7 @@
     <task:scheduled-tasks> 
     	<task:scheduled ref="taskJob" method="downLoad1" cron="5 30 9 * * *"/> 
     	<task:scheduled ref="taskJob" method="downLoad1" cron="5 0 13 * * *"/>
-    	<task:scheduled ref="taskJob" method="initStockEveryDay" cron="0 0 22 * * *"/>
+    	<task:scheduled ref="taskJob" method="initStockEveryDay" cron="0 20 17 * * *"/>
 	</task:scheduled-tasks> 
     
 

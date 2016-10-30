@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.stock.model.StockAnalyseBase;
 import com.stock.model.StockAnalyseResult;
 import com.stock.model.StockMain;
 import com.stock.model.StockMainAnalyse;
@@ -58,4 +59,8 @@ public interface StockMainMapper {
 	void updateStockMainDays(Map<String, Object> createMap);
 
 	List<StockMainAnalyse> findStock();
+
+	void insertAnalyse(Map<String, Object> createMap);
+
+	StockAnalyseBase selectStockAnalyse(Map<String, Object> createMap);
 }

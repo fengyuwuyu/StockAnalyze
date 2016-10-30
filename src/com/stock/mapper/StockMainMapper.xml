@@ -12,6 +12,20 @@
     <result column="volume" property="volume" jdbcType="BIGINT" />
     <result column="increase" property="increase" jdbcType="REAL" />
   </resultMap>
+  
+  <resultMap type="com.stock.model.StockAnalyseBase" id="StockAnalyseBase">
+  	<result column="symbol" property="symbol"/>
+  	<collection property="list" ofType="com.stock.model.DayIncrease" javaType="java.util.List">
+  		<result column="day" property="day"/>
+  		<result column="increase" property="increase"/>
+  		<result column="open" property="open"/>
+  		<result column="close" property="close"/>
+  		<result column="max" property="max"/>
+  		<result column="min" property="min"/>
+  		<result column="volume" property="volume"/>
+  	</collection>
+  </resultMap>
+  
   <sql id="Base_Column_List" >
     id, symbol, day, open, close, max, min, volume, increase
   </sql>
@@ -185,6 +199,18 @@
   				day between DATE_ADD(#{begin},INTERVAL -42 day) and DATE_ADD(#{begin},INTERVAL 28 day)
   			</if>
   		</if>
+  		<if test="begin==null">
+  			day &gt; '2000-03-03'
+  		</if>
+  	</trim>
+  </select>
+  
+  <select id="selectStockAnalyse" parameterType="map" resultMap="StockAnalyseBase" >
+  	select distinct symbol,day,open,close,max,min,volume,increase from stock_main where 
+  	<trim suffixOverrides="and">
+  		<if test="symbol!=null">
+  			symbol=#{symbol} 
+  		</if>
   	</trim>
   </select>
   
@@ -205,7 +231,7 @@
   </insert>
   
   <select id="selectAll" resultType="java.lang.String">
-  	select distinct symbol from stock_analyse_result_1
+  	select distinct symbol from stock
   </select>
   
   
@@ -248,16 +274,6 @@
   	</foreach>
   </update>
   
-  <resultMap type="com.stock.model.StockMainAnalyse" id="StockMainAnalyse">
-  	<result column="symbol" property="symbol"/>
-  	<collection property="dayIncreases" ofType="com.stock.model.DayIncrease" javaType="java.util.List">
-  		<result column="day" property="day"/>
-  		<result column="increase" property="increase"/>
-  		<result column="close" property="close"/>
-  	</collection>
-  	
-  </resultMap>
-  
   <select id="selectAnalyse" resultMap="StockMainAnalyse" parameterType="string">
   		select symbol,increase,day,close from stock_main
   		   where day BETWEEN DATE_ADD(#{begin},INTERVAL -60 day)  and DATE_ADD(#{begin},INTERVAL 20 day) order by symbol,day
@@ -273,4 +289,13 @@
   <select id="findStock" resultMap="StockMainAnalyse">
   	select * from stock_main where day between DATE_ADD(CURDATE(),INTERVAL -70 day) and CURDATE() order by day
   </select>
+  
+  <insert id="insertAnalyse" parameterType="map">
+  	insert into stock_analyse(symbol,now,nowIncrease,maxMinIncrease,maxMinIncreaseType,minNowIncrease,minNowIncreaseType,maxMinDays,maxMinDaysType,minNowDays,minNowDaysType)
+  	values
+  	<foreach collection="list" item="item" separator=",">
+  		(#{item.symbol},#{item.now},#{item.nowIncrease},#{item.maxMinIncrease},#{item.maxMinIncreaseType},#{item.minNowIncrease},#{item.minNowIncreaseType},#{item.maxMinDays},#{item.maxMinDaysType},#{item.minNowDays},#{item.minNowDaysType})
+  	</foreach>
+  	
+  </insert>
 </mapper>

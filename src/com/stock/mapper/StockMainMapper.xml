@@ -26,6 +26,19 @@
   	</collection>
   </resultMap>
   
+   <resultMap type="com.stock.model.StockMainAnalyse" id="StockMainAnalyse">
+  	<result column="symbol" property="symbol"/>
+  	<collection property="list" ofType="com.stock.model.DayIncrease" javaType="java.util.List">
+  		<result column="day" property="day"/>
+  		<result column="increase" property="increase"/>
+  		<result column="open" property="open"/>
+  		<result column="close" property="close"/>
+  		<result column="max" property="max"/>
+  		<result column="min" property="min"/>
+  		<result column="volume" property="volume"/>
+  	</collection>
+  </resultMap>
+  
   <sql id="Base_Column_List" >
     id, symbol, day, open, close, max, min, volume, increase
   </sql>
@@ -215,7 +228,7 @@
   </select>
   
   <select id="selectSymbols" resultType="java.lang.String">
-  	select  symbol from stock_main_id where status=0 LIMIT 0,80
+  	select  symbol from stock
   </select>
   
   <update id="updateStatus" parameterType="java.util.Map" >
@@ -296,6 +309,17 @@
   	<foreach collection="list" item="item" separator=",">
   		(#{item.symbol},#{item.now},#{item.nowIncrease},#{item.maxMinIncrease},#{item.maxMinIncreaseType},#{item.minNowIncrease},#{item.minNowIncreaseType},#{item.maxMinDays},#{item.maxMinDaysType},#{item.minNowDays},#{item.minNowDaysType})
   	</foreach>
-  	
   </insert>
+  
+  <insert id="insertStockAnaylseBase" parameterType="map">
+  	insert into stock_analyse_base(symbol,nowDay,nowIncrease,nowVol,lastIncrease,priceType,priceIncrease1,priceIncrease2,priceDay1,priceDay2,vols,maxIncreases,minIncreases)
+  	values
+  	<foreach collection="list" item="item" separator=","> 
+  		(#{item.symbol},#{item.nowDay},#{item.nowIncrease},#{item.nowVol},#{item.lastIncrease},#{item.priceType},#{item.priceIncrease1},#{item.priceIncrease2},#{item.priceDay1},#{item.priceDay2},#{item.vols},#{item.maxIncreases},#{item.minIncreases})
+  	</foreach>
+  </insert>
+  
+  <select id="initPrePrices" resultType="map">
+  	select symbol,close from stock_main where (select left(time,10) from stock_detail where id=(select max(id) from stock_detail))
+  </select>
 </mapper>

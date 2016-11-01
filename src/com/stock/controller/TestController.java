@@ -61,7 +61,7 @@ public class TestController {
 	@RequestMapping("test1.do")
 	@ResponseBody
 	public Map<String, Object> test1() throws Exception {
-		this.stockAnalyseJobI.findStock();
+		this.stockAnalyseJobI.initStockAnalyse();
 		return MapUtils.createSuccessMap();
 		// this.detailSaveServiceI.volBigIncrease();
 	}

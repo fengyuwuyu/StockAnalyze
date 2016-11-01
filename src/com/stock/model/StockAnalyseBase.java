@@ -2,7 +2,6 @@ package com.stock.model;
 
 import java.util.List;
 
-import com.stock.dao.StockMainMapper;
 import com.stock.util.CommonsUtil;
 
 public class StockAnalyseBase {
@@ -15,7 +14,7 @@ public class StockAnalyseBase {
 	/** 改天的涨幅 */
 	private float nowIncrease;
 	/** 当天的成交量 */
-	private int nowVol;
+	private long nowVol;
 
 	/** 持续5天的股价涨幅 */
 	private float lastIncrease;
@@ -72,7 +71,7 @@ public class StockAnalyseBase {
 		this.nowIncrease = nowIncrease;
 	}
 
-	public int getNowVol() {
+	public long getNowVol() {
 		return nowVol;
 	}
 
@@ -154,8 +153,7 @@ public class StockAnalyseBase {
 
 	@Override
 	public String toString() {
-		return "StockAnalyseBase [symbol=" + symbol + ", list=" + list
-				+ ", nowDay=" + nowDay + ", nowIncrease=" + nowIncrease
+		return "StockAnalyseBase [symbol=" + symbol + ", nowDay=" + nowDay + ", nowIncrease=" + nowIncrease
 				+ ", nowVol=" + nowVol + ", lastIncrease=" + lastIncrease
 				+ ", priceType=" + priceType + ", priceIncrease1="
 				+ priceIncrease1 + ", priceIncrease2=" + priceIncrease2
@@ -164,16 +162,21 @@ public class StockAnalyseBase {
 				+ ", minIncreases=" + minIncreases + ", index=" + index + "]";
 	}
 
-	public void initAnalyse(StockMainMapper stockMainMapper) {
+	public void initAnalyse(List<StockAnalyseBase> analyseBases) {
 		index = 50;
 		while (index < list.size() - 50) {
 			if (computeLastIncrease()) {
 				computPrice();
 				computVolume();
 				computZf();
+				analyseBases.add(this);
 			}
 		}
 	}
+
+//	private void insert(StockMainMapper stockMainMapper) {
+//		stockMainMapper.insertStockAnaylseBase(this);
+//	}
 
 	private boolean computeLastIncrease() {
 		int begin = this.index + 1, end = this.index + 5;
@@ -182,6 +185,7 @@ public class StockAnalyseBase {
 		if(this.lastIncrease>=10){
 			return true;
 		}
+		this.index+=3;
 		return false;
 	}
 
@@ -208,7 +212,8 @@ public class StockAnalyseBase {
 		} else {
 			this.priceType = "20";
 		}
-		// this.priceDay1 = CommonsUtil.getDayDiff(date1, date2);
+		 this.priceDay1 = CommonsUtil.getDayDiff(list.get(max).getDay(), list.get(min).getDay());
+		 this.priceDay2 = CommonsUtil.getDayDiff(list.get(min).getDay(), list.get(index).getDay());
 	}
 
 	private void computVolume() {
@@ -222,9 +227,11 @@ public class StockAnalyseBase {
 		for(int i = index-5;i<=index;i++){
 			float maxPrice = Math.max(list.get(i).getClose(), list.get(i).getOpen());
 			float minPrice = Math.min(list.get(i).getClose(), list.get(i).getOpen());
-			this.maxIncreases += (list.get(i).getMax()-maxPrice)*100/maxPrice;
-			this.minIncreases += (minPrice - list.get(i).getMin())*100/minPrice;
+			this.maxIncreases += (list.get(i).getMax()-maxPrice)*100/maxPrice+", ";
+			this.minIncreases += (minPrice - list.get(i).getMin())*100/minPrice+", ";
 		}
+		this.maxIncreases.substring(0, this.maxIncreases.length()-1);
+		this.minIncreases.substring(0, this.minIncreases.length()-1);
 	}
 
 	private int[] getMaxMin(int begin, int end) {

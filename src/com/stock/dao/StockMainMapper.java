@@ -63,4 +63,8 @@ public interface StockMainMapper {
 	void insertAnalyse(Map<String, Object> createMap);
 
 	StockAnalyseBase selectStockAnalyse(Map<String, Object> createMap);
+
+	void insertStockAnaylseBase(Map<String, Object> map);
+
+	Map<String, Object> initPrePrices();
 }

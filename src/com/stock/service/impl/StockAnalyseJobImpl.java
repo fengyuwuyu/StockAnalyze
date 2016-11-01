@@ -49,9 +49,28 @@ public class StockAnalyseJobImpl implements StockAnalyseJobI {
 
 	public void initStockAnalyse(){
 		List<String> symbols = this.stockMainMapper.selectSymbols();
+		List<StockAnalyseBase> list = new ArrayList<StockAnalyseBase>();
 		for (String symbol : symbols) {
 			StockAnalyseBase analyse = this.stockMainMapper.selectStockAnalyse(MapUtils.createMap("symbol",symbol));
-			analyse.initAnalyse(stockMainMapper);
+			analyse.initAnalyse(list);
+			if(list.size()>=3000){
+				this.stockMainMapper.insertStockAnaylseBase(MapUtils.createMap("list",list));
+				list.clear();
+			}
 		}
+		if(list.size()>0){
+			this.stockMainMapper.insertStockAnaylseBase(MapUtils.createMap("list",list));
+		}
+	}
+	
+	/**
+	 * 查找3分钟涨幅最大的10只股票
+	 */
+	public void find3MinuteStock(){
+		
+	}
+	
+	public void find9MinuteStock(){
+		
 	}
 }

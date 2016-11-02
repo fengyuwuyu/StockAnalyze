@@ -19,6 +19,8 @@ import com.stock.dao.StockMainMapper;
 import com.stock.service.InitStockServiceI;
 import com.stock.util.CommonsUtil;
 import com.stock.util.MapUtils;
+import com.stock.util.StockCache;
+import com.stock.util.ThreadPool;
 
 @Service
 public class InitStockServiceImpl implements InitStockServiceI {
@@ -88,12 +90,20 @@ public class InitStockServiceImpl implements InitStockServiceI {
 			return ;
 		}
 		timeBak = time;
-		List<LinkedHashMap<String, Object>> list= (List<LinkedHashMap<String, Object>>) detail.get("list");
+		final List<LinkedHashMap<String, Object>> list= (List<LinkedHashMap<String, Object>>) detail.get("list");
 		 for (LinkedHashMap<String, Object> map : list) {
 			 map.put("TIME", time);
 		 }
 		 Map<String,Object> map = MapUtils.createMap("list",list);
 		 this.stockDetailMapper.insert(map);
+		 //异步更新StockCache的prePrices对象
+		 ThreadPool.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				StockCache.initByInternet(list);
+			}
+		});
 		 log.info("插入数据库成功！");
 	}
 	

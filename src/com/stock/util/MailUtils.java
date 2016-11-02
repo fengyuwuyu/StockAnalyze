@@ -22,10 +22,10 @@ public class MailUtils {
 		cecepEmailMapper = emailMapper;
 	}
 
-	public static void sendErrorMsgToAdmin(String excInfo) throws Exception {
+	public static void sendMail(String subject, String msg) throws Exception {
 		MailInfo info = new MailInfo();
-		info.setSubject("一卡通系统异常");
-		String content = "您好，股票系统"+CommonsUtil.formatDateToString3(new Date())+"出现异常，请及时查看系统日志或exception_log表！ \n\r"+excInfo;
+		info.setSubject(subject);
+		String content = "您好，股票系统"+CommonsUtil.formatDateToString3(new Date())+"最新数据： \n\r\n\r"+msg;
 		info.setContent(content);
 		CecepEmail sender = cecepEmailMapper.selectSender();
 		String host = sender.getHost();

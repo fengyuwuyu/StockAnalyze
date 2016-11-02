@@ -2,6 +2,9 @@ package com.stock.model;
 
 public class StockConstant {
 	
+	public static final int THREE_MINUTE_MAX_INCREASE = 2;
+	public static final int MAX_INCREASE = 3;
+	
 	public static final int COUNT = 7;
 	
 	/** 股票一段时间的趋势*/

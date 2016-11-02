@@ -2,9 +2,7 @@ package com.stock.model;
 
 import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-public class StockMain {
+public class StockMain implements Comparable<StockMain> {
 	private Integer id;
 
 	private String symbol;
@@ -28,6 +26,19 @@ public class StockMain {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+
+	public StockMain(String symbol, Float open, Float close, Long volume,
+			Float increase) {
+		this.symbol = symbol;
+		this.open = open;
+		this.close = close;
+		this.volume = volume;
+		this.increase = increase;
+	}
+
+
 
 	public StockMain(String symbol, Date day, Float open, Float close,
 			Float max, Float min, Long volume, Float increase) {
@@ -116,10 +127,16 @@ public class StockMain {
 
 	@Override
 	public String toString() {
-		return "StockMain [id=" + id + ", symbol=" + symbol + ", day=" + day
-				+ ", open=" + open + ", close=" + close + ", max=" + max
-				+ ", min=" + min + ", volume=" + volume + ", increase="
+		return "StockMain [股票代码 = " + symbol
+				+ ", 开盘价 = " + open + ", 当前价格 = " + close + ", 成交量 = " + volume + ", 涨幅 = "
 				+ increase + "]";
+	}
+
+
+
+	@Override
+	public int compareTo(StockMain o) {
+		return (int) (this.getIncrease()-o.getIncrease());
 	}
 
 }

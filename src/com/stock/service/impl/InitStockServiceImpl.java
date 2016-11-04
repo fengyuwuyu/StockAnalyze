@@ -178,7 +178,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	
 	
 	public Map<String,Object> initBuyAndSell(){
-		log.info("开始下载委买委卖数据");
+		log.info("----------------------开始下载委买委卖数据----------------------");
 		List<String> codes = this.stockMainMapper.selectAllCodes();
 		int length = codes.size();
 		int count = 1000;
@@ -194,6 +194,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 			subList = codes.subList(begin, length);
 			downloadBuyAndSell(subList);
 		}
+		log.info("----------------------下载委买委卖数据结束----------------------");
 		return MapUtils.createSuccessMap();
 	}
 	
@@ -221,6 +222,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 							list.add(s);
 						}
 						this.stockMainMapper.insertStockBuySell(MapUtils.createMap("list",list));
+						log.info("插入数据的数量是 ： "+list.size());
 					}
 			}
 		} catch (Exception e) {

@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.stock.dao.HolidayMapper;
+
 public class CommonsUtil {
 	
 	/** yyyy-MM-dd*/
@@ -144,5 +146,49 @@ public class CommonsUtil {
 	public static String listToString(List<String> list){
 		String s = list.toString().replace(" ", "");
 		return s.substring(1, s.length()-1);
+	}
+	
+	/**
+	 * 股票交易时间：每周一到周五上午时段9:30-11:30，下午时段13:00-15:00
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("deprecation")
+	public static boolean checkTime(HolidayMapper holidayMapper){
+		Date now = new Date();
+		// 如果是节假日，则直接返回false
+		if (isHoliday(now,holidayMapper)) {
+			return false;
+		}
+		int hour = now.getHours();
+		int minute = now.getMinutes();
+		if (hour >= 9 && hour < 12) {
+			if (hour == 9) {
+				if (minute >= 30) {
+					return true;
+				} else {
+					return false;
+				}
+			} else if (hour == 11) {
+				if (minute <= 30) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+			return true;
+		} else if (hour >= 13 && hour < 15) {
+			return true;
+		}
+		return false;
+	}
+	
+	private static boolean isHoliday(Date now,HolidayMapper holidayMapper) {
+		String day = holidayMapper.queryByDay(new java.sql.Date(now
+				.getTime()));
+		if (day == null || "".equals(day)) {
+			return false;
+		}
+		return true;
 	}
 }

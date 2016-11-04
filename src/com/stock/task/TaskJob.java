@@ -64,7 +64,7 @@ public class TaskJob {
 	public void downLoad1() {
 		try {
 			// 如果当前不在股市的交易时间
-			while (checkTime()) {
+			while (CommonsUtil.checkTime(this.holidayMapper)) {
 				log.info("开始下载每天股票详情。。。");
 				long begin = System.currentTimeMillis();
 				initStockServiceI.initStock();
@@ -99,51 +99,20 @@ public class TaskJob {
 		}
 	}
 
-	/**
-	 * 股票交易时间：每周一到周五上午时段9:30-11:30，下午时段13:00-15:00
-	 * 
-	 * @return
-	 */
-	@SuppressWarnings("deprecation")
-	private boolean checkTime() {
-		log.info("检查是否在股市交易期间");
-		Date now = new Date();
-		// 如果是节假日，则直接返回false
-		if (isHoliday(now)) {
-			return false;
-		}
-		int hour = now.getHours();
-		int minute = now.getMinutes();
-		if (hour >= 9 && hour < 12) {
-			if (hour == 9) {
-				if (minute >= 30) {
-					return true;
-				} else {
-					return false;
-				}
-			} else if (hour == 11) {
-				if (minute <= 30) {
-					return true;
-				} else {
-					return false;
+	public void initBuyAndSell(){
+		long time = 20000;
+		while(true){
+			long begin = System.currentTimeMillis();
+			initStockServiceI.initBuyAndSell();
+			long remain = System.currentTimeMillis() - begin;
+			long sleep = time-remain;
+			if(sleep>3000){
+				try {
+					Thread.sleep(sleep);
+				} catch (InterruptedException e) {
+					log.info(CommonsUtil.join(e.getStackTrace(), ","));;
 				}
 			}
-			return true;
-		} else if (hour >= 13 && hour < 15) {
-			return true;
 		}
-		return false;
 	}
-
-	private boolean isHoliday(Date now) {
-		String day = this.holidayMapper.queryByDay(new java.sql.Date(now
-				.getTime()));
-		if (day == null || "".equals(day)) {
-			return false;
-		}
-		return true;
-	}
-	
-	
-
 }

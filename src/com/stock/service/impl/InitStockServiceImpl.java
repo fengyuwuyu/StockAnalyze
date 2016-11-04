@@ -16,7 +16,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stock.connection.HttpClientUtil;
 import com.stock.dao.StockDetailMapper;
 import com.stock.dao.StockMainMapper;
+import com.stock.model.StockBuySell;
 import com.stock.service.InitStockServiceI;
+import com.stock.util.CodesArrayList;
 import com.stock.util.CommonsUtil;
 import com.stock.util.MapUtils;
 import com.stock.util.StockCache;
@@ -174,6 +176,59 @@ public class InitStockServiceImpl implements InitStockServiceI {
 		return MapUtils.createSuccessMap();
 	}
 	
+	
+	public Map<String,Object> initBuyAndSell(){
+		log.info("开始下载委买委卖数据");
+		List<String> codes = this.stockMainMapper.selectAllCodes();
+		int length = codes.size();
+		int count = 1000;
+		int begin = 0,end = (begin+count)<=length?(begin+count):length;
+		List<String> subList = null;
+		while(end<=length){
+			subList =  codes.subList(begin, end);
+			downloadBuyAndSell(subList);
+			begin = end;
+			end+=count;
+		}
+		if(end>length&&begin<length){
+			subList = codes.subList(begin, length);
+			downloadBuyAndSell(subList);
+		}
+		return MapUtils.createSuccessMap();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void downloadBuyAndSell(List<String> subList){
+		HttpEntity entity;
+		try {
+			String url = "http://api.money.126.net/data/feed/"+CommonsUtil.listToString(subList)+",money.api";
+			log.info(url);
+			entity = HttpClientUtil.get(url);
+			String temp = EntityUtils.toString(entity, "utf-8");
+			String content = temp.substring(21,temp.length()-2);
+			if (entity != null) {
+				LinkedHashMap<String, Object> detail = null;
+					detail = mapper.readValue(
+							content,
+							LinkedHashMap.class);
+					if(detail!=null){
+						LinkedHashMap<String, Object>  o = null;
+						StockBuySell s = null;
+						List<StockBuySell> list = new ArrayList<StockBuySell>();
+						for (String code : subList) {
+							o = (LinkedHashMap<String, Object>) detail.get(code);
+							s = new StockBuySell(o);
+							list.add(s);
+						}
+						this.stockMainMapper.insertStockBuySell(MapUtils.createMap("list",list));
+					}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info(CommonsUtil.join(e.getStackTrace(), ","));
+		}
+	}
+	
 	//
 	public Map<String, Object> test() throws Exception{
 		String url = "http://img1.money.126.net/data/hs/1000573.json";
@@ -187,5 +242,6 @@ public class InitStockServiceImpl implements InitStockServiceI {
 		return null;
 		
 	}
+	
 	
 }

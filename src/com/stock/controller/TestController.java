@@ -1,5 +1,6 @@
 package com.stock.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -70,9 +71,16 @@ public class TestController {
 	@RequestMapping("test1.do")
 	@ResponseBody
 	public Map<String, Object> test1() throws Exception {
-		List<CacheItem> list = stockMainMapper.initPrePrices();
-		System.out.println(list);
+		initStockServiceI.initBuyAndSell();
 		return MapUtils.createSuccessMap();
 		// this.detailSaveServiceI.volBigIncrease();
+	}
+	
+	public static void main(String[] args) {
+		List<String> list = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			list.add("asf"+i);
+		}
+		System.out.println(list.toString());
 	}
 }

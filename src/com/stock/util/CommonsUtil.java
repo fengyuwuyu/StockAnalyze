@@ -3,6 +3,7 @@ package com.stock.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class CommonsUtil {
 	
@@ -138,5 +139,10 @@ public class CommonsUtil {
 
 	public static int getDayDiff(Date date1,Date date2){
 		return getDayDiff(dateFormat1.format(date1),dateFormat1.format(date2));
+	}
+	
+	public static String listToString(List<String> list){
+		String s = list.toString().replace(" ", "");
+		return s.substring(1, s.length()-1);
 	}
 }

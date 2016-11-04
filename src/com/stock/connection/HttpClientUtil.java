@@ -25,7 +25,7 @@ public class HttpClientUtil {
 		try {
 			HttpClient client = HttpClients.createDefault();
 			HttpGet get = new HttpGet(url);
-			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build();//设置请求和传输超时时间
+			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(20000).setConnectTimeout(20000).build();//设置请求和传输超时时间
 			get.setConfig(requestConfig);
 			HttpResponse response = client.execute(get);
 			entity = response.getEntity();

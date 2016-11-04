@@ -11,6 +11,7 @@ import com.stock.model.StockMain;
 import com.stock.model.StockMainAnalyse;
 import com.stock.model.StockQuery;
 import com.stock.model.StockTop100;
+import com.stock.util.CodesArrayList;
 
 public interface StockMainMapper {
     int deleteByPrimaryKey(Integer id);
@@ -68,4 +69,8 @@ public interface StockMainMapper {
 	void insertStockAnaylseBase(Map<String, Object> map);
 
 	List<CacheItem> initPrePrices();
+	
+	List<String> selectAllCodes();
+
+	void insertStockBuySell(Map<String, Object> createMap);
 }

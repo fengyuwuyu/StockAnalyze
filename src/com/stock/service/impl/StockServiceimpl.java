@@ -20,6 +20,7 @@ import com.stock.connection.HttpClientUtil;
 import com.stock.dao.StockDetailMapper;
 import com.stock.dao.StockMainMapper;
 import com.stock.dao.StockShortMapper;
+import com.stock.model.StockBuySell;
 import com.stock.model.StockMain;
 import com.stock.model.StockQuery;
 import com.stock.model.StockVol;
@@ -278,19 +279,37 @@ public class StockServiceimpl implements StockServiceI {
 		return MapUtils.createSuccessMap();
 	}
 
+	public static void main(String[] args) {
+		StockServiceimpl serviceimpl = new StockServiceimpl();
+		serviceimpl.test();
+//		String s = "_ntes_quote_callback(";
+//		System.out.println(s.length());
+	}
+	
 	//http://img1.money.126.net/data/hs/kline/day/history/2016/0603016.json?callback=neb7ceb25d5da26
 	public Map<String,Object> test(){
 		HttpEntity entity;
 		try {
-			entity = HttpClientUtil.get("http://img1.money.126.net/data/hs/kline/day/history/2016/0603016.json");
-			String content = EntityUtils.toString(entity, "utf-8");
+//			String url = "http://quotes.money.163.com/hs/service/diyrank.php?"
+//					+ "host=http%3A%2F%2Fquotes.money.163.com%2Fhs%2Fservice%2Fdiyrank.php&"
+//					+ "page=0&query=STYPE%3AEQA&fields=NO%2CSYMBOL%2CNAME%2CPRICE%2CPERCENT%2CUPDOWN%2CFIVE_MINUTE%2COPEN%"
+//					+ "2CYESTCLOSE%2CHIGH%2CLOW%2CVOLUME%2CTURNOVER%2CHS%2CLB%2CWB%2CZF%2CPE%2CMCAP%2CTCAP%2CMFSUM%"
+//					+ "2CMFRATIO.MFRATIO2%2CMFRATIO.MFRATIO10%2CSNAME%2CCODE%2CANNOUNMT%2CUVSNEWS&s"
+//					+ "ort=PERCENT&order=desc&count=2953&type=query";
+			String url = "http://api.money.126.net/data/feed/0000001,1300556,1002212,1300428,0600874,0601857,0601600,0601398,0600028,0600019,0601318,0600030,0601939,0601088,0600900,1002485,1002291,1002763,0600233,1002486,money.api";
+			entity = HttpClientUtil.get(url);
+			String temp = EntityUtils.toString(entity, "utf-8");
+			String content = temp.substring(21,temp.length()-2);
 			System.out.println(content);
 			if (entity != null) {
 				LinkedHashMap<String, Object> detail = null;
 					detail = mapper.readValue(
 							content,
 							LinkedHashMap.class);
-					System.out.println(detail);
+					LinkedHashMap<String, Object>  o = (LinkedHashMap<String, Object>) detail.get("1002486");
+					StockBuySell s = new StockBuySell(o);
+					System.out.println(s);
+					
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

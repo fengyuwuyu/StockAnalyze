@@ -101,7 +101,7 @@ public class TaskJob {
 
 	public void initBuyAndSell(){
 		long time = 20000;
-		while(true){
+		while(CommonsUtil.checkTime(holidayMapper)){
 			long begin = System.currentTimeMillis();
 			initStockServiceI.initBuyAndSell();
 			long remain = System.currentTimeMillis() - begin;

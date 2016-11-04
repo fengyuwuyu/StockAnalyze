@@ -127,8 +127,8 @@ public class StockMain implements Comparable<StockMain> {
 
 	@Override
 	public String toString() {
-		return "StockMain [股票代码 = " + symbol
-				+ ", 开盘价 = " + open + ", 当前价格 = " + close + ", 成交量 = " + volume + ", 涨幅 = "
+		return "StockMain [股票 =" + symbol
+				+",价=" + close + ",量=" + volume + ",涨幅="
 				+ increase + "]";
 	}
 

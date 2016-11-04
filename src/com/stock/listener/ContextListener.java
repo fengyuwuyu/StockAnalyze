@@ -9,7 +9,9 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.stock.dao.StockMainMapper;
 import com.stock.task.TaskJob;
+import com.stock.util.StockCache;
 import com.stock.util.ThreadPool;
 
 /**
@@ -31,6 +33,8 @@ public class ContextListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent arg0) {
 		ServletContext context = arg0.getServletContext();
 		ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext(context);
+		StockMainMapper stockMainMapper = ac.getBean(StockMainMapper.class);
+		StockCache.initPrePrices(stockMainMapper);
 		final TaskJob job = (TaskJob) ac.getBean("taskJob");
 		if(job!=null){
 			ThreadPool.execute(new Runnable() {

@@ -107,7 +107,7 @@
   </update>
   
   <select id="selectSender" resultMap="BaseResultMap" >
-  	select top 1 * from email where type=1
+  	select * from email where type=1 limit 1
   </select>
   
   <select id="selectReveivers" resultMap="BaseResultMap">

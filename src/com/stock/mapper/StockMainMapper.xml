@@ -318,8 +318,13 @@
   		(#{item.symbol},#{item.nowDay},#{item.nowIncrease},#{item.nowVol},#{item.lastIncrease},#{item.priceType},#{item.priceIncrease1},#{item.priceIncrease2},#{item.priceDay1},#{item.priceDay2},#{item.vols},#{item.maxIncreases},#{item.minIncreases})
   	</foreach>
   </insert>
+  <resultMap type="com.stock.model.CacheItem" id="CacheItem">
+  	<result column="symbol" property="symbol"/>
+  	<result column="price" property="price"/>
+  	<result column="close" property="close"/>
+  </resultMap>
   
-  <select id="initPrePrices" resultType="map">
-  	select symbol,close from stock_main where (select left(time,10) from stock_detail where id=(select max(id) from stock_detail))
+  <select id="initPrePrices" resultMap="CacheItem">
+  	select symbol,close,close price from stock_main where day = (select DATE_ADD(left(time,10),INTERVAL -1 day) from stock_detail where id=(select max(id) from stock_detail))
   </select>
 </mapper>

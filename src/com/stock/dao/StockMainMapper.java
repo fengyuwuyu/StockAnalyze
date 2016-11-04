@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.stock.model.CacheItem;
 import com.stock.model.StockAnalyseBase;
 import com.stock.model.StockAnalyseResult;
 import com.stock.model.StockMain;
@@ -66,5 +67,5 @@ public interface StockMainMapper {
 
 	void insertStockAnaylseBase(Map<String, Object> map);
 
-	Map<String, Object> initPrePrices();
+	List<CacheItem> initPrePrices();
 }

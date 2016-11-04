@@ -12,7 +12,7 @@
 	<!-- 引入数据库属性文件 -->
 	<context:property-placeholder location="classpath:config.properties" />	
 	<!-- 扫描注解 -->
-    <context:component-scan base-package="com.stock.service" /> 
+    <context:component-scan base-package="com.stock.service,com.stock.util" /> 
        
     <!-- 定义工作类 -->
     <bean id="taskJob" class="com.stock.task.TaskJob"></bean>
@@ -20,7 +20,7 @@
     
     <!-- 注册定时器  -->
     <task:scheduled-tasks> 
-    	<task:scheduled ref="taskJob" method="downLoad1" cron="5 54 9 * * *"/> 
+    	<task:scheduled ref="taskJob" method="downLoad1" cron="5 30 9 * * *"/> 
     	<task:scheduled ref="taskJob" method="downLoad1" cron="5 0 13 * * *"/>
     	<task:scheduled ref="taskJob" method="initStockEveryDay" cron="0 20 17 * * *"/>
 	</task:scheduled-tasks> 

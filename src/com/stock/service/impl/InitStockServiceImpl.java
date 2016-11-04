@@ -60,7 +60,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 			while(entity==null&&HttpClientUtil.hasException){
 				log.info("http请求出现异常，将再次尝试3次");
 				int times = 0;
-				while(times<3){
+				while(times<3&&entity==null){
 					times++;
 					log.info("http请求出现异常，第 "+times+"次尝试。。。");
 					entity = HttpClientUtil.get(url);
@@ -68,6 +68,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 			}
 			if(entity!=null){
 				download(entity);
+				HttpClientUtil.hasException = false;
 			}else{
 				log.info("连续4次http请求都失败了。。。");
 			}

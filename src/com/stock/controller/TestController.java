@@ -1,5 +1,6 @@
 package com.stock.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.stock.dao.StockMainMapper;
+import com.stock.model.CacheItem;
 import com.stock.service.InitStockServiceI;
 import com.stock.service.StockAnalyseJobI;
 import com.stock.service.StockMainServiceI;
@@ -21,7 +24,13 @@ public class TestController {
 	private StockMainServiceI stockMainServiceI;
 	private InitStockServiceI initStockServiceI;
 	private StockAnalyseJobI stockAnalyseJobI;
+	private StockMainMapper stockMainMapper;
 	
+	@Autowired
+	public void setStockMainMapper(StockMainMapper stockMainMapper) {
+		this.stockMainMapper = stockMainMapper;
+	}
+
 	@Autowired
 	public void setStockAnalyseJobI(StockAnalyseJobI stockAnalyseJobI) {
 		this.stockAnalyseJobI = stockAnalyseJobI;
@@ -61,7 +70,8 @@ public class TestController {
 	@RequestMapping("test1.do")
 	@ResponseBody
 	public Map<String, Object> test1() throws Exception {
-		this.stockAnalyseJobI.initStockAnalyse();
+		List<CacheItem> list = stockMainMapper.initPrePrices();
+		System.out.println(list);
 		return MapUtils.createSuccessMap();
 		// this.detailSaveServiceI.volBigIncrease();
 	}

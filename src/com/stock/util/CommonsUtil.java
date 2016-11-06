@@ -23,6 +23,28 @@ public class CommonsUtil {
 			"HH:mm:ss");
 	private static SimpleDateFormat dateFormat5 = new SimpleDateFormat(
 			"yyyy");
+	private static SimpleDateFormat dateFormatYYYY = new SimpleDateFormat(
+			"yyyy");
+	private static SimpleDateFormat dateFormatYYYYMMDD = new SimpleDateFormat(
+			"yyyyMMdd");
+	
+	public static String formatYYYY(Date date){
+		return dateFormatYYYY.format(date);
+	}
+	
+	public static String formatYYYYMMDD(Date date){
+		return dateFormatYYYYMMDD.format(date);
+	}
+	
+	/**
+	 * 以separate为分隔符，返回String类型，数组中的对象需要实现toString方法
+	 * @param array 数组对象
+	 * @param separate
+	 * @return
+	 */
+	public static String join(Object[] array){
+		return join(array,null);
+	}
 
 	/**
 	 * 以separate为分隔符，返回String类型，数组中的对象需要实现toString方法
@@ -95,8 +117,12 @@ public class CommonsUtil {
 		return dateFormat4.parse(time);
 	}
 
+	/**
+	 * 返回日期中的年份
+	 * @param date
+	 * @return
+	 */
 	public static String formatDateToString5(Date date) {
-		// TODO Auto-generated method stub
 		return dateFormat5.format(date);
 	}
 	
@@ -179,6 +205,10 @@ public class CommonsUtil {
 			return true;
 		} else if (hour >= 13 && hour < 15) {
 			return true;
+		}else if(hour==15){
+			if(minute<=2){
+				return true;
+			}
 		}
 		return false;
 	}

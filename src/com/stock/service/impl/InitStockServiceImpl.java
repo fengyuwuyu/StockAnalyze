@@ -1,14 +1,20 @@
 package com.stock.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +24,6 @@ import com.stock.dao.StockDetailMapper;
 import com.stock.dao.StockMainMapper;
 import com.stock.model.StockBuySell;
 import com.stock.service.InitStockServiceI;
-import com.stock.util.CodesArrayList;
 import com.stock.util.CommonsUtil;
 import com.stock.util.MapUtils;
 import com.stock.util.StockCache;
@@ -36,42 +41,44 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	public void setStockDetailMapper(StockDetailMapper stockDetailMapper) {
 		this.stockDetailMapper = stockDetailMapper;
 	}
-	
+
 	@Autowired
 	public void setStockMainMapper(StockMainMapper stockMainMapper) {
 		this.stockMainMapper = stockMainMapper;
 	}
 
-
-
 	/**
-	 * 每30秒执行一次
-	 * 用于获取股票的详细信息
+	 * 每30秒执行一次 用于获取股票的详细信息
+	 * http://quotes.money.163.com/hs/service/marketradar_ajax
+	 * .php?host=http%3A%2F
+	 * %2Fquotes.money.163.com%2Fhs%2Fservice%2Fmarketradar_ajax
+	 * .php&page=0&query=STYPE%3AEQA&types=&count=28&type=query&order=desc
 	 */
 	@Override
 	public Map<String, Object> initStock() {
-		log.info("下载股票数据，每分钟执行一次。。。"+(CommonsUtil.formatDateToString3(new Date())));
+		log.info("下载股票数据，每分钟执行一次。。。"
+				+ (CommonsUtil.formatDateToString3(new Date())));
 		String url = "http://quotes.money.163.com/hs/service/diyrank.php?"
 				+ "host=http%3A%2F%2Fquotes.money.163.com%2Fhs%2Fservice%2Fdiyrank.php&"
 				+ "page=0&query=STYPE%3AEQA&fields=NO%2CSYMBOL%2CNAME%2CPRICE%2CPERCENT%2CUPDOWN%2CFIVE_MINUTE%2COPEN%"
 				+ "2CYESTCLOSE%2CHIGH%2CLOW%2CVOLUME%2CTURNOVER%2CHS%2CLB%2CWB%2CZF%2CPE%2CMCAP%2CTCAP%2CMFSUM%"
 				+ "2CMFRATIO.MFRATIO2%2CMFRATIO.MFRATIO10%2CSNAME%2CCODE%2CANNOUNMT%2CUVSNEWS&s"
-				+ "ort=PERCENT&order=desc&count=2953&type=query";
+				+ "ort=PERCENT&order=desc&count=10000&type=query";
 		try {
 			HttpEntity entity = HttpClientUtil.get(url);
-			while(entity==null&&HttpClientUtil.hasException){
+			while (entity == null && HttpClientUtil.hasException) {
 				log.info("http请求出现异常，将再次尝试3次");
 				int times = 0;
-				while(times<3&&entity==null){
+				while (times < 3 && entity == null) {
 					times++;
-					log.info("http请求出现异常，第 "+times+"次尝试。。。");
+					log.info("http请求出现异常，第 " + times + "次尝试。。。");
 					entity = HttpClientUtil.get(url);
 				}
 			}
-			if(entity!=null){
+			if (entity != null) {
 				download(entity);
 				HttpClientUtil.hasException = false;
-			}else{
+			} else {
 				log.info("连续4次http请求都失败了。。。");
 			}
 		} catch (Exception e) {
@@ -83,42 +90,44 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private void download(HttpEntity entity) throws Exception{
+	private void download(HttpEntity entity) throws Exception {
 		LinkedHashMap<String, Object> detail = mapper.readValue(
 				EntityUtils.toString(entity, "utf-8"), LinkedHashMap.class);
-		log.info("下载的数据是： "+detail.get("count"));
 		String time = (String) detail.get("time");
-		log.info("本次下载的时间是："+time+"  上次下载的时间是： "+timeBak);
-		if(!checkTime(time)){
-			return ;
+		log.info("本次下载的时间是：" + time + "  上次下载的时间是： " + timeBak);
+		if (!checkTime(time)) {
+			return;
 		}
 		timeBak = time;
-		final List<LinkedHashMap<String, Object>> list= (List<LinkedHashMap<String, Object>>) detail.get("list");
-		 for (LinkedHashMap<String, Object> map : list) {
-			 map.put("TIME", time);
-		 }
-		 Map<String,Object> map = MapUtils.createMap("list",list);
-		 this.stockDetailMapper.insert(map);
-		 //异步更新StockCache的prePrices对象
-		 ThreadPool.execute(new Runnable() {
-			
+		final List<LinkedHashMap<String, Object>> list = (List<LinkedHashMap<String, Object>>) detail
+				.get("list");
+		log.info("下载的数据是： " + list.size());
+		for (LinkedHashMap<String, Object> map : list) {
+			map.put("TIME", time);
+		}
+		Map<String, Object> map = MapUtils.createMap("list", list);
+		this.stockDetailMapper.insert(map);
+		// 异步更新StockCache的prePrices对象
+		ThreadPool.execute(new Runnable() {
+
 			@Override
 			public void run() {
 				StockCache.initByInternet(list);
 			}
 		});
-		 log.info("插入数据库成功！");
+		log.info("插入数据库成功！");
 	}
-	
+
 	/**
 	 * 判断股市此时是否是可交易时间
+	 * 
 	 * @param time
 	 * @return
 	 */
 	private boolean checkTime(String time) {
-		if("".equals(timeBak)){
+		if ("".equals(timeBak)) {
 			int count = this.stockDetailMapper.selectCountByTime(time);
-			return count==0?true:false;
+			return count == 0 ? true : false;
 		}
 		return !timeBak.equals(time);
 	}
@@ -127,123 +136,183 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	 * day, open, close, max, min, volume, increase
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String,Object> initStockEveryDay() throws Exception{
+	public Map<String, Object> initStockEveryDay() throws Exception {
 		List<String> codes = this.stockDetailMapper.selectAllCode();
 		String year = CommonsUtil.formatDateToString5(new Date());
 		for (String code : codes) {
-				HttpEntity entity = HttpClientUtil
-						.get("http://img1.money.126.net/data/hs/kline/day/history/"+year+"/"
-								+ code + ".json");
-				if (entity != null) {
-					log.info("解析json数据。。。");
-					LinkedHashMap<String, Object> detail = null;
-					try {
-						detail = mapper.readValue(
-								EntityUtils.toString(entity, "utf-8"),
-								LinkedHashMap.class);
-					} catch (Exception e) {
-						log.info("解析json数据失败");
-						log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
-					}
-					if (detail != null) {
-						log.info("开始判断数据正确性");
-						List<List<Object>> list = (List<List<Object>>) detail
-								.get("data");
-						if (list != null && list.size() > 0) {
-							String symbol = code.substring(1);
-							String lastDay = this.stockDetailMapper.selectLastDay(symbol);
-							if(lastDay!=null){
-								lastDay = lastDay.replaceAll("-", "");
-								List<List<Object>> inserts = new ArrayList<List<Object>>();
-								for(int i=list.size()-1;i>=0;i--){
-									if(lastDay.equals(list.get(i).get(0))){
-										break;
-									}
-									inserts.add(list.get(i));
+			HttpEntity entity = HttpClientUtil
+					.get("http://img1.money.126.net/data/hs/kline/day/history/"
+							+ year + "/" + code + ".json");
+			if (entity != null) {
+				log.info("解析json数据。。。");
+				LinkedHashMap<String, Object> detail = null;
+				try {
+					detail = mapper.readValue(
+							EntityUtils.toString(entity, "utf-8"),
+							LinkedHashMap.class);
+				} catch (Exception e) {
+					log.info("解析json数据失败");
+					log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+				}
+				if (detail != null) {
+					log.info("开始判断数据正确性");
+					List<List<Object>> list = (List<List<Object>>) detail
+							.get("data");
+					if (list != null && list.size() > 0) {
+						String symbol = code.substring(1);
+						String lastDay = this.stockDetailMapper
+								.selectLastDay(symbol);
+						if (lastDay != null) {
+							lastDay = lastDay.replaceAll("-", "");
+							List<List<Object>> inserts = new ArrayList<List<Object>>();
+							for (int i = list.size() - 1; i >= 0; i--) {
+								if (lastDay.equals(list.get(i).get(0))) {
+									break;
 								}
-								if(inserts.size()>0){
-									this.stockMainMapper.insert(MapUtils.createMap("list",inserts,"symbol",symbol));
-									log.info("更新数据成功！插入的数据时 ： "+inserts);
-								}
-							}else{
-								log.info("发现新的股票数据，开始插入，  "+list);
-								this.stockMainMapper.insert(MapUtils.createMap("list",list,"symbol",symbol));
+								inserts.add(list.get(i));
 							}
+							if (inserts.size() > 0) {
+								this.stockMainMapper.insert(MapUtils.createMap(
+										"list", inserts, "symbol", symbol));
+								log.info("更新数据成功！插入的数据时 ： " + inserts);
+							}
+						} else {
+							log.info("发现新的股票数据，开始插入，  " + list);
+							this.stockMainMapper.insert(MapUtils.createMap(
+									"list", list, "symbol", symbol));
 						}
 					}
 				}
+			}
 		}
 		return MapUtils.createSuccessMap();
 	}
-	
-	
-	public Map<String,Object> initBuyAndSell(){
+
+	public Map<String, Object> initBuyAndSell() {
 		log.info("----------------------开始下载委买委卖数据----------------------");
 		List<String> codes = this.stockMainMapper.selectAllCodes();
 		int length = codes.size();
 		int count = 1000;
-		int begin = 0,end = (begin+count)<=length?(begin+count):length;
+		int begin = 0, end = (begin + count) <= length ? (begin + count)
+				: length;
 		List<String> subList = null;
-		while(end<=length){
-			subList =  codes.subList(begin, end);
+		while (end <= length) {
+			subList = codes.subList(begin, end);
 			downloadBuyAndSell(subList);
 			begin = end;
-			end+=count;
+			end += count;
 		}
-		if(end>length&&begin<length){
+		if (end > length && begin < length) {
 			subList = codes.subList(begin, length);
 			downloadBuyAndSell(subList);
 		}
 		log.info("----------------------下载委买委卖数据结束----------------------");
 		return MapUtils.createSuccessMap();
 	}
-	
+
+	// http://api.money.126.net/data/feed/0000001,0600137,1002485,1002291,1002763,1002486,money.api?callback=_ntes_quote_callback50000858
+	// http://api.money.126.net/data/feed/0000001,1000573,0600275,1000553,0603777,0603313,0603816,0600321,0603006,0603887,0603016,1200413,1000755,1000002,0600589,0600137,1002485,1002291,1002763,1002486,money.api?callback=_ntes_quote_callback95430716
 	@SuppressWarnings("unchecked")
-	private void downloadBuyAndSell(List<String> subList){
+	private void downloadBuyAndSell(List<String> subList) {
 		HttpEntity entity;
 		try {
-			String url = "http://api.money.126.net/data/feed/"+CommonsUtil.listToString(subList)+",money.api";
+			String url = "http://api.money.126.net/data/feed/"
+					+ CommonsUtil.listToString(subList) + ",money.api";
 			log.info(url);
 			entity = HttpClientUtil.get(url);
 			String temp = EntityUtils.toString(entity, "utf-8");
-			String content = temp.substring(21,temp.length()-2);
+			String content = temp.substring(21, temp.length() - 2);
 			if (entity != null) {
 				LinkedHashMap<String, Object> detail = null;
-					detail = mapper.readValue(
-							content,
-							LinkedHashMap.class);
-					if(detail!=null){
-						LinkedHashMap<String, Object>  o = null;
-						StockBuySell s = null;
-						List<StockBuySell> list = new ArrayList<StockBuySell>();
-						for (String code : subList) {
-							o = (LinkedHashMap<String, Object>) detail.get(code);
-							s = new StockBuySell(o);
-							list.add(s);
+				detail = mapper.readValue(content, LinkedHashMap.class);
+				if (detail != null) {
+					LinkedHashMap<String, Object> o = null;
+					StockBuySell s = null;
+					List<StockBuySell> list = new ArrayList<StockBuySell>();
+					for (String code : subList) {
+						o = (LinkedHashMap<String, Object>) detail.get(code);
+						s = new StockBuySell(o);
+						if (s.getSymbol() != null) {
+							if (s.getAsk1() != 0 || s.getBid1() != 0) {
+								list.add(s);
+							}
 						}
-						this.stockMainMapper.insertStockBuySell(MapUtils.createMap("list",list));
-						log.info("插入数据的数量是 ： "+list.size());
 					}
+					this.stockMainMapper.insertStockBuySell(MapUtils.createMap(
+							"list", list));
+					log.info("插入数据的数量是 ： " + list);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(CommonsUtil.join(e.getStackTrace(), ","));
 		}
 	}
-	
+
 	//
-	public Map<String, Object> test() throws Exception{
+	public Map<String, Object> test() throws Exception {
 		String url = "http://img1.money.126.net/data/hs/1000573.json";
 		HttpEntity entity = HttpClientUtil.get(url);
-		if(entity!=null){
+		if (entity != null) {
 			System.out.println(EntityUtils.toString(entity, "utf-8"));
-//			LinkedHashMap<String, Object> detail = mapper.readValue(
-//					EntityUtils.toString(entity, "utf-8"),
-//					LinkedHashMap.class);
+			// LinkedHashMap<String, Object> detail = mapper.readValue(
+			// EntityUtils.toString(entity, "utf-8"),
+			// LinkedHashMap.class);
 		}
 		return null;
-		
+
 	}
-	
-	
+
+	// quotes.money.163.com/cjmx/2016/20161031/1002486.xls
+	@Test
+	public void downloadCJMX() throws Exception {
+		String url = "http://quotes.money.163.com/cjmx/2016/20161031/1002486.xls";
+		HttpEntity entity = HttpClientUtil.get(url);
+		if (entity != null) {
+			InputStream in = entity.getContent();
+			OutputStream output = new FileOutputStream(
+					"D:/stock_download/cjmx/1002486/1002486.xls");
+			IOUtils.copy(in, output);
+			// LinkedHashMap<String, Object> detail = mapper.readValue(
+			// EntityUtils.toString(entity, "utf-8"),
+			// LinkedHashMap.class);
+		}
+
+	}
+
+	public Map<String, Object> initCjmx() throws Exception {
+		List<String> codes = this.stockMainMapper.selectAllCodes();
+		Date date = new Date();
+		String year = CommonsUtil.formatYYYY(date);
+		String day = CommonsUtil.formatYYYYMMDD(date);
+		String direct = "D:/stock_download/cjmx/" + year + "/" + day;
+		File directory = new File(direct);
+		boolean exception = false;
+		if (!directory.exists()) {
+			exception = directory.mkdirs();
+		}
+		if (!exception) {
+			return MapUtils.createFailedMap();
+		}
+		for (String code : codes) {
+			try {
+				File file = new File(direct + "/" + code + ".xls");
+				String url = "http://quotes.money.163.com/cjmx/" + year + "/"
+						+ day + "/" + code + ".xls";
+				HttpEntity entity = HttpClientUtil.get(url);
+				if (entity != null) {
+					InputStream in = entity.getContent();
+					OutputStream output = new FileOutputStream(file);
+					IOUtils.copy(in, output);
+					in.close();
+					output.close();
+				}
+			} catch (Exception e) {
+				log.info("code--" + code + " 下载失败！");
+				log.info("------------------------------------------------------------------------------");
+				log.info(CommonsUtil.join(e.getStackTrace()));
+			}
+		}
+		return MapUtils.createSuccessMap();
+	}
 }

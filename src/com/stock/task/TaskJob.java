@@ -49,11 +49,11 @@ public class TaskJob {
 				run = this.stockMainServiceI.analyse1(i);
 			}
 		} catch (Exception e) {
-			log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+			log.info(CommonsUtil.join(e.getStackTrace(), ","));
 			ExceptionLog record = new ExceptionLog(
 					CommonsUtil.formatDateToString3(new Date()), this
 							.getClass().getName(), "execute", e.getMessage(),
-					CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+					CommonsUtil.join(e.getStackTrace(), ","));
 			this.exceptionLogMapper.insert(record);
 		}
 	}
@@ -77,11 +77,11 @@ public class TaskJob {
 			}
 			log.info("下载每天股票详情任务结束");
 		} catch (Exception e) {
-			log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+			log.info(CommonsUtil.join(e.getStackTrace(), ","));
 			ExceptionLog record = new ExceptionLog(
 					CommonsUtil.formatDateToString3(new Date()), this
 							.getClass().getName(), "downLoad1", e.getMessage(),
-					CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+					CommonsUtil.join(e.getStackTrace(), ","));
 			this.exceptionLogMapper.insert(record);
 		}
 	}
@@ -90,11 +90,11 @@ public class TaskJob {
 		try {
 			initStockServiceI.initStockEveryDay();
 		} catch (Exception e) {
-			log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+			log.info(CommonsUtil.join(e.getStackTrace(), ","));
 			ExceptionLog record = new ExceptionLog(
 					CommonsUtil.formatDateToString3(new Date()), this
 							.getClass().getName(), "initStockEveryDay", e.getMessage(),
-					CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+					CommonsUtil.join(e.getStackTrace(), ","));
 			this.exceptionLogMapper.insert(record);
 		}
 	}
@@ -106,13 +106,36 @@ public class TaskJob {
 			initStockServiceI.initBuyAndSell();
 			long remain = System.currentTimeMillis() - begin;
 			long sleep = time-remain;
-			if(sleep>3000){
+			if(sleep>0){
 				try {
 					Thread.sleep(sleep);
 				} catch (InterruptedException e) {
-					log.info(CommonsUtil.join(e.getStackTrace(), ","));;
+					log.info(CommonsUtil.join(e.getStackTrace(), ","));
+					ExceptionLog record = new ExceptionLog(
+							CommonsUtil.formatDateToString3(new Date()), this
+									.getClass().getName(), "initBuyAndSell", e.getMessage(),
+							CommonsUtil.join(e.getStackTrace(), ","));
+					this.exceptionLogMapper.insert(record);
 				}
 			}
+		}
+	}
+	
+	/**
+	 * 下载成交量
+	 */
+	public void initCJL(){
+		try {
+			while(CommonsUtil.checkTime(holidayMapper)){
+				initStockServiceI.initCjmx();
+			}
+		} catch (Exception e) {
+			log.info(CommonsUtil.join(e.getStackTrace(), ","));
+			ExceptionLog record = new ExceptionLog(
+					CommonsUtil.formatDateToString3(new Date()), this
+							.getClass().getName(), "initCJL", e.getMessage(),
+					CommonsUtil.join(e.getStackTrace(), ","));
+			this.exceptionLogMapper.insert(record);
 		}
 	}
 }

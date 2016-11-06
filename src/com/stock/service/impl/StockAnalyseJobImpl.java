@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import com.stock.util.MapUtils;
 public class StockAnalyseJobImpl implements StockAnalyseJobI {
 	
 	private StockMainMapper stockMainMapper;
+	private SqlSessionFactory sqlSessionFactory;
 	
 	private Logger log = Logger.getLogger(StockAnalyseJobImpl.class);
 	
@@ -26,6 +30,10 @@ public class StockAnalyseJobImpl implements StockAnalyseJobI {
 		this.stockMainMapper = stockMainMapper;
 	}
 
+	@Autowired
+	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSessionFactory = sqlSessionFactory;
+	}
 
 
 	/**
@@ -48,18 +56,29 @@ public class StockAnalyseJobImpl implements StockAnalyseJobI {
 	}
 
 	public void initStockAnalyse(){
-		List<String> symbols = this.stockMainMapper.selectSymbols();
+		SqlSession session = getSqlSession();
+		StockMainMapper stockMainMapper = session.getMapper(StockMainMapper.class);
+		List<String> symbols = stockMainMapper.selectSymbols();
 		List<StockAnalyseBase> list = new ArrayList<StockAnalyseBase>();
+		int index = 0;
+		
 		for (String symbol : symbols) {
-			StockAnalyseBase analyse = this.stockMainMapper.selectStockAnalyse(MapUtils.createMap("symbol",symbol));
-			analyse.initAnalyse(list);
-			if(list.size()>=3000){
-				this.stockMainMapper.insertStockAnaylseBase(MapUtils.createMap("list",list));
+			log.info("正在处理的股票是 : "+symbol+", index = "+(++index));
+			StockAnalyseBase analyse = stockMainMapper.selectStockAnalyse(MapUtils.createMap("symbol",symbol));
+			if(analyse!=null){
+				analyse.initAnalyse(list);
+			}
+			if(list.size()>=100){
+				stockMainMapper.insertStockAnaylseBase(MapUtils.createMap("list",list));
+				session.commit(true);
+				session.clearCache();
+				log.info("插入到数据库的数量是 : "+list.size());
 				list.clear();
 			}
+			log.info("处理完毕的股票是 : "+symbol+", index = "+index);
 		}
 		if(list.size()>0){
-			this.stockMainMapper.insertStockAnaylseBase(MapUtils.createMap("list",list));
+			stockMainMapper.insertStockAnaylseBase(MapUtils.createMap("list",list));
 		}
 	}
 	
@@ -72,5 +91,9 @@ public class StockAnalyseJobImpl implements StockAnalyseJobI {
 	
 	public void find9MinuteStock(){
 		
+	}
+	
+	private SqlSession getSqlSession(){
+		return this.sqlSessionFactory.openSession(ExecutorType.BATCH,false);
 	}
 }

@@ -2,6 +2,8 @@ package com.stock.model;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.stock.util.CommonsUtil;
 
 public class StockAnalyseBase {
@@ -38,6 +40,30 @@ public class StockAnalyseBase {
 	/** 连续5天最小震幅走势 */
 	private String minIncreases;
 	private int index;
+	private Logger log = Logger.getLogger(StockAnalyseBase.class);
+
+	public StockAnalyseBase() {
+	}
+
+	public StockAnalyseBase(String symbol, String nowDay, float nowIncrease,
+			long nowVol, float lastIncrease, String priceType,
+			float priceIncrease1, float priceIncrease2, int priceDay1,
+			int priceDay2, String vols, String maxIncreases, String minIncreases) {
+		super();
+		this.symbol = symbol;
+		this.nowDay = nowDay;
+		this.nowIncrease = nowIncrease;
+		this.nowVol = nowVol;
+		this.lastIncrease = lastIncrease;
+		this.priceType = priceType;
+		this.priceIncrease1 = priceIncrease1;
+		this.priceIncrease2 = priceIncrease2;
+		this.priceDay1 = priceDay1;
+		this.priceDay2 = priceDay2;
+		this.vols = vols;
+		this.maxIncreases = maxIncreases;
+		this.minIncreases = minIncreases;
+	}
 
 	public String getSymbol() {
 		return symbol;
@@ -151,17 +177,6 @@ public class StockAnalyseBase {
 		this.lastIncrease = lastIncrease;
 	}
 
-	@Override
-	public String toString() {
-		return "StockAnalyseBase [symbol=" + symbol + ", nowDay=" + nowDay + ", nowIncrease=" + nowIncrease
-				+ ", nowVol=" + nowVol + ", lastIncrease=" + lastIncrease
-				+ ", priceType=" + priceType + ", priceIncrease1="
-				+ priceIncrease1 + ", priceIncrease2=" + priceIncrease2
-				+ ", priceDay1=" + priceDay1 + ", priceDay2=" + priceDay2
-				+ ", vols=" + vols + ", maxIncreases=" + maxIncreases
-				+ ", minIncreases=" + minIncreases + ", index=" + index + "]";
-	}
-
 	public void initAnalyse(List<StockAnalyseBase> analyseBases) {
 		index = 50;
 		while (index < list.size() - 50) {
@@ -169,23 +184,39 @@ public class StockAnalyseBase {
 				computPrice();
 				computVolume();
 				computZf();
-				analyseBases.add(this);
+				analyseBases.add(new StockAnalyseBase(symbol, nowDay, nowIncrease, nowVol, lastIncrease, priceType, priceIncrease1, priceIncrease2, priceDay1, priceDay2, vols, maxIncreases, minIncreases));
+				initField();
 			}
 		}
 	}
 
-//	private void insert(StockMainMapper stockMainMapper) {
-//		stockMainMapper.insertStockAnaylseBase(this);
-//	}
+	// private void insert(StockMainMapper stockMainMapper) {
+	// stockMainMapper.insertStockAnaylseBase(this);
+	// }
+
+	private void initField() {
+		this.nowIncrease = list.get(index).getIncrease();
+		this.nowVol = list.get(index).getVolume();
+		this.lastIncrease = 0;
+		this.priceType = "";
+		this.priceIncrease1 = 0;
+		this.priceIncrease2 = 0;
+		this.priceDay1 = 0;
+		this.priceDay2 = 0;
+		this.vols = "";
+		this.maxIncreases = "";
+		this.minIncreases = "";
+	}
 
 	private boolean computeLastIncrease() {
 		int begin = this.index + 1, end = this.index + 5;
 		int max = getMaxMin(begin, end)[0];
-		this.lastIncrease = (list.get(max).getClose()-list.get(begin).getClose())*100/list.get(begin).getClose();
-		if(this.lastIncrease>=10){
+		this.lastIncrease = (list.get(max).getClose() - list.get(begin)
+				.getClose()) * 100 / list.get(begin).getClose();
+		this.index += 3;
+		if (this.lastIncrease >= 10) {
 			return true;
 		}
-		this.index+=3;
 		return false;
 	}
 
@@ -203,35 +234,46 @@ public class StockAnalyseBase {
 		}
 		this.priceIncrease1 = (maxDay.getClose() - minDay.getClose()) * 100
 				/ maxDay.getClose();
-		this.priceDay1 = CommonsUtil.getDayDiff(maxDay.getDay(), minDay.getDay());
+		if(this.priceIncrease1<=0){
+			log .info("max--"+max+"maxDay.getClose()--"+maxDay.getClose()+"--min--"+max+"--minDay.getClose()--"+minDay.getClose());
+		}
+		this.priceDay1 = CommonsUtil.getDayDiff(maxDay.getDay(),
+				minDay.getDay());
 		if (minDay.getClose() < list.get(index).getClose()) {
 			this.priceType = "21";
 			this.priceIncrease2 = (list.get(index).getClose() - minDay
 					.getClose()) * 100 / minDay.getClose();
-			this.priceDay2 = CommonsUtil.getDayDiff(minDay.getDay(), list.get(index).getDay());
+			this.priceDay2 = CommonsUtil.getDayDiff(minDay.getDay(),
+					list.get(index).getDay());
 		} else {
 			this.priceType = "20";
 		}
-		 this.priceDay1 = CommonsUtil.getDayDiff(list.get(max).getDay(), list.get(min).getDay());
-		 this.priceDay2 = CommonsUtil.getDayDiff(list.get(min).getDay(), list.get(index).getDay());
+		this.priceDay1 = CommonsUtil.getDayDiff(list.get(max).getDay(), list
+				.get(min).getDay());
+		this.priceDay2 = CommonsUtil.getDayDiff(list.get(min).getDay(), list
+				.get(index).getDay());
 	}
 
 	private void computVolume() {
-		for(int i = index-10;i<=index;i++){
-			this.vols +=list.get(i).getVolume()+", ";
+		for (int i = index - 10; i <= index; i++) {
+			this.vols += list.get(i).getVolume() + ", ";
 		}
-		this.vols.substring(0, this.vols.length()-1);
+		this.vols.substring(0, this.vols.length() - 1);
 	}
 
 	private void computZf() {
-		for(int i = index-5;i<=index;i++){
-			float maxPrice = Math.max(list.get(i).getClose(), list.get(i).getOpen());
-			float minPrice = Math.min(list.get(i).getClose(), list.get(i).getOpen());
-			this.maxIncreases += (list.get(i).getMax()-maxPrice)*100/maxPrice+", ";
-			this.minIncreases += (minPrice - list.get(i).getMin())*100/minPrice+", ";
+		for (int i = index - 5; i <= index; i++) {
+			float maxPrice = Math.max(list.get(i).getClose(), list.get(i)
+					.getOpen());
+			float minPrice = Math.min(list.get(i).getClose(), list.get(i)
+					.getOpen());
+			this.maxIncreases += (list.get(i).getMax() - maxPrice) * 100
+					/ maxPrice + ", ";
+			this.minIncreases += (minPrice - list.get(i).getMin()) * 100
+					/ minPrice + ", ";
 		}
-		this.maxIncreases.substring(0, this.maxIncreases.length()-1);
-		this.minIncreases.substring(0, this.minIncreases.length()-1);
+		this.maxIncreases.substring(0, this.maxIncreases.length() - 1);
+		this.minIncreases.substring(0, this.minIncreases.length() - 1);
 	}
 
 	private int[] getMaxMin(int begin, int end) {
@@ -249,4 +291,15 @@ public class StockAnalyseBase {
 		return new int[] { max, min };
 	}
 
+	@Override
+	public String toString() {
+		return "StockAnalyseBase [symbol=" + symbol + ", nowDay=" + nowDay
+				+ ", nowIncrease=" + nowIncrease + ", nowVol=" + nowVol
+				+ ", lastIncrease=" + lastIncrease + ", priceType=" + priceType
+				+ ", priceIncrease1=" + priceIncrease1 + ", priceIncrease2="
+				+ priceIncrease2 + ", priceDay1=" + priceDay1 + ", priceDay2="
+				+ priceDay2 + ", vols=" + vols + ", maxIncreases="
+				+ maxIncreases + ", minIncreases=" + minIncreases + ", index="
+				+ index + "]";
+	}
 }

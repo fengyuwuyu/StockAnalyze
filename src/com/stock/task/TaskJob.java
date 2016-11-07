@@ -138,4 +138,22 @@ public class TaskJob {
 			this.exceptionLogMapper.insert(record);
 		}
 	}
+	
+	/**
+	 * 将excel格式的成交量导入到数据库中，每天执行一次
+	 */
+	public void insertCJL(){
+		try {
+			while(CommonsUtil.checkTime(holidayMapper)){
+				initStockServiceI.insertCJL();
+			}
+		} catch (Exception e) {
+			log.info(CommonsUtil.join(e.getStackTrace(), ","));
+			ExceptionLog record = new ExceptionLog(
+					CommonsUtil.formatDateToString3(new Date()), this
+							.getClass().getName(), "insertCJL", e.getMessage(),
+					CommonsUtil.join(e.getStackTrace(), ","));
+			this.exceptionLogMapper.insert(record);
+		}
+	}
 }

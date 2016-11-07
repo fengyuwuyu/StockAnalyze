@@ -320,4 +320,22 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	 * 实时下载逐笔成交量
 	 * url：http://quotes.money.163.com/service/zhubi_ajax.html?symbol=600868&end=09%3A52%3A00
 	 */
+
+	@Override
+	public void insertCJL() {
+		// TODO Auto-generated method stub
+		Date date = new Date();
+		String year = CommonsUtil.formatYYYY(date);
+		String day = CommonsUtil.formatYYYYMMDD(date);
+		String direct = "D:/stock_download/cjmx/" + year + "/" + day;
+		List<String> codes = this.stockMainMapper.selectAllCodes();
+		if(codes!=null){
+			for (String code : codes) {
+				File file = new File(direct+"/"+code+".xls");
+				if(file.exists()){
+					
+				}
+			}
+		}
+	}
 }

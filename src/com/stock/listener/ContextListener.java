@@ -43,8 +43,8 @@ public class ContextListener implements ServletContextListener {
 
 				@Override
 				public void run() {
-					job.downLoad1();
 					log.info("downLoad1启动了！");
+					job.downLoad1();
 				}
 			});
 
@@ -52,17 +52,26 @@ public class ContextListener implements ServletContextListener {
 
 				@Override
 				public void run() {
-					job.initBuyAndSell();
 					log.info("initBuyAndSell启动了！");
+					job.initBuyAndSell();
 				}
 			});
 			
+//			ThreadPool.execute(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					log.info("initStockEveryDay启动了！");
+//					job.initStockEveryDay();
+//				}
+//			});
+			
 			ThreadPool.execute(new Runnable() {
-
+				
 				@Override
 				public void run() {
-//					job.initStockEveryDay();
-					log.info("initStockEveryDay启动了！");
+					log.info("initCJL启动了！");
+					job.initCJL();
 				}
 			});
 		}

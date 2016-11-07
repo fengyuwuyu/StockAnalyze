@@ -315,4 +315,9 @@ public class InitStockServiceImpl implements InitStockServiceI {
 		}
 		return MapUtils.createSuccessMap();
 	}
+	
+	/**
+	 * 实时下载逐笔成交量
+	 * url：http://quotes.money.163.com/service/zhubi_ajax.html?symbol=600868&end=09%3A52%3A00
+	 */
 }

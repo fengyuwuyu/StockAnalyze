@@ -342,4 +342,12 @@
   		#{item.bid1},#{item.bid2},#{item.bid3},#{item.bid4},#{item.bid5},#{item.bidvol1},#{item.bidvol2},#{item.bidvol3},#{item.bidvol4},#{item.bidvol5})
   	</foreach>
   </insert>
+  
+  <insert id="insertFBVolume" parameterType="map">
+  	insert into stock_fb_volume(symbol,TRADE_TYPE,VOLUME_INC,PRICE,PRICE_PRE,PRICE_INC,DATE_STR,TRADE_TYPE_STR)
+  	values
+  	<foreach collection="list" item="item" separator=",">
+  		(#{symbol},#{item.TRADE_TYPE},#{item.VOLUME_INC},#{item.PRICE},#{item.PRICE_PRE},#{item.PRICE_INC},#{item.DATE_STR},#{item.TRADE_TYPE_STR})
+  	</foreach>
+  </insert>
 </mapper>

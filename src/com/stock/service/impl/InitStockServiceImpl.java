@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -22,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stock.connection.HttpClientUtil;
 import com.stock.dao.StockDetailMapper;
 import com.stock.dao.StockMainMapper;
+import com.stock.model.FBVolume;
 import com.stock.model.StockBuySell;
 import com.stock.service.InitStockServiceI;
 import com.stock.util.CommonsUtil;
@@ -319,23 +322,113 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	/**
 	 * 实时下载逐笔成交量
 	 * url：http://quotes.money.163.com/service/zhubi_ajax.html?symbol=600868&end=09%3A52%3A00
+	 * 
+	 *  _id---{$id=582177fd0cf279f0882d18f7}
+		TRADE_TYPE---1
+		PRICE_PRE---9.14
+		VOLUME_INC---1304200
+		PRICE---9.15
+		TURNOVER_INC---11933430
+		DATE---{sec=1478588406, usec=0}
+		PRICE_INC---0.0099999999999998
+		DATE_STR---15:00:06
+		TRADE_TYPE_STR---买盘
+		
 	 */
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void insertCJL() {
 		// TODO Auto-generated method stub
-		Date date = new Date();
-		String year = CommonsUtil.formatYYYY(date);
-		String day = CommonsUtil.formatYYYYMMDD(date);
-		String direct = "D:/stock_download/cjmx/" + year + "/" + day;
-		List<String> codes = this.stockMainMapper.selectAllCodes();
-		if(codes!=null){
-			for (String code : codes) {
-				File file = new File(direct+"/"+code+".xls");
-				if(file.exists()){
-					
+		List<String> symbols = this.stockMainMapper.selectAll();
+		String time = CommonsUtil.formatDateToString4(new Date());
+		String encodeTime = null;
+		String begin = "14:45:00";
+		String encodeBegin = null;
+		try {
+			encodeBegin = URLEncoder.encode(begin,"utf-8");
+			encodeTime = URLEncoder.encode(time,"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			log.info("编码失败！");
+		}
+		String url = "";
+		if(symbols!=null){
+			List<FBVolume> fbVolumes = new ArrayList<FBVolume>();
+			for (String symbol : symbols) {
+				fbVolumes.clear();
+				url = "http://quotes.money.163.com/service/zhubi_ajax.html?symbol="+symbol+"&end="+encodeTime+"&begin="+encodeBegin;
+				log.info(url);
+				HttpEntity entity = HttpClientUtil.get(url);
+				if(entity!=null){
+					try {
+						String content = EntityUtils.toString(entity, "utf-8");
+						LinkedHashMap<String,Object> detail = mapper.readValue(content, LinkedHashMap.class);
+						System.out.println(detail);
+						ArrayList<Object> list = (ArrayList<Object>) detail.get("zhubi_list");
+						if(list!=null&&list.size()>0){
+							for (Object object : list) {
+								LinkedHashMap<String,Object> o = (LinkedHashMap<String, Object>) object;
+								FBVolume volume = new FBVolume(o);
+								fbVolumes.add(volume);
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(fbVolumes.size()>0){
+					this.stockMainMapper.insertFBVolume(MapUtils.createMap("list",fbVolumes,"symbol",symbol));
+					log.info("插入数据库成功！---"+symbol);
+				}else{
+					log.info("该股票此时间段内无成交量---"+symbol);
 				}
 			}
 		}
+	}
+	
+	public static void main(String[] args) {
+		new InitStockServiceImpl().testInsertCJL();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void testInsertCJL() {
+		String time = CommonsUtil.formatDateToString4(new Date());
+		String encodeTime = null;
+		try {
+			encodeTime = URLEncoder.encode(time,"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			log.info("编码失败！");
+		}
+		String url = "";
+		String symbol = "000029";
+			List<FBVolume> fbVolumes = new ArrayList<FBVolume>();
+				fbVolumes.clear();
+				url = "http://quotes.money.163.com/service/zhubi_ajax.html?symbol="+symbol+"&end="+encodeTime;
+				log.info(url);
+				HttpEntity entity = HttpClientUtil.get(url);
+				if(entity!=null){
+					try {
+						String content = EntityUtils.toString(entity, "utf-8");
+						System.out.println(content);
+						LinkedHashMap<String,Object> detail = mapper.readValue(content, LinkedHashMap.class);
+						ArrayList<Object> list = (ArrayList<Object>) detail.get("zhubi_list");
+						if(list!=null&&list.size()>0){
+							for (Object object : list) {
+								LinkedHashMap<String,Object> o = (LinkedHashMap<String, Object>) object;
+								FBVolume volume = new FBVolume(o);
+								fbVolumes.add(volume);
+							}
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(fbVolumes.size()>0){
+					this.stockMainMapper.insertFBVolume(MapUtils.createMap("list",fbVolumes,"symbol",symbol));
+					log.info("插入数据库成功！---"+symbol);
+				}else{
+					log.info("该股票此时间段内无成交量---"+symbol);
+				}
 	}
 }

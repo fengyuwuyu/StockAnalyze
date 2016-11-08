@@ -73,4 +73,6 @@ public interface StockMainMapper {
 	List<String> selectAllCodes();
 
 	void insertStockBuySell(Map<String, Object> createMap);
+
+	void insertFBVolume(Map<String, Object> createMap);
 }

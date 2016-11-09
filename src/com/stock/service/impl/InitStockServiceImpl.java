@@ -427,5 +427,5 @@ public class InitStockServiceImpl implements InitStockServiceI {
 				}else{
 					log.info("该股票此时间段内无成交量---"+symbol);
 				}
-	}
+	}   
 }

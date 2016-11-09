@@ -22,10 +22,12 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stock.connection.HttpClientUtil;
+import com.stock.dao.HolidayMapper;
 import com.stock.dao.StockDetailMapper;
 import com.stock.dao.StockMainMapper;
 import com.stock.model.FBVolume;
 import com.stock.model.StockBuySell;
+import com.stock.model.StockConstant;
 import com.stock.service.InitStockServiceI;
 import com.stock.util.CommonsUtil;
 import com.stock.util.MapUtils;
@@ -37,8 +39,10 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	private static ObjectMapper mapper = new ObjectMapper();
 	private StockDetailMapper stockDetailMapper;
 	private StockMainMapper stockMainMapper;
+	private HolidayMapper holidayMapper;
 	private String timeBak = "";
 	private Logger log = Logger.getLogger(InitStockServiceImpl.class);
+	private int index = 0;
 
 	@Autowired
 	public void setStockDetailMapper(StockDetailMapper stockDetailMapper) {
@@ -48,6 +52,11 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	@Autowired
 	public void setStockMainMapper(StockMainMapper stockMainMapper) {
 		this.stockMainMapper = stockMainMapper;
+	}
+	
+	@Autowired
+	public void setHolidayMapper(HolidayMapper holidayMapper) {
+		this.holidayMapper = holidayMapper;
 	}
 
 	/**
@@ -341,46 +350,89 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	public void insertCJL() {
 		// TODO Auto-generated method stub
 		List<String> symbols = this.stockMainMapper.selectAll();
-		String time = CommonsUtil.formatDateToString4(new Date());
-		String encodeTime = null;
-		try {
-			encodeTime = URLEncoder.encode(time,"utf-8");
-		} catch (UnsupportedEncodingException e) {
-			log.info("编码失败！");
-		}
-		String url = "";
-		if(symbols!=null){
-			List<FBVolume> fbVolumes = new ArrayList<FBVolume>();
-			for (String symbol : symbols) {
-				fbVolumes.clear();
-				url = "http://quotes.money.163.com/service/zhubi_ajax.html?symbol="+symbol+"&end="+encodeTime;
-				log.info(url);
-				HttpEntity entity = HttpClientUtil.get(url);
-				if(entity!=null){
-					try {
-						String content = EntityUtils.toString(entity, "utf-8");
-						LinkedHashMap<String,Object> detail = mapper.readValue(content, LinkedHashMap.class);
-						System.out.println(detail);
-						ArrayList<Object> list = (ArrayList<Object>) detail.get("zhubi_list");
-						if(list!=null&&list.size()>0){
-							for (Object object : list) {
-								LinkedHashMap<String,Object> o = (LinkedHashMap<String, Object>) object;
-								FBVolume volume = new FBVolume(o);
-								fbVolumes.add(volume);
+		while(CommonsUtil.checkTime(this.holidayMapper)){
+			long begin = System.currentTimeMillis();
+			String time = CommonsUtil.formatDateToString4(new Date());
+			String encodeTime = null;
+			try {
+				encodeTime = URLEncoder.encode(time,"utf-8");
+			} catch (UnsupportedEncodingException e) {
+				log.info("编码失败！");
+			}
+			String url = "";
+			if(symbols!=null){
+				List<FBVolume> fbVolumes = new ArrayList<FBVolume>();
+				for (String symbol : symbols) {
+					fbVolumes.clear();
+					url = "http://quotes.money.163.com/service/zhubi_ajax.html?symbol="+symbol+"&end="+encodeTime;
+					log.info(url);
+					HttpEntity entity = HttpClientUtil.get(url);
+					if(entity!=null){
+						try {
+							String content = EntityUtils.toString(entity, "utf-8");
+							LinkedHashMap<String,Object> detail = mapper.readValue(content, LinkedHashMap.class);
+							System.out.println(detail);
+							ArrayList<Object> list = (ArrayList<Object>) detail.get("zhubi_list");
+							if(list!=null&&list.size()>0){
+								for (Object object : list) {
+									LinkedHashMap<String,Object> o = (LinkedHashMap<String, Object>) object;
+									FBVolume volume = new FBVolume(o);
+									fbVolumes.add(volume);
+								}
 							}
+							if(fbVolumes.size()>0){
+								List<FBVolume> inserts = getInsertList("fbVolumes"+symbol, fbVolumes);
+								this.stockMainMapper.insertFBVolume(MapUtils.createMap("list",inserts,"symbol",symbol));
+								putFbVolumes("fbVolumes"+symbol, fbVolumes);
+								log.info("插入数据库成功！---"+symbol);
+							}else{
+								log.info("该股票此时间段内无成交量---"+symbol);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
 				}
-				if(fbVolumes.size()>0){
-					this.stockMainMapper.insertFBVolume(MapUtils.createMap("list",fbVolumes,"symbol",symbol));
-					log.info("插入数据库成功！---"+symbol);
-				}else{
-					log.info("该股票此时间段内无成交量---"+symbol);
+			}
+			long remain = System.currentTimeMillis()-begin;
+			long sleep = StockConstant.INIT_STOCK_SLEEP_TIME - remain;
+			if(sleep>0){
+				try {
+					Thread.sleep(sleep);
+				} catch (InterruptedException e) {
+					log.info(CommonsUtil.join(e.getStackTrace()));
 				}
 			}
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void putFbVolumes(String key,List<FBVolume> fbVolumes){
+		List<FBVolume> list = (List<FBVolume>) StockCache.getCache(key);
+		if(list==null){
+			StockCache.putCache(key, fbVolumes);
+			List<List<FBVolume>> fbVolumes_list = new ArrayList<List<FBVolume>>();
+			fbVolumes_list.add(fbVolumes);
+		}else{
+			List<List<FBVolume>> fbVolumes_list = (List<List<FBVolume>>) StockCache.getCache("fbVolumes_list");
+			if(fbVolumes_list.size()==2){
+				List<FBVolume> temp = fbVolumes_list.remove(0);
+				List<FBVolume> list1 = (List<FBVolume>) StockCache.getCache(key);
+				list1.removeAll(temp);
+				list1.addAll(fbVolumes);
+				fbVolumes_list.add(fbVolumes);
+			}else{
+				fbVolumes_list.add(fbVolumes);
+				((List<FBVolume>) StockCache.getCache(key)).addAll(fbVolumes);
+			}
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<FBVolume> getInsertList(String key,List<FBVolume> fbVolumes){
+		fbVolumes.removeAll((List<FBVolume>) StockCache.getCache(key));
+		return fbVolumes;
 	}
 	
 	public static void main(String[] args) {
@@ -422,7 +474,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 					}
 				}
 				if(fbVolumes.size()>0){
-					this.stockMainMapper.insertFBVolume(MapUtils.createMap("list",fbVolumes,"symbol",symbol));
+//					this.stockMainMapper.insertFBVolume(MapUtils.createMap("list",fbVolumes,"symbol",symbol));
 					log.info("插入数据库成功！---"+symbol);
 				}else{
 					log.info("该股票此时间段内无成交量---"+symbol);

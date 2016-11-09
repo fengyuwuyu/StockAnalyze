@@ -39,23 +39,23 @@ public class ContextListener implements ServletContextListener {
 		StockCache.initPrePrices(stockMainMapper);
 		final TaskJob job = (TaskJob) ac.getBean("taskJob");
 		if (job != null) {
-			ThreadPool.execute(new Runnable() {
+//			ThreadPool.execute(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					log.info("downLoad1启动了！");
+//					job.downLoad1();
+//				}
+//			});
 
-				@Override
-				public void run() {
-					log.info("downLoad1启动了！");
-					job.downLoad1();
-				}
-			});
-
-			ThreadPool.execute(new Runnable() {
-
-				@Override
-				public void run() {
-					log.info("initBuyAndSell启动了！");
-					job.initBuyAndSell();
-				}
-			});
+//			ThreadPool.execute(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					log.info("initBuyAndSell启动了！");
+//					job.initBuyAndSell();
+//				}
+//			});
 			
 //			ThreadPool.execute(new Runnable() {
 //

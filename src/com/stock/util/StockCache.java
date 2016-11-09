@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
@@ -22,6 +23,8 @@ public class StockCache {
 			20);
 	private static List<StockMain> maxIncreaseThreeMinute = new ArrayList<StockMain>();
 	private static List<String> hasNotify = new ArrayList<String>();
+	
+	private static ConcurrentHashMap<Object,Object> cache = new ConcurrentHashMap<Object,Object>();
 
 	/**
 	 * 系统第一次启动时调用，根据数据库中数据初始化prePrices对象
@@ -132,5 +135,14 @@ public class StockCache {
 			return true;
 		}
 		return false;
+	}
+	
+	public static boolean putCache(Object key,Object value){
+		cache.put(key, value);
+		return true;
+	}
+	
+	public static Object getCache(Object key){
+		return cache.get(key);
 	}
 }

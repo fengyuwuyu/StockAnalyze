@@ -343,10 +343,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 		List<String> symbols = this.stockMainMapper.selectAll();
 		String time = CommonsUtil.formatDateToString4(new Date());
 		String encodeTime = null;
-		String begin = "14:45:00";
-		String encodeBegin = null;
 		try {
-			encodeBegin = URLEncoder.encode(begin,"utf-8");
 			encodeTime = URLEncoder.encode(time,"utf-8");
 		} catch (UnsupportedEncodingException e) {
 			log.info("编码失败！");
@@ -356,7 +353,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 			List<FBVolume> fbVolumes = new ArrayList<FBVolume>();
 			for (String symbol : symbols) {
 				fbVolumes.clear();
-				url = "http://quotes.money.163.com/service/zhubi_ajax.html?symbol="+symbol+"&end="+encodeTime+"&begin="+encodeBegin;
+				url = "http://quotes.money.163.com/service/zhubi_ajax.html?symbol="+symbol+"&end="+encodeTime;
 				log.info(url);
 				HttpEntity entity = HttpClientUtil.get(url);
 				if(entity!=null){

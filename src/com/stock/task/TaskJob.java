@@ -126,9 +126,7 @@ public class TaskJob {
 	 */
 	public void initCJL(){
 		try {
-			while(CommonsUtil.checkTime(holidayMapper)){
-				initStockServiceI.initCjmx();
-			}
+			initStockServiceI.initCjmx();
 		} catch (Exception e) {
 			log.info(CommonsUtil.join(e.getStackTrace(), ","));
 			ExceptionLog record = new ExceptionLog(

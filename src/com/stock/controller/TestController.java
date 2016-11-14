@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.stock.dao.StockMainMapper;
 import com.stock.model.CacheItem;
 import com.stock.service.InitStockServiceI;
+import com.stock.service.SearchMachineI;
 import com.stock.service.StockAnalyseJobI;
 import com.stock.service.StockMainServiceI;
 import com.stock.service.StockServiceI;
@@ -26,7 +27,13 @@ public class TestController {
 	private InitStockServiceI initStockServiceI;
 	private StockAnalyseJobI stockAnalyseJobI;
 	private StockMainMapper stockMainMapper;
+	private SearchMachineI searchMachineI;
 	
+	@Autowired
+	public void setSearchMachineI(SearchMachineI searchMachineI) {
+		this.searchMachineI = searchMachineI;
+	}
+
 	@Autowired
 	public void setStockMainMapper(StockMainMapper stockMainMapper) {
 		this.stockMainMapper = stockMainMapper;
@@ -71,7 +78,7 @@ public class TestController {
 	@RequestMapping("test1.do")
 	@ResponseBody
 	public Map<String, Object> test1() throws Exception {
-		initStockServiceI.insertCJL();
+//		initStockServiceI.insertCJL();
 //		stockAnalyseJobI.initStockAnalyse();
 		return MapUtils.createSuccessMap();
 		// this.detailSaveServiceI.volBigIncrease();

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.stock.dao.StockMainMapper;
 import com.stock.util.CommonsUtil;
 
@@ -20,38 +21,51 @@ public class StockMainAnalyse implements Serializable {
 	 */
 	private static final long serialVersionUID = 7325927076713573583L;
 
+	@JsonIgnore
 	private Logger log = Logger.getLogger(StockMainAnalyse.class);
 
 	private String symbol;
 	/** 当天日期 */
+	@JsonIgnore
 	private String now;
 	/** 当天涨幅 */
 	private float nowIncrease;
 	/** 最高价与最低价之差 */
 	private float maxMinIncrease;
 	/** */
+	@JsonIgnore
 	private int maxMinIncreaseType;
 	/** 最低价与当天价格之差 */
+	@JsonIgnore
 	private float minNowIncrease;
 	/** */
+	@JsonIgnore
 	private int minNowIncreaseType;
 	/** 最高价与最低价相隔天数 */
+	@JsonIgnore
 	private int maxMinDays;
 	/** */
+	@JsonIgnore
 	private int maxMinDaysType;
 	/** 最低价与当天相隔天数 */
+	@JsonIgnore
 	private int minNowDays;
 	/** 最低价与当天相隔天数的类型 */
+	@JsonIgnore
 	private int minNowDaysType;
 	/** 连续若干天的股票信息 */
+	@JsonIgnore
 	private List<DayIncrease> dayIncreases;
 	/** 从now开始的若干天的持续涨幅 */
-	private float lastIncrease;
-	private String type;
-	private int count;
+	private double lastIncrease;
+	private int type;
+	@JsonIgnore
 	private int index = -1;
+	@JsonIgnore
 	private int analyseType = 0;
+	@JsonIgnore
 	private StringBuilder builder = new StringBuilder();
+	@JsonIgnore
 	private String data;
 
 	/**
@@ -61,33 +75,71 @@ public class StockMainAnalyse implements Serializable {
 	 */
 	public boolean analyse(String n, int c) {
 		this.now = n;
-		this.count = c;
 		this.analyseType = c;
 		if (dayIncreases != null && dayIncreases.size() > 0) {
 			for (int i = 0; i < dayIncreases.size(); i++) {
-				float temp = dayIncreases.get(i).getIncrease();
 				if (now.equals(dayIncreases.get(i).getDay())) {
 					index = i;
-					nowIncrease = temp;
+					nowIncrease = dayIncreases.get(i).getIncrease();
 				}
 				if (index != -1) {
-					lastIncrease += temp;
-					if (temp <= 0) {
-						chargeType();
+					if(rightTypeStock()){
+						rightStock();
 						return true;
 					}
+					return false;
 				}
 			}
 		}
 		return false;
 	}
 
-	private void chargeType() {
-		int begin = index - count;
-		if (begin < 0) {
-			return;
+	/**
+	 * 判断股票类型
+	 * @return
+	 */
+	private boolean rightTypeStock() {
+		if(index+5>dayIncreases.size()){
+			return false;
 		}
-		getStockAnalyse(begin);
+		int [] temp = getMaxAndMin(dayIncreases,0,index-1);
+		int max = temp[0];
+		int min = temp[1];
+//		if(max>min){
+//			min = getMaxAndMin(dayIncreases,max,index-1)[1];
+//		}
+		if(max<min){
+			maxMinIncrease = (this.dayIncreases.get(max).getClose()-this.dayIncreases.get(min).getClose())*100/this.dayIncreases.get(max).getClose();
+			if(maxMinIncrease<10){
+				this.type = 3;
+			}else{
+				this.type = 1;
+			}
+//			return true;
+		}else{
+			maxMinIncrease = (this.dayIncreases.get(max).getClose()-this.dayIncreases.get(index).getClose())*100/this.dayIncreases.get(max).getClose();
+			if(maxMinIncrease<=0){
+				this.type = 4;
+			}else if(maxMinIncrease<=10){
+				this.type = 3;
+			}else{
+				this.type = 2;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 计算5天内涨幅
+	 * @return
+	 */
+	private boolean rightStock() {
+		int max = this.getMaxAndMin(dayIncreases, index+1, index+5)[0];
+		this.lastIncrease = (dayIncreases.get(max).getClose()-dayIncreases.get(index).getClose())*100/dayIncreases.get(index).getClose();
+		if(this.lastIncrease>=10){
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -96,68 +148,7 @@ public class StockMainAnalyse implements Serializable {
 	 * @param list
 	 * @return
 	 */
-	private void getStockAnalyse(int begin) {
-		DayIncrease maxStock = null;
-		DayIncrease minStock = null;
-		Integer end = index - 1;
-		Integer max = begin;
-		Integer min = begin;
-		maxStock = dayIncreases.get(begin);
-		minStock = dayIncreases.get(begin);
-		builder.append(dayIncreases.get(begin).getIncrease() + ", ");
-		for (int i = begin + 1; i <= end; i++) {
-			builder.append(dayIncreases.get(i).getIncrease() + ", ");
-			if (dayIncreases.get(i).getClose() > maxStock.getClose()) {
-				maxStock = dayIncreases.get(i);
-				max = i;
-			} else if (dayIncreases.get(i).getClose() < minStock.getClose()) {
-				minStock = dayIncreases.get(i);
-				min = i;
-			}
-		}
-		this.data = builder.toString();
-		DayIncrease beginStock = dayIncreases.get(begin);
-		DayIncrease endStock = dayIncreases.get(end);
-		float beginClose = beginStock.getClose();
-		float endClose = endStock.getClose();
-		float minClose = minStock.getClose();
-		float maxClose = maxStock.getClose();
-		int type1 = 0;
-		int type2 = 0;
-		int type3 = 0;
-		if ((maxClose - minClose) < 10) {
-			type1 = 3;
-			type2 = 3;
-			type3 = 3;
-		} else {
-			if (max > min) {
-				type2 = 1;
-				if ((beginClose - minClose) >= 10) {
-					type1 = 2;
-				} else {
-					type1 = 3;
-				}
-				if ((maxClose - endClose) >= 10) {
-					type3 = 2;
-				} else {
-					type3 = 3;
-				}
-			} else {
-				type2 = 2;
-				if ((maxClose - beginClose) > 10) {
-					type1 = 1;
-				} else {
-					type1 = 3;
-				}
-				if ((endClose - minClose) >= 10) {
-					type3 = 1;
-				} else {
-					type3 = 3;
-				}
-			}
-		}
-		this.type = "" + type1 + type2 + type3;
-	}
+	private void getStockAnalyse(int begin) {}
 
 	/**
 	 * 判断连续的50天内波动情况
@@ -226,7 +217,7 @@ public class StockMainAnalyse implements Serializable {
 		}
 		return new int[] { max, min };
 	}
-
+	
 	public String getSymbol() {
 		return symbol;
 	}
@@ -259,19 +250,20 @@ public class StockMainAnalyse implements Serializable {
 		this.dayIncreases = dayIncreases;
 	}
 
-	public float getLastIncrease() {
+	public double getLastIncrease() {
 		return lastIncrease;
 	}
 
-	public void setLastIncrease(float lastIncrease) {
+	public void setLastIncrease(double lastIncrease) {
 		this.lastIncrease = lastIncrease;
 	}
 
-	public String getType() {
+	/** 1：先跌后涨；2：先涨后跌；3：震荡；4：仍在上涨*/
+	public int getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(int type) {
 		this.type = type;
 	}
 

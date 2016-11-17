@@ -28,7 +28,7 @@
   
    <resultMap type="com.stock.model.StockMainAnalyse" id="StockMainAnalyse">
   	<result column="symbol" property="symbol"/>
-  	<collection property="list" ofType="com.stock.model.DayIncrease" javaType="java.util.List">
+  	<collection property="dayIncreases" ofType="com.stock.model.DayIncrease" javaType="java.util.List">
   		<result column="day" property="day"/>
   		<result column="increase" property="increase"/>
   		<result column="open" property="open"/>
@@ -289,7 +289,7 @@
   
   <select id="selectAnalyse" resultMap="StockMainAnalyse" parameterType="string">
   		select symbol,increase,day,close from stock_main
-  		   where day BETWEEN DATE_ADD(#{begin},INTERVAL -60 day)  and DATE_ADD(#{begin},INTERVAL 20 day) order by symbol,day
+  		   where day BETWEEN DATE_ADD(#{begin},INTERVAL -70 day)  and DATE_ADD(#{begin},INTERVAL 20 day) order by symbol,day
   </select>
   
   <insert id="insertStockMainAnalyse" parameterType="java.util.Map">

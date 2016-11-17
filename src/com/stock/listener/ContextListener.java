@@ -66,14 +66,14 @@ public class ContextListener implements ServletContextListener {
 //				}
 //			});
 			
-			ThreadPool.execute(new Runnable() {
-				
-				@Override
-				public void run() {
-					log.info("initCJL启动了！");
-					job.initCJL();
-				}
-			});
+//			ThreadPool.execute(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					log.info("initCJL启动了！");
+//					job.initCJL();
+//				}
+//			});
 		}
 
 		// Properties properties = new Properties();

@@ -16,13 +16,15 @@
        
     <!-- 定义工作类 -->
     <bean id="taskJob" class="com.stock.task.TaskJob"></bean>
-    <bean id="teskJob" class="com.stock.task.TestJob"></bean>
     
     <!-- 注册定时器  -->
     <task:scheduled-tasks> 
     	<task:scheduled ref="taskJob" method="downLoad1" cron="5 30 9 * * *"/> 
     	<task:scheduled ref="taskJob" method="downLoad1" cron="5 0 13 * * *"/>
+    	<task:scheduled ref="taskJob" method="initBuyAndSell" cron="5 30 9 * * *"/> 
+    	<task:scheduled ref="taskJob" method="initBuyAndSell" cron="5 0 13 * * *"/> 
     	<task:scheduled ref="taskJob" method="initStockEveryDay" cron="0 20 17 * * *"/>
+    	<task:scheduled ref="taskJob" method="initCJL" cron="0 30 17 * * *"/>
 	</task:scheduled-tasks> 
     
 

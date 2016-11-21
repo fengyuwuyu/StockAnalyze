@@ -15,10 +15,6 @@ import com.stock.service.SearchMachineI;
 import com.stock.util.CommonsUtil;
 import com.stock.util.MapUtils;
 
-/**
- * 搜索器，针对从该天气之后的5天涨幅超过10%股票进行统计分析
- *  * @author lilei
- */
 @Service
 public class SearchMachineImpl implements SearchMachineI {
 	
@@ -65,8 +61,11 @@ public class SearchMachineImpl implements SearchMachineI {
 		return MapUtils.createSuccessMap();
 	}
 	
-	private List<StockMain> findDownStock(String begin){
-		
+	public List<StockMain> findGlodStock(StockQuery query){
+		/**
+		 * 初始：计算3、5、9、13、19、21、27、37、49、65日均线
+		 * 目标：找出股价高出穿越均线的股票
+		 */
 		return null;
 	}
 } 

@@ -18,7 +18,11 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stock.connection.HttpClientUtil;
@@ -26,6 +30,7 @@ import com.stock.dao.HolidayMapper;
 import com.stock.dao.StockDetailMapper;
 import com.stock.dao.StockMainMapper;
 import com.stock.model.FBVolume;
+import com.stock.model.StockAnalyseBase;
 import com.stock.model.StockBuySell;
 import com.stock.model.StockConstant;
 import com.stock.service.InitStockServiceI;
@@ -42,7 +47,12 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	private HolidayMapper holidayMapper;
 	private String timeBak = "";
 	private Logger log = Logger.getLogger(InitStockServiceImpl.class);
-	private int index = 0;
+	private DataSourceTransactionManager transactionManager;
+	
+	@Autowired
+	public void setTransactionManager(DataSourceTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
 
 	@Autowired
 	public void setStockDetailMapper(StockDetailMapper stockDetailMapper) {
@@ -480,4 +490,47 @@ public class InitStockServiceImpl implements InitStockServiceI {
 					log.info("该股票此时间段内无成交量---"+symbol);
 				}
 	}   
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void initJunX(String symbol) throws Exception{
+		StockAnalyseBase analyseBase = stockMainMapper.selectStockAnalyse(MapUtils.createMap("symbol",symbol));
+		if(analyseBase!=null){
+			analyseBase.initJunXian();
+			if(analyseBase.junxians.size()>0){
+				DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+				def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+				TransactionStatus status = transactionManager.getTransaction(def);
+				stockMainMapper.insertJunXian(analyseBase);
+				transactionManager.commit(status);
+//				log.info("insert----------"+symbol+"---------------------size------"+analyseBase.junxians.size());
+			}
+			log.info("insert----------"+symbol+"---------------------size------"+analyseBase.junxians.size());
+		}
+	}
+	
+	public void initJunXEveryDay(){
+		
+	}
+	
+	
 }

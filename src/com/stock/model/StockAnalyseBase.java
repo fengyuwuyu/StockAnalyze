@@ -1,5 +1,6 @@
 package com.stock.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -10,7 +11,6 @@ public class StockAnalyseBase {
 
 	private String symbol;
 	private List<DayIncrease> list;
-
 	/** 统计的日期 */
 	private String nowDay;
 	/** 改天的涨幅 */
@@ -41,6 +41,7 @@ public class StockAnalyseBase {
 	private String minIncreases;
 	private int index;
 	private Logger log = Logger.getLogger(StockAnalyseBase.class);
+	public List<JunXianDomain> junxians = new ArrayList<JunXianDomain>();
 
 	public StockAnalyseBase() {
 	}
@@ -184,7 +185,10 @@ public class StockAnalyseBase {
 				computPrice();
 				computVolume();
 				computZf();
-				analyseBases.add(new StockAnalyseBase(symbol, nowDay, nowIncrease, nowVol, lastIncrease, priceType, priceIncrease1, priceIncrease2, priceDay1, priceDay2, vols, maxIncreases, minIncreases));
+				analyseBases.add(new StockAnalyseBase(symbol, nowDay,
+						nowIncrease, nowVol, lastIncrease, priceType,
+						priceIncrease1, priceIncrease2, priceDay1, priceDay2,
+						vols, maxIncreases, minIncreases));
 				initField();
 			}
 		}
@@ -234,8 +238,10 @@ public class StockAnalyseBase {
 		}
 		this.priceIncrease1 = (maxDay.getClose() - minDay.getClose()) * 100
 				/ maxDay.getClose();
-		if(this.priceIncrease1<=0){
-			log .info("max--"+max+"maxDay.getClose()--"+maxDay.getClose()+"--min--"+max+"--minDay.getClose()--"+minDay.getClose());
+		if (this.priceIncrease1 <= 0) {
+			log.info("max--" + max + "maxDay.getClose()--" + maxDay.getClose()
+					+ "--min--" + max + "--minDay.getClose()--"
+					+ minDay.getClose());
 		}
 		this.priceDay1 = CommonsUtil.getDayDiff(maxDay.getDay(),
 				minDay.getDay());
@@ -289,6 +295,156 @@ public class StockAnalyseBase {
 			}
 		}
 		return new int[] { max, min };
+	}
+
+	public void initJunXian() {
+		if (list != null && list.size() > 0) {
+			for (int i = 64; i < list.size(); i++) {
+				String time = list.get(i).getDay();
+				float day = list.get(i).getClose();
+				float five = computeJunXian(i, 5);
+				float nine = computeJunXian(i, 9);
+				float thirteen = computeJunXian(i, 13);
+				float nineteen = computeJunXian(i, 19);
+				float twentySeven = computeJunXian(i, 27);
+				float thirtyNine = computeJunXian(i, 39);
+				float fourtyNine = computeJunXian(i, 49);
+				float sixtyFive = computeJunXian(i, 65);
+				JunXianDomain domain = new JunXianDomain(time, day, five, nine,
+						thirteen, nineteen, twentySeven, thirtyNine,
+						fourtyNine, sixtyFive);
+				junxians.add(domain);
+			}
+		}
+	}
+
+	private float computeJunXian(int i, int count) {
+		float sum = 0;
+		for (int j = i - count + 1; j <= i; j++) {
+			sum += list.get(j).getClose();
+		}
+		return sum / count;
+	}
+
+	class JunXianDomain {
+		private String time;
+		private float day;
+		private float five;
+		private float nine;
+		private float thirteen;
+		private float nineteen;
+		private float twentySeven;
+		private float thirtyNine;
+		private float fourtyNine;
+		private float sixtyFive;
+
+		public JunXianDomain() {
+		}
+
+		public JunXianDomain(String time, float day, float five, float nine,
+				float thirteen, float nineteen, float twentySeven,
+				float thirtyNine, float fourtyNine, float sixtyFive) {
+			this.time = time;
+			this.day = day;
+			this.five = five;
+			this.nine = nine;
+			this.thirteen = thirteen;
+			this.nineteen = nineteen;
+			this.twentySeven = twentySeven;
+			this.thirtyNine = thirtyNine;
+			this.fourtyNine = fourtyNine;
+			this.sixtyFive = sixtyFive;
+		}
+
+		public float getFive() {
+			return five;
+		}
+
+		public void setFive(float five) {
+			this.five = five;
+		}
+
+		public float getNine() {
+			return nine;
+		}
+
+		public void setNine(float nine) {
+			this.nine = nine;
+		}
+
+		public float getThirteen() {
+			return thirteen;
+		}
+
+		public void setThirteen(float thirteen) {
+			this.thirteen = thirteen;
+		}
+
+		public float getNineteen() {
+			return nineteen;
+		}
+
+		public void setNineteen(float nineteen) {
+			this.nineteen = nineteen;
+		}
+
+		public float getTwentySeven() {
+			return twentySeven;
+		}
+
+		public void setTwentySeven(float twentySeven) {
+			this.twentySeven = twentySeven;
+		}
+
+		public float getThirtyNine() {
+			return thirtyNine;
+		}
+
+		public void setThirtyNine(float thirtyNine) {
+			this.thirtyNine = thirtyNine;
+		}
+
+		public float getFourtyNine() {
+			return fourtyNine;
+		}
+
+		public void setFourtyNine(float fourtyNine) {
+			this.fourtyNine = fourtyNine;
+		}
+
+		public float getSixtyFive() {
+			return sixtyFive;
+		}
+
+		public void setSixtyFive(float sixtyFive) {
+			this.sixtyFive = sixtyFive;
+		}
+
+		public float getDay() {
+			return day;
+		}
+
+		public void setDay(float day) {
+			this.day = day;
+		}
+
+		public String getTime() {
+			return time;
+		}
+
+		public void setTime(String time) {
+			this.time = time;
+		}
+
+		@Override
+		public String toString() {
+			return "JunXianDomain [day=" + day + ", five=" + five + ", nine="
+					+ nine + ", thirteen=" + thirteen + ", nineteen="
+					+ nineteen + ", twentySeven=" + twentySeven
+					+ ", thirtyNine=" + thirtyNine + ", fourtyNine="
+					+ fourtyNine + ", sixtyFive=" + sixtyFive + "]";
+		}
+
 	}
 
 	@Override

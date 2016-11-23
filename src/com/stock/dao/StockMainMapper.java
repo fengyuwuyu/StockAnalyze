@@ -75,4 +75,6 @@ public interface StockMainMapper {
 	void insertStockBuySell(Map<String, Object> createMap);
 
 	void insertFBVolume(Map<String, Object> createMap);
+
+	void insertJunXian(StockAnalyseBase analyseBase);
 }

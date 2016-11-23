@@ -350,4 +350,11 @@
   		(#{symbol},#{item.TRADE_TYPE},#{item.VOLUME_INC},#{item.PRICE},#{item.PRICE_PRE},#{item.PRICE_INC},#{item.DATE_STR},#{item.TRADE_TYPE_STR})
   	</foreach>
   </insert>
+  
+  <insert id="insertJunXian" parameterType="com.stock.model.StockAnalyseBase">
+  		insert into junxian(symbol,time,day,five,nine,thirteen,nineteen,twentySeven,thirtyNine,fourtyNine,sixtyFive) values
+  		<foreach collection="junxians" item="item" separator=",">
+  			(#{symbol},#{item.time},#{item.day},#{item.five},#{item.nine},#{item.thirteen},#{item.nineteen},#{item.twentySeven},#{item.thirtyNine},#{item.fourtyNine},#{item.sixtyFive})
+  		</foreach>
+  </insert>
 </mapper>

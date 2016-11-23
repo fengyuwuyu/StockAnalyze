@@ -66,6 +66,7 @@ public class SearchMachineImpl implements SearchMachineI {
 		 * 初始：计算3、5、9、13、19、21、27、37、49、65日均线
 		 * 目标：找出股价高出穿越均线的股票
 		 */
+		
 		return null;
 	}
 } 

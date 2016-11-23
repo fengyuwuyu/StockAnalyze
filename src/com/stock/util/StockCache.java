@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 
 import com.stock.dao.StockMainMapper;
@@ -25,6 +28,7 @@ public class StockCache {
 	private static List<String> hasNotify = new ArrayList<String>();
 	
 	private static ConcurrentHashMap<Object,Object> cache = new ConcurrentHashMap<Object,Object>();
+	private static SqlSessionFactory sqlSessionFactory = null;
 
 	/**
 	 * 系统第一次启动时调用，根据数据库中数据初始化prePrices对象
@@ -144,5 +148,20 @@ public class StockCache {
 	
 	public static Object getCache(Object key){
 		return cache.get(key);
+	}
+
+	public static void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		StockCache.sqlSessionFactory = sqlSessionFactory;
+	}
+	
+	/**
+	 * 主要用于用户需要自己维护事务的SqlSession
+	 * @param auto
+	 * @return
+	 */
+	public static SqlSession openSession(boolean auto){
+		if(sqlSessionFactory==null)
+			return null;
+		return sqlSessionFactory.openSession(ExecutorType.BATCH, auto);
 	}
 }

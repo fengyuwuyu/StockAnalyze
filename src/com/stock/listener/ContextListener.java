@@ -5,6 +5,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -12,7 +13,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.stock.dao.StockMainMapper;
 import com.stock.task.TaskJob;
 import com.stock.util.StockCache;
-import com.stock.util.ThreadPool;
 
 /**
  * 系统启动后加载配置文件：stock_interface.properties
@@ -35,6 +35,10 @@ public class ContextListener implements ServletContextListener {
 		ServletContext context = arg0.getServletContext();
 		ApplicationContext ac = WebApplicationContextUtils
 				.getWebApplicationContext(context);
+		//初始化StockCache.setSqlSessionFactory
+		SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) ac.getBean("sqlSessionFactory");
+		StockCache.setSqlSessionFactory(sqlSessionFactory);
+		
 		StockMainMapper stockMainMapper = ac.getBean(StockMainMapper.class);
 		StockCache.initPrePrices(stockMainMapper);
 		final TaskJob job = (TaskJob) ac.getBean("taskJob");
@@ -100,6 +104,7 @@ public class ContextListener implements ServletContextListener {
 		// log.error(CommonsUtil.join(e.getStackTrace(), ",\n\r"));
 		// }
 
+		log.info("contextListener启动了");
 	}
 
 }

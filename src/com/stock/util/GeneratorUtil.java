@@ -20,7 +20,7 @@ public class GeneratorUtil {
         //覆盖已有的重名文件
         boolean overwrite = true;
         //准备 配置文件
-        File configFile = new File("C:/workspace/git/StockAnalyze/WebRoot/WEB-INF/classes/generatorConfig.xml");
+        File configFile = new File("C://Users//ll//git//StockAnalyze//WebRoot//WEB-INF//classes/generatorConfig.xml");
         //创建 配置解析器
         ConfigurationParser parser = new ConfigurationParser(warnings);
         //获取 配置信息

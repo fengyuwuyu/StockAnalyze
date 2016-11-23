@@ -19,4 +19,15 @@ public interface InitStockServiceI {
 	Map<String,Object> initCjmx() throws Exception;
 
 	void insertCJL();
+	
+	/**
+	 * 初始化均线
+	 * 只调用一次
+	 */
+	public void initJunX(String symbol)  throws Exception;
+	
+	/**
+	 * 每日计算新增均线
+	 */
+	public void initJunXEveryDay();
 }

@@ -25,7 +25,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   	<!-- <input  id="bb" type="hidden" class="easyui-datebox" />
  	<input id="aa" type="hidden" class="easyui-datebox" />  -->
   	<input type="hidden" id="symbol" value="${symbol }" />
-  	<div id="container"></div>
+  	<div id="container" style="width:100%,height:100%"></div>
   	
   	<script type="text/javascript" src="${pageContext.request.contextPath }/js/commons/jquery-1.11.0-min.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-easyui-1.4.0/jquery.easyui.min.js"></script>

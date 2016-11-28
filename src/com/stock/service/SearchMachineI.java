@@ -16,12 +16,21 @@ public interface SearchMachineI {
 	Map<String,Object> find(StockQuery query);
 	
 	/**
-	 * 查找处于黄金交叉点的股票
-	 * @param begin
+	 * 根据list查找处于黄金交叉点的股票
+	 * @param query
+	 * @param list
 	 * @return
 	 */
-	List<StockMain> findGlodStock(StockQuery query);
+	List<StockMain> findGlodStock(StockQuery query,List<StockMain> list);
 	
-	Map<String,Object> searcher();
+	/**
+	 * 根据list查找处于低位的股票
+	 * @param query
+	 * @param list
+	 * @return
+	 */
+	List<StockMain> findLowPoint(StockQuery query,List<StockMain> list);
+	
+	Map<String,Object> searcher(StockQuery query);
 	
 }

@@ -75,7 +75,7 @@ $(function () {
                 title: {
                     text: '股价'
                 },
-                height: '60%',
+                height: '70%',
                 lineWidth: 2
             }, {
                 labels: {
@@ -85,7 +85,7 @@ $(function () {
                 title: {
                     text: '成交量'
                 },
-                top: '65%',
+                top: '75%',
                 height: '35%',
                 offset: 0,
                 lineWidth: 2

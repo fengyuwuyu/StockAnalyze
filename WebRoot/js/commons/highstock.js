@@ -1349,7 +1349,8 @@
             };
         }
         if (!isNumber(opt.duration)) {
-            opt.duration = 400;
+            opt.duration = 800;
+            ////
         }
         opt.easing = typeof opt.easing === 'function' ? opt.easing : (Math[opt.easing] || Math.easeInOutSine);
         opt.curAnim = merge(params);
@@ -2634,10 +2635,11 @@
          * @param {Number} x
          * @param {Number} y
          */
+        //////
         translate: function (x, y) {
             return this.attr({
-                translateX: x,
-                translateY: y
+                translateX: 2015,
+                translateY: 1000
             });
         },
 
@@ -3321,6 +3323,8 @@
          * @param {Boolean} forExport
          */
         init: function (container, width, height, style, forExport, allowHTML) {
+        	width = 2015;
+        	height = 1000;
             var renderer = this,
                 boxWrapper,
                 element,
@@ -3962,7 +3966,7 @@
          * @param {Number} strokeWidth A stroke width can be supplied to allow crisp drawing
          */
         rect: function (x, y, width, height, r, strokeWidth) {
-
+        	width = 2015,height = 1000;
             r = isObject(x) ? x.r : r;
 
             var wrapper = this.createElement('rect'),
@@ -12506,7 +12510,7 @@
             chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
             chart.chartHeight = mathMax(0, pick(heightOption,
                 // the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
-                chart.containerHeight > 19 ? chart.containerHeight : 400));
+                chart.containerHeight > 19 ? chart.containerHeight : 1000));
         },
 
         /**
@@ -21469,6 +21473,8 @@
                     bottomBox = mathRound(bottomBox) + crispCorr;
                     bottomBox = 110-min;
                     topBox = bottomBox - math.abs((open1-close1)*300/((open1+close1)/2));
+                    bottomBox+=300;
+                    topBox+=300;
                     // Create the path. Due to a bug in Chrome 49, the path is first instanciated
                     // with no values, then the values pushed. For unknown reasons, instanciated
                     // the path array with all the values would lead to a crash when updating

@@ -16,7 +16,7 @@ public class CacheItem {
 	/** 当前成交量 */
 	private long nowVol;
 	/** 当天成交量涨幅 */
-	private float currDayVol;
+//	private float currDayVol;
 	/** 相比前一刻成交量涨幅 */
 //	private float currVol;
 	/** 当天股价涨幅 */
@@ -32,7 +32,6 @@ public class CacheItem {
 	}
 
 	public CacheItem(String symbol, float nowPrice, long nowVol) {
-		super();
 		this.symbol = symbol;
 		this.nowPrice = nowPrice;
 		this.nowVol = nowVol;

@@ -1,7 +1,6 @@
 package com.stock.util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,8 +15,15 @@ import org.apache.log4j.Logger;
 import com.stock.dao.StockMainMapper;
 import com.stock.model.CacheItem;
 import com.stock.model.StockConstant;
-import com.stock.model.StockMain;
 
+/**
+ * 功能：
+ * 	1、根据委卖委买数据计算当天股价涨幅以及当前股价涨幅（间隔可自由控制）
+ * 	2、计算当天成交量涨幅及当前成交量涨幅（间隔与当前股价间隔相同）
+ * 	3、计算委卖委买笔数
+ * @author ll
+ *
+ */
 public class StockCache {
 
 	public static Map<String, CacheItem> prePrices = new HashMap<String, CacheItem>();
@@ -87,10 +93,10 @@ public class StockCache {
 		float price = Float.valueOf( m.get("PRICE")+"");
 		float oldPrice = prePrices.get(symbol).getNowPrice();
 		float oldClose = prePrices.get(symbol).getYestClose();
-		float open = Float.valueOf( m.get("OPEN")+"");
+//		float open = Float.valueOf( m.get("OPEN")+"");
 		long vol = (Integer) m.get("VOLUME");
-		float increase = Float.valueOf( m.get("PERCENT")+"");
-		CacheItem main = new CacheItem(symbol, open, price, vol, increase);
+//		float increase = Float.valueOf( m.get("PERCENT")+"");
+		CacheItem main = new CacheItem(symbol, price, vol);
 		if ((price - oldPrice) * 100 / oldPrice >= StockConstant.THREE_MINUTE_MAX_INCREASE) {
 			
 		}

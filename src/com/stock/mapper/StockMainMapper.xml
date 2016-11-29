@@ -325,7 +325,7 @@
   </resultMap>
   
   <select id="initPrePrices" resultMap="CacheItem">
-  	select symbol,close,close price from stock_main where day = (select DATE_ADD(left(time,10),INTERVAL -1 day) from stock_detail where id=(select max(id) from stock_detail))
+  	  select symbol,close,close price,volume yestVol,volume from stock_main where day = (select max(day) from stock_main)
   </select>
   
   <select id="selectAllCodes" resultType="string">

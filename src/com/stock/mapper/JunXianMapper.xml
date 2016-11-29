@@ -4,6 +4,8 @@
   <resultMap id="BaseResultMap" type="com.stock.model.JunXian" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="symbol" property="symbol" jdbcType="CHAR" />
+    <result column="time" property="time" jdbcType="CHAR" />
+    <result column="day" property="day" jdbcType="REAL" />
     <result column="five" property="five" jdbcType="REAL" />
     <result column="nine" property="nine" jdbcType="REAL" />
     <result column="thirteen" property="thirteen" jdbcType="REAL" />
@@ -152,4 +154,23 @@
       sixtyFive = #{sixtyfive,jdbcType=REAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectNeed" parameterType="com.stock.model.JunXian" resultMap="BaseResultMap">
+  	select * from junxian where day>five and day>nine and day >thirteen and day >nineteen 
+  	and day >twentySeven and day >thirtyNine and day >fourtyNine and day >sixtyFive 
+  	<where>
+  		<trim suffixOverrides="and">
+  			<if test="symbol!=null">
+  			symbol = #{symbol} and 
+  		</if>
+  		<if test="time!=null">
+  			time = #{time} and 
+  		</if>
+  		<if test="begin!=null and end != null">
+  			time between #{begin} and #{end}
+  		</if>
+  		</trim>
+  	</where>
+  	ORDER BY time DESC
+  </select>
 </mapper>

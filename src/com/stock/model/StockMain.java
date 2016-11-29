@@ -132,8 +132,6 @@ public class StockMain implements Comparable<StockMain> {
 				+ increase + "]";
 	}
 
-
-
 	@Override
 	public int compareTo(StockMain o) {
 		return (int) (this.getIncrease()-o.getIncrease());

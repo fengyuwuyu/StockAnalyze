@@ -22,9 +22,8 @@ public class StockCache {
 
 	public static Map<String, CacheItem> prePrices = new HashMap<String, CacheItem>();
 	private static Logger log = Logger.getLogger(StockCache.class);
-	private static List<StockMain> maxIncreaseStocks = new ArrayList<StockMain>(
-			20);
-	private static List<StockMain> maxIncreaseThreeMinute = new ArrayList<StockMain>();
+	private static List<CacheItem> maxIncreaseStocks = new ArrayList<CacheItem>(10);
+	private static List<CacheItem> maxIncreaseThreeMinute = new ArrayList<CacheItem>(10);
 	private static List<String> hasNotify = new ArrayList<String>();
 	
 	private static ConcurrentHashMap<Object,Object> cache = new ConcurrentHashMap<Object,Object>();
@@ -86,27 +85,26 @@ public class StockCache {
 			return ;
 		}
 		float price = Float.valueOf( m.get("PRICE")+"");
-		float oldPrice = prePrices.get(symbol).getPrice();
-		float oldClose = prePrices.get(symbol).getClose();
+		float oldPrice = prePrices.get(symbol).getNowPrice();
+		float oldClose = prePrices.get(symbol).getYestClose();
 		float open = Float.valueOf( m.get("OPEN")+"");
 		long vol = (Integer) m.get("VOLUME");
 		float increase = Float.valueOf( m.get("PERCENT")+"");
-		StockMain main = new StockMain(symbol, open, price, vol, increase);
+		CacheItem main = new CacheItem(symbol, open, price, vol, increase);
 		if ((price - oldPrice) * 100 / oldPrice >= StockConstant.THREE_MINUTE_MAX_INCREASE) {
-			main.setIncrease((price - oldPrice) * 100 / oldPrice);
-			addMaxIncreaseThreeMinute( main);
+			
 		}
 		if ((price - oldClose) * 100 / oldClose >= StockConstant.MAX_INCREASE) {
 			addMaxIncreaseStocks(main);
 		}
-		prePrices.get(symbol).setPrice(price);
+		prePrices.get(symbol).setNowPrice(price);
 	}
 
 	private static void findMaxIncrease() {
 
 	}
 
-	private static void addMaxIncreaseStocks(StockMain main) {
+	private static void addMaxIncreaseStocks(CacheItem main) {
 		if(hasNotify(main)){
 			return ;
 		}
@@ -114,27 +112,27 @@ public class StockCache {
 		if (maxIncreaseStocks.size() < 20) {
 			maxIncreaseStocks.add(main);
 		} else {
-			Collections.sort(maxIncreaseStocks);
-			if (main.getIncrease() > maxIncreaseStocks.get(19).getIncrease()) {
-				maxIncreaseStocks.remove(19);
-				maxIncreaseStocks.add(main);
-			}
+//			Collections.sort(maxIncreaseStocks);
+//			if (main.getIncrease() > maxIncreaseStocks.get(19).getIncrease()) {
+//				maxIncreaseStocks.remove(19);
+//				maxIncreaseStocks.add(main);
+//			}
 		}
 	}
 	
-	private static void addMaxIncreaseThreeMinute(StockMain main) {
+	private static void addMaxIncreaseThreeMinute(CacheItem main) {
 		if (maxIncreaseThreeMinute.size() < 20) {
 			maxIncreaseThreeMinute.add(main);
 		} else {
-			Collections.sort(maxIncreaseThreeMinute);
-			if (main.getIncrease() > maxIncreaseThreeMinute.get(19).getIncrease()) {
-				maxIncreaseThreeMinute.remove(19);
-				maxIncreaseThreeMinute.add(main);
-			}
+//			Collections.sort(maxIncreaseThreeMinute);
+//			if (main.getIncrease() > maxIncreaseThreeMinute.get(19).getIncrease()) {
+//				maxIncreaseThreeMinute.remove(19);
+//				maxIncreaseThreeMinute.add(main);
+//			}
 		}
 	}
 	
-	private static boolean hasNotify(StockMain main){
+	private static boolean hasNotify(CacheItem main){
 		if(hasNotify.indexOf(main.getSymbol())!=-1){
 			return true;
 		}

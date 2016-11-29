@@ -39,9 +39,13 @@ public class StockAnalyseBase {
 	private String maxIncreases;
 	/** 连续5天最小震幅走势 */
 	private String minIncreases;
+	private float maxMinIncrease;
+	private float minMaxIncrease;
+	private float maxNowIncrease;
+	private float minNowIncrease;
 	private int index;
 	private Logger log = Logger.getLogger(StockAnalyseBase.class);
-	public List<JunXianDomain> junxians = new ArrayList<JunXianDomain>();
+	public List<JunXian> junxians = new ArrayList<JunXian>();
 
 	public StockAnalyseBase() {
 	}
@@ -66,6 +70,196 @@ public class StockAnalyseBase {
 		this.minIncreases = minIncreases;
 	}
 
+	public void initAnalyse(List<StockAnalyseBase> analyseBases) {
+		index = 50;
+		while (index < list.size() - 50) {
+			// if (computeLastIncrease()) {
+			if (true) {
+				computPrice();
+				computVolume();
+				computZf();
+				analyseBases.add(new StockAnalyseBase(symbol, nowDay,
+						nowIncrease, nowVol, lastIncrease, priceType,
+						priceIncrease1, priceIncrease2, priceDay1, priceDay2,
+						vols, maxIncreases, minIncreases));
+				initField();
+			}
+		}
+	}
+
+	// private void insert(StockMainMapper stockMainMapper) {
+	// stockMainMapper.insertStockAnaylseBase(this);
+	// }
+
+	private void initField() {
+		this.nowIncrease = list.get(index).getIncrease();
+		this.nowVol = list.get(index).getVolume();
+		this.lastIncrease = 0;
+		this.priceType = "";
+		this.priceIncrease1 = 0;
+		this.priceIncrease2 = 0;
+		this.priceDay1 = 0;
+		this.priceDay2 = 0;
+		this.vols = "";
+		this.maxIncreases = "";
+		this.minIncreases = "";
+	}
+
+	private boolean computeLastIncrease() {
+		int begin = this.index + 1, end = this.index + 5;
+		int max = getMaxMin(begin, end)[0];
+		this.lastIncrease = (list.get(max).getClose() - list.get(begin)
+				.getClose()) * 100 / list.get(begin).getClose();
+		this.index += 3;
+		if (this.lastIncrease >= 10) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 计算价格走势
+	 */
+	private void computPrice() {
+		int max = getMaxMin(index - 50, index)[0];
+		int min = getMaxMin(index - 50, index)[1];
+		DayIncrease maxDay = list.get(max);
+		DayIncrease minDay = list.get(min);
+		DayIncrease nowDay = list.get(index);
+		if (max > min) {
+			minMaxIncrease = (maxDay.getClose()-minDay.getClose())*100/minDay.getClose();
+			maxNowIncrease = (maxDay.getClose()-nowDay.getClose())*100/maxDay.getClose();
+		} else {
+			maxMinIncrease = (maxDay.getClose()-minDay.getClose())*100/maxDay.getClose();
+			minNowIncrease = (nowDay.getClose()-minDay.getClose())*100/minDay.getClose();
+		}
+
+		if (max > min) {
+			min = getMaxMin(max, index)[1];
+			minDay = list.get(min);
+		}
+		this.priceIncrease1 = (maxDay.getClose() - minDay.getClose()) * 100
+				/ maxDay.getClose();
+		if (this.priceIncrease1 <= 0) {
+			log.info("max--" + max + "maxDay.getClose()--" + maxDay.getClose()
+					+ "--min--" + max + "--minDay.getClose()--"
+					+ minDay.getClose());
+		}
+		this.priceDay1 = CommonsUtil.getDayDiff(maxDay.getDay(),
+				minDay.getDay());
+		if (minDay.getClose() < list.get(index).getClose()) {
+			this.priceType = "21";
+			this.priceIncrease2 = (list.get(index).getClose() - minDay
+					.getClose()) * 100 / minDay.getClose();
+			this.priceDay2 = CommonsUtil.getDayDiff(minDay.getDay(),
+					list.get(index).getDay());
+		} else {
+			this.priceType = "20";
+		}
+		this.priceDay1 = CommonsUtil.getDayDiff(list.get(max).getDay(), list
+				.get(min).getDay());
+		this.priceDay2 = CommonsUtil.getDayDiff(list.get(min).getDay(), list
+				.get(index).getDay());
+	}
+
+	private void computVolume() {
+		for (int i = index - 10; i <= index; i++) {
+			this.vols += list.get(i).getVolume() + ", ";
+		}
+		this.vols.substring(0, this.vols.length() - 1);
+	}
+
+	private void computZf() {
+		for (int i = index - 5; i <= index; i++) {
+			float maxPrice = Math.max(list.get(i).getClose(), list.get(i)
+					.getOpen());
+			float minPrice = Math.min(list.get(i).getClose(), list.get(i)
+					.getOpen());
+			this.maxIncreases += (list.get(i).getMax() - maxPrice) * 100
+					/ maxPrice + ", ";
+			this.minIncreases += (minPrice - list.get(i).getMin()) * 100
+					/ minPrice + ", ";
+		}
+		this.maxIncreases.substring(0, this.maxIncreases.length() - 1);
+		this.minIncreases.substring(0, this.minIncreases.length() - 1);
+	}
+
+	private int[] getMaxMin(int begin, int end) {
+		int max = begin, min = begin;
+		float maxClose = list.get(begin).getClose();
+		float minClose = list.get(begin).getClose();
+		for (int i = begin; i < end; i++) {
+			if (maxClose < list.get(i).getClose()) {
+				max = i;
+			}
+			if (list.get(i).getClose() < minClose) {
+				min = i;
+			}
+		}
+		return new int[] { max, min };
+	}
+
+	public void initJunXian() {
+		if (list != null && list.size() > 0) {
+			for (int i = 64; i < list.size(); i++) {
+				String time = list.get(i).getDay();
+				float day = list.get(i).getClose();
+				float five = computeJunXian(i, 5);
+				float nine = computeJunXian(i, 9);
+				float thirteen = computeJunXian(i, 13);
+				float nineteen = computeJunXian(i, 19);
+				float twentySeven = computeJunXian(i, 27);
+				float thirtyNine = computeJunXian(i, 39);
+				float fourtyNine = computeJunXian(i, 49);
+				float sixtyFive = computeJunXian(i, 65);
+				JunXian domain = new JunXian(symbol, time, day, five, nine,
+						thirteen, nineteen, twentySeven, thirtyNine,
+						fourtyNine, sixtyFive);
+				junxians.add(domain);
+			}
+		}
+	}
+
+	private float computeJunXian(int i, int count) {
+		float sum = 0;
+		for (int j = i - count + 1; j <= i; j++) {
+			sum += list.get(j).getClose();
+		}
+		return sum / count;
+	}
+
+	public float getMaxMinIncrease() {
+		return maxMinIncrease;
+	}
+
+	public void setMaxMinIncrease(float maxMinIncrease) {
+		this.maxMinIncrease = maxMinIncrease;
+	}
+
+	public float getMinMaxIncrease() {
+		return minMaxIncrease;
+	}
+
+	public void setMinMaxIncrease(float minMaxIncrease) {
+		this.minMaxIncrease = minMaxIncrease;
+	}
+
+	public float getMaxNowIncrease() {
+		return maxNowIncrease;
+	}
+
+	public void setMaxNowIncrease(float maxNowIncrease) {
+		this.maxNowIncrease = maxNowIncrease;
+	}
+
+	public float getMinNowIncrease() {
+		return minNowIncrease;
+	}
+
+	public void setMinNowIncrease(float minNowIncrease) {
+		this.minNowIncrease = minNowIncrease;
+	}
+	
 	public String getSymbol() {
 		return symbol;
 	}
@@ -176,275 +370,6 @@ public class StockAnalyseBase {
 
 	public void setLastIncrease(float lastIncrease) {
 		this.lastIncrease = lastIncrease;
-	}
-
-	public void initAnalyse(List<StockAnalyseBase> analyseBases) {
-		index = 50;
-		while (index < list.size() - 50) {
-			if (computeLastIncrease()) {
-				computPrice();
-				computVolume();
-				computZf();
-				analyseBases.add(new StockAnalyseBase(symbol, nowDay,
-						nowIncrease, nowVol, lastIncrease, priceType,
-						priceIncrease1, priceIncrease2, priceDay1, priceDay2,
-						vols, maxIncreases, minIncreases));
-				initField();
-			}
-		}
-	}
-
-	// private void insert(StockMainMapper stockMainMapper) {
-	// stockMainMapper.insertStockAnaylseBase(this);
-	// }
-
-	private void initField() {
-		this.nowIncrease = list.get(index).getIncrease();
-		this.nowVol = list.get(index).getVolume();
-		this.lastIncrease = 0;
-		this.priceType = "";
-		this.priceIncrease1 = 0;
-		this.priceIncrease2 = 0;
-		this.priceDay1 = 0;
-		this.priceDay2 = 0;
-		this.vols = "";
-		this.maxIncreases = "";
-		this.minIncreases = "";
-	}
-
-	private boolean computeLastIncrease() {
-		int begin = this.index + 1, end = this.index + 5;
-		int max = getMaxMin(begin, end)[0];
-		this.lastIncrease = (list.get(max).getClose() - list.get(begin)
-				.getClose()) * 100 / list.get(begin).getClose();
-		this.index += 3;
-		if (this.lastIncrease >= 10) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * 计算价格走势
-	 */
-	private void computPrice() {
-		int max = getMaxMin(index - 50, index)[0];
-		int min = getMaxMin(index - 50, index)[1];
-		DayIncrease maxDay = list.get(max);
-		DayIncrease minDay = list.get(min);
-		if (max > min) {
-			min = getMaxMin(max, index)[1];
-			minDay = list.get(min);
-		}
-		this.priceIncrease1 = (maxDay.getClose() - minDay.getClose()) * 100
-				/ maxDay.getClose();
-		if (this.priceIncrease1 <= 0) {
-			log.info("max--" + max + "maxDay.getClose()--" + maxDay.getClose()
-					+ "--min--" + max + "--minDay.getClose()--"
-					+ minDay.getClose());
-		}
-		this.priceDay1 = CommonsUtil.getDayDiff(maxDay.getDay(),
-				minDay.getDay());
-		if (minDay.getClose() < list.get(index).getClose()) {
-			this.priceType = "21";
-			this.priceIncrease2 = (list.get(index).getClose() - minDay
-					.getClose()) * 100 / minDay.getClose();
-			this.priceDay2 = CommonsUtil.getDayDiff(minDay.getDay(),
-					list.get(index).getDay());
-		} else {
-			this.priceType = "20";
-		}
-		this.priceDay1 = CommonsUtil.getDayDiff(list.get(max).getDay(), list
-				.get(min).getDay());
-		this.priceDay2 = CommonsUtil.getDayDiff(list.get(min).getDay(), list
-				.get(index).getDay());
-	}
-
-	private void computVolume() {
-		for (int i = index - 10; i <= index; i++) {
-			this.vols += list.get(i).getVolume() + ", ";
-		}
-		this.vols.substring(0, this.vols.length() - 1);
-	}
-
-	private void computZf() {
-		for (int i = index - 5; i <= index; i++) {
-			float maxPrice = Math.max(list.get(i).getClose(), list.get(i)
-					.getOpen());
-			float minPrice = Math.min(list.get(i).getClose(), list.get(i)
-					.getOpen());
-			this.maxIncreases += (list.get(i).getMax() - maxPrice) * 100
-					/ maxPrice + ", ";
-			this.minIncreases += (minPrice - list.get(i).getMin()) * 100
-					/ minPrice + ", ";
-		}
-		this.maxIncreases.substring(0, this.maxIncreases.length() - 1);
-		this.minIncreases.substring(0, this.minIncreases.length() - 1);
-	}
-
-	private int[] getMaxMin(int begin, int end) {
-		int max = begin, min = begin;
-		float maxClose = list.get(begin).getClose();
-		float minClose = list.get(begin).getClose();
-		for (int i = begin; i < end; i++) {
-			if (maxClose < list.get(i).getClose()) {
-				max = i;
-			}
-			if (list.get(i).getClose() < minClose) {
-				min = i;
-			}
-		}
-		return new int[] { max, min };
-	}
-
-	public void initJunXian() {
-		if (list != null && list.size() > 0) {
-			for (int i = 64; i < list.size(); i++) {
-				String time = list.get(i).getDay();
-				float day = list.get(i).getClose();
-				float five = computeJunXian(i, 5);
-				float nine = computeJunXian(i, 9);
-				float thirteen = computeJunXian(i, 13);
-				float nineteen = computeJunXian(i, 19);
-				float twentySeven = computeJunXian(i, 27);
-				float thirtyNine = computeJunXian(i, 39);
-				float fourtyNine = computeJunXian(i, 49);
-				float sixtyFive = computeJunXian(i, 65);
-				JunXianDomain domain = new JunXianDomain(time, day, five, nine,
-						thirteen, nineteen, twentySeven, thirtyNine,
-						fourtyNine, sixtyFive);
-				junxians.add(domain);
-			}
-		}
-	}
-
-	private float computeJunXian(int i, int count) {
-		float sum = 0;
-		for (int j = i - count + 1; j <= i; j++) {
-			sum += list.get(j).getClose();
-		}
-		return sum / count;
-	}
-
-	class JunXianDomain {
-		private String time;
-		private float day;
-		private float five;
-		private float nine;
-		private float thirteen;
-		private float nineteen;
-		private float twentySeven;
-		private float thirtyNine;
-		private float fourtyNine;
-		private float sixtyFive;
-
-		public JunXianDomain() {
-		}
-
-		public JunXianDomain(String time, float day, float five, float nine,
-				float thirteen, float nineteen, float twentySeven,
-				float thirtyNine, float fourtyNine, float sixtyFive) {
-			this.time = time;
-			this.day = day;
-			this.five = five;
-			this.nine = nine;
-			this.thirteen = thirteen;
-			this.nineteen = nineteen;
-			this.twentySeven = twentySeven;
-			this.thirtyNine = thirtyNine;
-			this.fourtyNine = fourtyNine;
-			this.sixtyFive = sixtyFive;
-		}
-
-		public float getFive() {
-			return five;
-		}
-
-		public void setFive(float five) {
-			this.five = five;
-		}
-
-		public float getNine() {
-			return nine;
-		}
-
-		public void setNine(float nine) {
-			this.nine = nine;
-		}
-
-		public float getThirteen() {
-			return thirteen;
-		}
-
-		public void setThirteen(float thirteen) {
-			this.thirteen = thirteen;
-		}
-
-		public float getNineteen() {
-			return nineteen;
-		}
-
-		public void setNineteen(float nineteen) {
-			this.nineteen = nineteen;
-		}
-
-		public float getTwentySeven() {
-			return twentySeven;
-		}
-
-		public void setTwentySeven(float twentySeven) {
-			this.twentySeven = twentySeven;
-		}
-
-		public float getThirtyNine() {
-			return thirtyNine;
-		}
-
-		public void setThirtyNine(float thirtyNine) {
-			this.thirtyNine = thirtyNine;
-		}
-
-		public float getFourtyNine() {
-			return fourtyNine;
-		}
-
-		public void setFourtyNine(float fourtyNine) {
-			this.fourtyNine = fourtyNine;
-		}
-
-		public float getSixtyFive() {
-			return sixtyFive;
-		}
-
-		public void setSixtyFive(float sixtyFive) {
-			this.sixtyFive = sixtyFive;
-		}
-
-		public float getDay() {
-			return day;
-		}
-
-		public void setDay(float day) {
-			this.day = day;
-		}
-
-		public String getTime() {
-			return time;
-		}
-
-		public void setTime(String time) {
-			this.time = time;
-		}
-
-		@Override
-		public String toString() {
-			return "JunXianDomain [day=" + day + ", five=" + five + ", nine="
-					+ nine + ", thirteen=" + thirteen + ", nineteen="
-					+ nineteen + ", twentySeven=" + twentySeven
-					+ ", thirtyNine=" + thirtyNine + ", fourtyNine="
-					+ fourtyNine + ", sixtyFive=" + sixtyFive + "]";
-		}
-
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.stock.dao;
 
+import java.util.List;
+
 import com.stock.model.JunXian;
 
 public interface JunXianMapper {
@@ -14,4 +16,6 @@ public interface JunXianMapper {
     int updateByPrimaryKeySelective(JunXian record);
 
     int updateByPrimaryKey(JunXian record);
+
+	List<JunXian> selectNeed(JunXian query);
 }

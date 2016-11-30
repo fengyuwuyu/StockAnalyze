@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.stock.dao.StockMainMapper;
-import com.stock.task.TaskJob;
 import com.stock.util.StockCache;
 
 /**
@@ -41,44 +40,6 @@ public class ContextListener implements ServletContextListener {
 		
 		StockMainMapper stockMainMapper = ac.getBean(StockMainMapper.class);
 		StockCache.initPrePrices(stockMainMapper);
-		final TaskJob job = (TaskJob) ac.getBean("taskJob");
-		if (job != null) {
-//			ThreadPool.execute(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					log.info("downLoad1启动了！");
-//					job.downLoad1();
-//				}
-//			});
-
-//			ThreadPool.execute(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					log.info("initBuyAndSell启动了！");
-//					job.initBuyAndSell();
-//				}
-//			});
-			
-//			ThreadPool.execute(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					log.info("initStockEveryDay启动了！");
-//					job.initStockEveryDay();
-//				}
-//			});
-			
-//			ThreadPool.execute(new Runnable() {
-//				
-//				@Override
-//				public void run() {
-//					log.info("initCJL启动了！");
-//					job.initCJL();
-//				}
-//			});
-		}
 
 		// Properties properties = new Properties();
 		// try {

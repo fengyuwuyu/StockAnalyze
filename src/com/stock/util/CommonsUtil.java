@@ -190,7 +190,7 @@ public class CommonsUtil {
 		int minute = now.getMinutes();
 		if (hour >= 9 && hour < 12) {
 			if (hour == 9) {
-				if (minute >= 30) {
+				if (minute >= 25) {
 					return true;
 				} else {
 					return false;
@@ -205,10 +205,6 @@ public class CommonsUtil {
 			return true;
 		} else if (hour >= 13 && hour < 15) {
 			return true;
-		}else if(hour==15){
-			if(minute<=2){
-				return true;
-			}
 		}
 		return false;
 	}

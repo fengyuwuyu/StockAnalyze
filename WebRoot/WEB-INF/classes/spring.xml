@@ -15,16 +15,19 @@
     <context:component-scan base-package="com.stock.service,com.stock.util" /> 
        
     <!-- 定义工作类 -->
-    <bean id="taskJob" class="com.stock.task.TaskJob"></bean>
+    <bean id="downloadBase" class="com.stock.task.DownloadBase"></bean>
+    <bean id="downloadDetail" class="com.stock.task.DownloadDetail"></bean>
+    <bean id="downloadCjmx" class="com.stock.task.DownloadCjmx"></bean>
+    <bean id="downloadPerDay" class="com.stock.task.DownloadPerDay"></bean>
     
     <!-- 注册定时器  -->
     <task:scheduled-tasks> 
-    	<task:scheduled ref="taskJob" method="downLoad1" cron="5 30 9 * * *"/> 
-    	<task:scheduled ref="taskJob" method="downLoad1" cron="5 0 13 * * *"/>
-    	<task:scheduled ref="taskJob" method="initBuyAndSell" cron="5 30 9 * * *"/> 
-    	<task:scheduled ref="taskJob" method="initBuyAndSell" cron="5 0 13 * * *"/> 
-    	<task:scheduled ref="taskJob" method="initStockEveryDay" cron="0 20 17 * * *"/>
-    	<task:scheduled ref="taskJob" method="initCJL" cron="0 30 17 * * *"/>
+    	<task:scheduled ref="downloadBase" method="execute" cron="5 25 9 * * *"/> 
+    	<task:scheduled ref="downloadBase" method="execute" cron="50 0 13 * * *"/>
+    	<task:scheduled ref="downloadDetail" method="execute" cron="20 25 9 * * *"/> 
+    	<task:scheduled ref="downloadDetail" method="execute" cron="10 0 13 * * *"/> 
+    	<task:scheduled ref="downloadPerDay" method="execute" cron="0 20 17 * * *"/>
+    	<task:scheduled ref="downloadCjmx" method="execute" cron="0 30 17 * * *"/>
 	</task:scheduled-tasks> 
     
 

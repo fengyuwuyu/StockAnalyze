@@ -42,6 +42,7 @@ public class DownloadCjmx {
 	 * 将excel格式的成交量导入到数据库中，每天执行一次
 	 */
 	public void execute(){
+		log.info("开始下载。。。");
 		try {
 			while(CommonsUtil.checkTime(holidayMapper)){
 				initStockServiceI.insertCJL();
@@ -54,6 +55,7 @@ public class DownloadCjmx {
 					CommonsUtil.join(e.getStackTrace(), ","));
 			this.exceptionLogMapper.insert(record);
 		}
+		log.info("下载结束。。。");
 	}
 	
 	/**

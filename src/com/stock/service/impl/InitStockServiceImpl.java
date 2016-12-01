@@ -196,10 +196,10 @@ public class InitStockServiceImpl implements InitStockServiceI {
 							if (inserts.size() > 0) {
 								this.stockMainMapper.insert(MapUtils.createMap(
 										"list", inserts, "symbol", symbol));
-								log.info("更新数据成功！插入的数据时 ： " + inserts);
+								log.info("更新数据成功！插入的数据时 ： " + inserts.size());
 							}
 						} else {
-							log.info("发现新的股票数据，开始插入，  " + list);
+							log.info("发现新的股票数据，开始插入，  " + list.size());
 							this.stockMainMapper.insert(MapUtils.createMap(
 									"list", list, "symbol", symbol));
 						}
@@ -262,7 +262,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 					}
 					this.stockMainMapper.insertStockBuySell(MapUtils.createMap(
 							"list", list));
-					log.info("插入数据的数量是 ： " + list);
+					log.info("插入数据的数量是 ： " + list.size());
 				}
 			}
 		} catch (Exception e) {

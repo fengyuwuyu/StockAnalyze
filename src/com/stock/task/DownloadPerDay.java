@@ -32,6 +32,7 @@ public class DownloadPerDay {
 	}
 	
 	public void execute(){
+		log.info("开始下载。。。");
 		try {
 			initStockServiceI.initStockEveryDay();
 		} catch (Exception e) {
@@ -42,5 +43,6 @@ public class DownloadPerDay {
 					CommonsUtil.join(e.getStackTrace(), ","));
 			this.exceptionLogMapper.insert(record);
 		}
+		log.info("开始下载。。。");
 	}
 }

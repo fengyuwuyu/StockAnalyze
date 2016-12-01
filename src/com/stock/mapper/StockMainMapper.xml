@@ -320,12 +320,14 @@
   </insert>
   <resultMap type="com.stock.model.CacheItem" id="CacheItem">
   	<result column="symbol" property="symbol"/>
-  	<result column="price" property="price"/>
-  	<result column="close" property="close"/>
+  	<result column="yestClose" property="yestClose"/>
+  	<result column="prePrice" property="prePrice"/>
+  	<result column="yestVol" property="yestVol"/>
+  	<result column="preVol" property="preVol"/>
   </resultMap>
   
   <select id="initPrePrices" resultMap="CacheItem">
-  	  select symbol,close,close price,volume yestVol,volume from stock_main where day = (select max(day) from stock_main)
+  	  select symbol,close yestClose,close prePrice,volume yestVol,volume preVol from stock_main where day = (select max(day) from stock_main)
   </select>
   
   <select id="selectAllCodes" resultType="string">

@@ -35,6 +35,7 @@ public class DownloadDetail {
 
 	public void execute(){
 		long time = 20000;
+		log.info("开始下载。。。");
 		while(CommonsUtil.checkTime(holidayMapper)){
 			long begin = System.currentTimeMillis();
 			initStockServiceI.initBuyAndSell();
@@ -53,6 +54,7 @@ public class DownloadDetail {
 				}
 			}
 		}
+		log.info("下载结束。。。");
 	}
 	
 }

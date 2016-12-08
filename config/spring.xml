@@ -21,14 +21,14 @@
     <bean id="downloadPerDay" class="com.stock.task.DownloadPerDay"></bean>
     
     <!-- 注册定时器  -->
-    <task:scheduled-tasks> 
+   <!--  <task:scheduled-tasks> 
     	<task:scheduled ref="downloadBase" method="execute" cron="30 25 9 * * *"/> 
-    	<task:scheduled ref="downloadBase" method="execute" cron="50 0 13 * * *"/>
+    	<task:scheduled ref="downloadBase" method="execute" cron="50 9 13 * * *"/>
     	<task:scheduled ref="downloadDetail" method="execute" cron="30 25 9 * * *"/> 
-    	<task:scheduled ref="downloadDetail" method="execute" cron="50 0 13 * * *"/> 
+    	<task:scheduled ref="downloadDetail" method="execute" cron="30 9 13 * * *"/> 
     	<task:scheduled ref="downloadPerDay" method="execute" cron="5 20 17 * * *"/>
     	<task:scheduled ref="downloadCjmx" method="execute" cron="5 40 17 * * *"/>
-	</task:scheduled-tasks> 
+	</task:scheduled-tasks>  -->
     
 
 </beans>

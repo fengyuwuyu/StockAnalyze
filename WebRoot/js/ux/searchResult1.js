@@ -7,6 +7,7 @@ YiYa.searcher = function(){
 			dataGrid : {
 				url : urls['msUrl']+'searcher/find.do',
 				idField : 'symbol',
+				pagination : false,
 				columns:[[
 							{field:'ck',checkbox:true},
 							{field : 'symbol',title:'股票编号',align:'center',width:200},

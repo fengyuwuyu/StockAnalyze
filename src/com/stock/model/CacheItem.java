@@ -143,4 +143,11 @@ public class CacheItem {
 		this.nowVol = nowVol;
 	}
 
+	@Override
+	public String toString() {
+		return "CacheItem [symbol=" + symbol +"]";
+	}
+	
+	
+
 }

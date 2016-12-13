@@ -113,8 +113,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 
 	@SuppressWarnings({ "unchecked" })
 	private void download(HttpEntity entity) throws Exception {
-		LinkedHashMap<String, Object> detail = mapper.readValue(
-				EntityUtils.toString(entity, "utf-8"), LinkedHashMap.class);
+		LinkedHashMap<String, Object> detail = mapper.readValue(EntityUtils.toString(entity, "utf-8"), LinkedHashMap.class);
 		String time = (String) detail.get("time");
 		log.info("本次下载的时间是：" + time + "  上次下载的时间是： " + timeBak);
 		if (!checkTime(time)) {
@@ -240,7 +239,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 		try {
 			String url = "http://api.money.126.net/data/feed/"
 					+ CommonsUtil.listToString(subList) + ",money.api";
-			log.info(url);
+//			log.info(url);
 			entity = HttpClientUtil.get(url);
 			String temp = EntityUtils.toString(entity, "utf-8");
 			String content = temp.substring(21, temp.length() - 2);

@@ -58,10 +58,10 @@ public class SearchMachineImpl implements SearchMachineI {
 	}
 
 	/**
-	 * 根据查询条件返回股票 1、找到股价处于相对低点、成交量交大且存在或接近黄金交叉点
+	 * 根据查询条件返回股票 1、找到股价处于相对低点、成交量较大且存在或接近黄金交叉点
 	 */
 	public Map<String, Object> searcher(StockQuery query) {
-
+		
 		return MapUtils.createSuccessMap();
 	}
 
@@ -101,5 +101,7 @@ public class SearchMachineImpl implements SearchMachineI {
 		}
 		return null;
 	}
+	
+	
 
 }

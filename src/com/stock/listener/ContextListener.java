@@ -49,7 +49,7 @@ public class ContextListener implements ServletContextListener {
 			
 			@Override
 			public void run() {
-				downloadBase.execute();
+//				downloadBase.execute();
 			}
 		});
 		try {
@@ -63,7 +63,7 @@ public class ContextListener implements ServletContextListener {
 			
 			@Override
 			public void run() {
-				downloadDetail.execute();
+//				downloadDetail.execute();
 			}
 		});
 		log.info("contextListener启动了");

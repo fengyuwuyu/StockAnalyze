@@ -42,8 +42,8 @@ public class DownloadBase {
 	public void execute(){
 		try {
 			// 如果当前不在股市的交易时间
+			log.info("下载股票每分钟数据");
 			while (CommonsUtil.checkTime(this.holidayMapper)) {
-				log.info("开始下载每天股票详情。。。");
 				long begin = System.currentTimeMillis();
 				initStockServiceI.initStock();
 				long host = System.currentTimeMillis() - begin;
@@ -53,7 +53,7 @@ public class DownloadBase {
 					Thread.sleep(sleep);
 				}
 			}
-			log.info("下载每天股票详情任务结束");
+			log.info("下载股票每分钟数据结束");
 		} catch (Exception e) {
 			log.info(CommonsUtil.join(e.getStackTrace(), ","));
 			ExceptionLog record = new ExceptionLog(

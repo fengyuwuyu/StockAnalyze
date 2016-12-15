@@ -35,7 +35,7 @@ public class DownloadDetail {
 
 	public void execute(){
 		long time = 20000;
-		log.info("开始下载。。。");
+		log.info("开始下载委卖委买数据，每20s一次");
 		while(CommonsUtil.checkTime(holidayMapper)){
 			long begin = System.currentTimeMillis();
 			initStockServiceI.initBuyAndSell();
@@ -54,7 +54,7 @@ public class DownloadDetail {
 				}
 			}
 		}
-		log.info("下载结束。。。");
+		log.info("下载委卖委买数据结束。。。");
 	}
 	
 }

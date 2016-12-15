@@ -32,7 +32,7 @@ public class DownloadPerDay {
 	}
 	
 	public void execute(){
-		log.info("开始下载。。。");
+		log.info("开始下载股票每天综合信息");
 		try {
 			initStockServiceI.initStockEveryDay();
 		} catch (Exception e) {
@@ -43,6 +43,6 @@ public class DownloadPerDay {
 					CommonsUtil.join(e.getStackTrace(), ","));
 			this.exceptionLogMapper.insert(record);
 		}
-		log.info("开始下载。。。");
+		log.info("下载股票每天综合信息结束");
 	}
 }

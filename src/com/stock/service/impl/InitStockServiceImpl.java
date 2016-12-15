@@ -107,7 +107,6 @@ public class InitStockServiceImpl implements InitStockServiceI {
 			e.printStackTrace();
 			log.info("json解析失败");
 		}
-		log.info("下载股票数据结束。。。");
 		return MapUtils.createSuccessMap();
 	}
 
@@ -165,7 +164,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 					.get("http://img1.money.126.net/data/hs/kline/day/history/"
 							+ year + "/" + code + ".json");
 			if (entity != null) {
-				log.info("解析json数据。。。");
+//				log.info("解析json数据。。。");
 				LinkedHashMap<String, Object> detail = null;
 				try {
 					detail = mapper.readValue(
@@ -176,7 +175,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 					log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
 				}
 				if (detail != null) {
-					log.info("开始判断数据正确性");
+//					log.info("开始判断数据正确性");
 					List<List<Object>> list = (List<List<Object>>) detail
 							.get("data");
 					if (list != null && list.size() > 0) {
@@ -195,10 +194,10 @@ public class InitStockServiceImpl implements InitStockServiceI {
 							if (inserts.size() > 0) {
 								this.stockMainMapper.insert(MapUtils.createMap(
 										"list", inserts, "symbol", symbol));
-								log.info("更新数据成功！插入的数据时 ： " + inserts.size());
+//								log.info("更新数据成功！插入的数据时 ： " + inserts.size());
 							}
 						} else {
-							log.info("发现新的股票数据，开始插入，  " + list.size());
+//							log.info("发现新的股票数据，开始插入，  " + list.size());
 							this.stockMainMapper.insert(MapUtils.createMap(
 									"list", list, "symbol", symbol));
 						}
@@ -210,31 +209,31 @@ public class InitStockServiceImpl implements InitStockServiceI {
 	}
 
 	public Map<String, Object> initBuyAndSell() {
-		log.info("----------------------开始下载委买委卖数据----------------------");
 		List<String> codes = this.stockMainMapper.selectAllCodes();
 		int length = codes.size();
 		int count = 1000;
 		int begin = 0, end = (begin + count) <= length ? (begin + count)
 				: length;
 		List<String> subList = null;
+		Integer c = 0;
 		while (end <= length) {
 			subList = codes.subList(begin, end);
-			downloadBuyAndSell(subList);
+			downloadBuyAndSell(subList,c);
 			begin = end;
 			end += count;
 		}
 		if (end > length && begin < length) {
 			subList = codes.subList(begin, length);
-			downloadBuyAndSell(subList);
+			downloadBuyAndSell(subList,c);
 		}
-		log.info("----------------------下载委买委卖数据结束----------------------");
+		log.info("插入委买委卖数据的数量是 ： " + c);
 		return MapUtils.createSuccessMap();
 	}
 
 	// http://api.money.126.net/data/feed/0000001,0600137,1002485,1002291,1002763,1002486,money.api?callback=_ntes_quote_callback50000858
 	// http://api.money.126.net/data/feed/0000001,1000573,0600275,1000553,0603777,0603313,0603816,0600321,0603006,0603887,0603016,1200413,1000755,1000002,0600589,0600137,1002485,1002291,1002763,1002486,money.api?callback=_ntes_quote_callback95430716
 	@SuppressWarnings("unchecked")
-	private void downloadBuyAndSell(List<String> subList) {
+	private void downloadBuyAndSell(List<String> subList, Integer c) {
 		HttpEntity entity;
 		try {
 			String url = "http://api.money.126.net/data/feed/"
@@ -261,7 +260,7 @@ public class InitStockServiceImpl implements InitStockServiceI {
 					}
 					this.stockMainMapper.insertStockBuySell(MapUtils.createMap(
 							"list", list));
-					log.info("插入数据的数量是 ： " + list.size());
+					c+=list.size();
 				}
 			}
 		} catch (Exception e) {
@@ -374,13 +373,11 @@ public class InitStockServiceImpl implements InitStockServiceI {
 				for (String symbol : symbols) {
 					fbVolumes.clear();
 					url = "http://quotes.money.163.com/service/zhubi_ajax.html?symbol="+symbol+"&end="+encodeTime;
-					log.info(url);
 					HttpEntity entity = HttpClientUtil.get(url);
 					if(entity!=null){
 						try {
 							String content = EntityUtils.toString(entity, "utf-8");
 							LinkedHashMap<String,Object> detail = mapper.readValue(content, LinkedHashMap.class);
-							System.out.println(detail);
 							ArrayList<Object> list = (ArrayList<Object>) detail.get("zhubi_list");
 							if(list!=null&&list.size()>0){
 								for (Object object : list) {

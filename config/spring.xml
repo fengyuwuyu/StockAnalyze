@@ -20,7 +20,7 @@
     <bean id="downloadCjmx" class="com.stock.task.DownloadCjmx"></bean>
     <bean id="downloadPerDay" class="com.stock.task.DownloadPerDay"></bean>
     
-    <!-- 配置调度器工厂(SchedulerFactoryBean) -->
+	<!-- 配置调度器工厂(SchedulerFactoryBean) -->
 	<bean name="startQuertz"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
@@ -30,6 +30,7 @@
 				<ref bean="downloadDetailTrigger" />
 				<ref bean="downloadDetailTrigger1" />
 				<ref bean="downloadCjmxTrigger" />
+				<ref bean="downloadCjmxTrigger1" />
 				<ref bean="downloadPerDayTrigger" />
 			</list>
 		</property>
@@ -42,42 +43,34 @@
 			<ref bean="downloadBaseDetail" />
 		</property>
 		<property name="cronExpression">
-			<!-- 每隔一秒钟执行一次 -->
-			<value>10 12 23 * * 1-5</value>
-<!-- 			<value>10 30 9 * * 1-5</value> -->
+ 			<value>10 25 9 * * ?</value> 
 		</property>
 	</bean>
 	<bean id="downloadBaseTrigger1"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
-			<ref bean="downloadBaseDetail1" />
+			<ref bean="downloadBaseDetail" />
 		</property>
 		<property name="cronExpression">
-			<!-- 每隔一秒钟执行一次 -->
-			<value>10 12 23 * * 1-5</value>
-<!-- 			<value>10 0 13 * * 1-5</value> -->
+ 			<value>10 0 13 * * ?</value>
 		</property>
 	</bean>
 	<bean id="downloadDetailTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
-			<ref bean="downloadDetail" />
+			<ref bean="downloadDetailDetail" />
 		</property>
 		<property name="cronExpression">
-			<!-- 每隔一秒钟执行一次 -->
-<!-- 			<value>10 30 9 * * 1-5</value> -->
-			<value>10 12 23 * * 1-5</value>
+ 			<value>15 25 9 * * ?</value>
 		</property>
 	</bean>
 	<bean id="downloadDetailTrigger1"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
-			<ref bean="downloadDetail1" />
+			<ref bean="downloadDetailDetail" />
 		</property>
 		<property name="cronExpression">
-			<!-- 每隔一秒钟执行一次 -->
-<!-- 			<value>10 0 13 * * 1-5</value> -->
-			<value>10 12 23 * * 1-5</value>
+ 			<value>15 0 13 * * ?</value> 
 		</property>
 	</bean>
 	<bean id="downloadCjmxTrigger"
@@ -86,20 +79,27 @@
 			<ref bean="downloadCjmxDetail" />
 		</property>
 		<property name="cronExpression">
-			<!-- 每隔一秒钟执行一次 -->
-<!-- 			<value>0 30 17 * * 1-5</value> -->
-			<value>0 30 23 * * 1-5</value>
+ 			<value>20 25 9 * * ?</value> 
 		</property>
 	</bean>
+	
+	<bean id="downloadCjmxTrigger1"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="downloadCjmxDetail" />
+		</property>
+		<property name="cronExpression">
+ 			<value>20 0 13 * * ?</value> 
+		</property>
+	</bean>
+	
 	<bean id="downloadPerDayTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
 			<ref bean="downloadPerDayDetail" />
 		</property>
 		<property name="cronExpression">
-			<!-- 每隔一秒钟执行一次 -->
-			<value>0 0 23 * * 1-5</value>
-			<!-- <value>0 0 18 * * 1-5</value> -->
+			 <value>0 0 18 * * ?</value> 
 		</property>
 	</bean>
 
@@ -113,7 +113,7 @@
 			<value>execute</value>
 		</property>
 	</bean>
-	<bean id="downloadDetail"
+	<bean id="downloadDetailDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
 			<ref bean="downloadDetail" />
@@ -145,10 +145,10 @@
     
     <!-- 注册定时器  -->
    <!--  <task:scheduled-tasks> 
-    	<task:scheduled ref="downloadBase" method="execute" cron="30 25 9 * * *"/> 
-    	<task:scheduled ref="downloadBase" method="execute" cron="50 9 13 * * *"/>
-    	<task:scheduled ref="downloadDetail" method="execute" cron="30 25 9 * * *"/> 
-    	<task:scheduled ref="downloadDetail" method="execute" cron="30 9 13 * * *"/> 
+    	<task:scheduled ref="downloadBase" method="execute" cron="30 25 10 * * *"/> 
+    	<task:scheduled ref="downloadBase" method="execute" cron="50 10 13 * * *"/>
+    	<task:scheduled ref="downloadDetail" method="execute" cron="30 25 10 * * *"/> 
+    	<task:scheduled ref="downloadDetail" method="execute" cron="30 10 13 * * *"/> 
     	<task:scheduled ref="downloadPerDay" method="execute" cron="5 20 17 * * *"/>
     	<task:scheduled ref="downloadCjmx" method="execute" cron="5 40 17 * * *"/>
 	</task:scheduled-tasks>  -->

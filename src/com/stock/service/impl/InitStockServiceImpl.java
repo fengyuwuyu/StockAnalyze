@@ -167,12 +167,12 @@ public class InitStockServiceImpl implements InitStockServiceI {
 //				log.info("解析json数据。。。");
 				LinkedHashMap<String, Object> detail = null;
 				try {
+					String content = EntityUtils.toString(entity, "utf-8");
 					detail = mapper.readValue(
-							EntityUtils.toString(entity, "utf-8"),
+							content,
 							LinkedHashMap.class);
 				} catch (Exception e) {
-					log.info("解析json数据失败");
-					log.info(CommonsUtil.join(e.getStackTrace(), ",\r\n"));
+					log.info("解析json数据失败"+code);
 				}
 				if (detail != null) {
 //					log.info("开始判断数据正确性");
@@ -208,32 +208,30 @@ public class InitStockServiceImpl implements InitStockServiceI {
 		return MapUtils.createSuccessMap();
 	}
 
-	public Map<String, Object> initBuyAndSell() {
+	public Map<String, Object> initBuyAndSell(String day) {
 		List<String> codes = this.stockMainMapper.selectAllCodes();
 		int length = codes.size();
 		int count = 1000;
 		int begin = 0, end = (begin + count) <= length ? (begin + count)
 				: length;
 		List<String> subList = null;
-		Integer c = 0;
 		while (end <= length) {
 			subList = codes.subList(begin, end);
-			downloadBuyAndSell(subList,c);
+			downloadBuyAndSell(subList,day);
 			begin = end;
 			end += count;
 		}
 		if (end > length && begin < length) {
 			subList = codes.subList(begin, length);
-			downloadBuyAndSell(subList,c);
+			downloadBuyAndSell(subList,day);
 		}
-		log.info("插入委买委卖数据的数量是 ： " + c);
 		return MapUtils.createSuccessMap();
 	}
 
 	// http://api.money.126.net/data/feed/0000001,0600137,1002485,1002291,1002763,1002486,money.api?callback=_ntes_quote_callback50000858
 	// http://api.money.126.net/data/feed/0000001,1000573,0600275,1000553,0603777,0603313,0603816,0600321,0603006,0603887,0603016,1200413,1000755,1000002,0600589,0600137,1002485,1002291,1002763,1002486,money.api?callback=_ntes_quote_callback95430716
 	@SuppressWarnings("unchecked")
-	private void downloadBuyAndSell(List<String> subList, Integer c) {
+	private void downloadBuyAndSell(List<String> subList, String day) {
 		HttpEntity entity;
 		try {
 			String url = "http://api.money.126.net/data/feed/"
@@ -259,8 +257,8 @@ public class InitStockServiceImpl implements InitStockServiceI {
 						}
 					}
 					this.stockMainMapper.insertStockBuySell(MapUtils.createMap(
-							"list", list));
-					c+=list.size();
+							"list", list,"day",day));
+					log.info("插入委买委卖数据的数量是 ： " + list.size());
 				}
 			}
 		} catch (Exception e) {

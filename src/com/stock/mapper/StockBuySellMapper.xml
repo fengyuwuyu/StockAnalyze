@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stock.dao.StockBuySellMapper" >
+  <resultMap id="BaseResultMap" type="com.stock.model.StockBuySell" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="CHAR" />
+    <result column="symbol" property="symbol" jdbcType="CHAR" />
+    <result column="percent" property="percent" jdbcType="DOUBLE" />
+    <result column="high" property="high" jdbcType="DOUBLE" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="open" property="open" jdbcType="DOUBLE" />
+    <result column="low" property="low" jdbcType="DOUBLE" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <result column="yestclose" property="yestclose" jdbcType="DOUBLE" />
+    <result column="turnover" property="turnover" jdbcType="BIGINT" />
+    <result column="updown" property="updown" jdbcType="DOUBLE" />
+    <result column="volume" property="volume" jdbcType="INTEGER" />
+    <result column="ask1" property="ask1" jdbcType="DOUBLE" />
+    <result column="ask2" property="ask2" jdbcType="DOUBLE" />
+    <result column="ask3" property="ask3" jdbcType="DOUBLE" />
+    <result column="ask4" property="ask4" jdbcType="DOUBLE" />
+    <result column="ask5" property="ask5" jdbcType="DOUBLE" />
+    <result column="askvol1" property="askvol1" jdbcType="INTEGER" />
+    <result column="askvol2" property="askvol2" jdbcType="INTEGER" />
+    <result column="askvol3" property="askvol3" jdbcType="INTEGER" />
+    <result column="askvol4" property="askvol4" jdbcType="INTEGER" />
+    <result column="askvol5" property="askvol5" jdbcType="INTEGER" />
+    <result column="bid1" property="bid1" jdbcType="DOUBLE" />
+    <result column="bid2" property="bid2" jdbcType="DOUBLE" />
+    <result column="bid3" property="bid3" jdbcType="DOUBLE" />
+    <result column="bid4" property="bid4" jdbcType="DOUBLE" />
+    <result column="bid5" property="bid5" jdbcType="DOUBLE" />
+    <result column="bidvol1" property="bidvol1" jdbcType="INTEGER" />
+    <result column="bidvol2" property="bidvol2" jdbcType="INTEGER" />
+    <result column="bidvol3" property="bidvol3" jdbcType="INTEGER" />
+    <result column="bidvol4" property="bidvol4" jdbcType="INTEGER" />
+    <result column="bidvol5" property="bidvol5" jdbcType="INTEGER" />
+    <result column="day" property="day" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, code, symbol, percent, high, price, open, low, time, yestclose, turnover, updown, 
+    volume, ask1, ask2, ask3, ask4, ask5, askvol1, askvol2, askvol3, askvol4, askvol5, 
+    bid1, bid2, bid3, bid4, bid5, bidvol1, bidvol2, bidvol3, bidvol4, bidvol5, day
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from stock_buy_sell
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from stock_buy_sell
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.stock.model.StockBuySell" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stock_buy_sell (id, code, symbol, percent, 
+      high, price, open, low, 
+      time, yestclose, turnover, 
+      updown, volume, ask1, 
+      ask2, ask3, ask4, ask5, 
+      askvol1, askvol2, askvol3, 
+      askvol4, askvol5, bid1, 
+      bid2, bid3, bid4, bid5, 
+      bidvol1, bidvol2, bidvol3, 
+      bidvol4, bidvol5, day)
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=CHAR}, #{symbol,jdbcType=CHAR}, #{percent,jdbcType=DOUBLE}, 
+      #{high,jdbcType=DOUBLE}, #{price,jdbcType=DOUBLE}, #{open,jdbcType=DOUBLE}, #{low,jdbcType=DOUBLE}, 
+      #{time,jdbcType=VARCHAR}, #{yestclose,jdbcType=DOUBLE}, #{turnover,jdbcType=BIGINT}, 
+      #{updown,jdbcType=DOUBLE}, #{volume,jdbcType=INTEGER}, #{ask1,jdbcType=DOUBLE}, 
+      #{ask2,jdbcType=DOUBLE}, #{ask3,jdbcType=DOUBLE}, #{ask4,jdbcType=DOUBLE}, #{ask5,jdbcType=DOUBLE}, 
+      #{askvol1,jdbcType=INTEGER}, #{askvol2,jdbcType=INTEGER}, #{askvol3,jdbcType=INTEGER}, 
+      #{askvol4,jdbcType=INTEGER}, #{askvol5,jdbcType=INTEGER}, #{bid1,jdbcType=DOUBLE}, 
+      #{bid2,jdbcType=DOUBLE}, #{bid3,jdbcType=DOUBLE}, #{bid4,jdbcType=DOUBLE}, #{bid5,jdbcType=DOUBLE}, 
+      #{bidvol1,jdbcType=INTEGER}, #{bidvol2,jdbcType=INTEGER}, #{bidvol3,jdbcType=INTEGER}, 
+      #{bidvol4,jdbcType=INTEGER}, #{bidvol5,jdbcType=INTEGER}, #{day,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.stock.model.StockBuySell" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stock_buy_sell
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="symbol != null" >
+        symbol,
+      </if>
+      <if test="percent != null" >
+        percent,
+      </if>
+      <if test="high != null" >
+        high,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="open != null" >
+        open,
+      </if>
+      <if test="low != null" >
+        low,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="yestclose != null" >
+        yestclose,
+      </if>
+      <if test="turnover != null" >
+        turnover,
+      </if>
+      <if test="updown != null" >
+        updown,
+      </if>
+      <if test="volume != null" >
+        volume,
+      </if>
+      <if test="ask1 != null" >
+        ask1,
+      </if>
+      <if test="ask2 != null" >
+        ask2,
+      </if>
+      <if test="ask3 != null" >
+        ask3,
+      </if>
+      <if test="ask4 != null" >
+        ask4,
+      </if>
+      <if test="ask5 != null" >
+        ask5,
+      </if>
+      <if test="askvol1 != null" >
+        askvol1,
+      </if>
+      <if test="askvol2 != null" >
+        askvol2,
+      </if>
+      <if test="askvol3 != null" >
+        askvol3,
+      </if>
+      <if test="askvol4 != null" >
+        askvol4,
+      </if>
+      <if test="askvol5 != null" >
+        askvol5,
+      </if>
+      <if test="bid1 != null" >
+        bid1,
+      </if>
+      <if test="bid2 != null" >
+        bid2,
+      </if>
+      <if test="bid3 != null" >
+        bid3,
+      </if>
+      <if test="bid4 != null" >
+        bid4,
+      </if>
+      <if test="bid5 != null" >
+        bid5,
+      </if>
+      <if test="bidvol1 != null" >
+        bidvol1,
+      </if>
+      <if test="bidvol2 != null" >
+        bidvol2,
+      </if>
+      <if test="bidvol3 != null" >
+        bidvol3,
+      </if>
+      <if test="bidvol4 != null" >
+        bidvol4,
+      </if>
+      <if test="bidvol5 != null" >
+        bidvol5,
+      </if>
+      <if test="day != null" >
+        day,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=INTEGER},
+      <if test="code != null" >
+        #{code,jdbcType=CHAR},
+      </if>
+      <if test="symbol != null" >
+        #{symbol,jdbcType=CHAR},
+      </if>
+      <if test="percent != null" >
+        #{percent,jdbcType=DOUBLE},
+      </if>
+      <if test="high != null" >
+        #{high,jdbcType=DOUBLE},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="open != null" >
+        #{open,jdbcType=DOUBLE},
+      </if>
+      <if test="low != null" >
+        #{low,jdbcType=DOUBLE},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="yestclose != null" >
+        #{yestclose,jdbcType=DOUBLE},
+      </if>
+      <if test="turnover != null" >
+        #{turnover,jdbcType=BIGINT},
+      </if>
+      <if test="updown != null" >
+        #{updown,jdbcType=DOUBLE},
+      </if>
+      <if test="volume != null" >
+        #{volume,jdbcType=INTEGER},
+      </if>
+      <if test="ask1 != null" >
+        #{ask1,jdbcType=DOUBLE},
+      </if>
+      <if test="ask2 != null" >
+        #{ask2,jdbcType=DOUBLE},
+      </if>
+      <if test="ask3 != null" >
+        #{ask3,jdbcType=DOUBLE},
+      </if>
+      <if test="ask4 != null" >
+        #{ask4,jdbcType=DOUBLE},
+      </if>
+      <if test="ask5 != null" >
+        #{ask5,jdbcType=DOUBLE},
+      </if>
+      <if test="askvol1 != null" >
+        #{askvol1,jdbcType=INTEGER},
+      </if>
+      <if test="askvol2 != null" >
+        #{askvol2,jdbcType=INTEGER},
+      </if>
+      <if test="askvol3 != null" >
+        #{askvol3,jdbcType=INTEGER},
+      </if>
+      <if test="askvol4 != null" >
+        #{askvol4,jdbcType=INTEGER},
+      </if>
+      <if test="askvol5 != null" >
+        #{askvol5,jdbcType=INTEGER},
+      </if>
+      <if test="bid1 != null" >
+        #{bid1,jdbcType=DOUBLE},
+      </if>
+      <if test="bid2 != null" >
+        #{bid2,jdbcType=DOUBLE},
+      </if>
+      <if test="bid3 != null" >
+        #{bid3,jdbcType=DOUBLE},
+      </if>
+      <if test="bid4 != null" >
+        #{bid4,jdbcType=DOUBLE},
+      </if>
+      <if test="bid5 != null" >
+        #{bid5,jdbcType=DOUBLE},
+      </if>
+      <if test="bidvol1 != null" >
+        #{bidvol1,jdbcType=INTEGER},
+      </if>
+      <if test="bidvol2 != null" >
+        #{bidvol2,jdbcType=INTEGER},
+      </if>
+      <if test="bidvol3 != null" >
+        #{bidvol3,jdbcType=INTEGER},
+      </if>
+      <if test="bidvol4 != null" >
+        #{bidvol4,jdbcType=INTEGER},
+      </if>
+      <if test="bidvol5 != null" >
+        #{bidvol5,jdbcType=INTEGER},
+      </if>
+      <if test="day != null" >
+        #{day,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.stock.model.StockBuySell" >
+    update stock_buy_sell
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=CHAR},
+      </if>
+      <if test="symbol != null" >
+        symbol = #{symbol,jdbcType=CHAR},
+      </if>
+      <if test="percent != null" >
+        percent = #{percent,jdbcType=DOUBLE},
+      </if>
+      <if test="high != null" >
+        high = #{high,jdbcType=DOUBLE},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="open != null" >
+        open = #{open,jdbcType=DOUBLE},
+      </if>
+      <if test="low != null" >
+        low = #{low,jdbcType=DOUBLE},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="yestclose != null" >
+        yestclose = #{yestclose,jdbcType=DOUBLE},
+      </if>
+      <if test="turnover != null" >
+        turnover = #{turnover,jdbcType=BIGINT},
+      </if>
+      <if test="updown != null" >
+        updown = #{updown,jdbcType=DOUBLE},
+      </if>
+      <if test="volume != null" >
+        volume = #{volume,jdbcType=INTEGER},
+      </if>
+      <if test="ask1 != null" >
+        ask1 = #{ask1,jdbcType=DOUBLE},
+      </if>
+      <if test="ask2 != null" >
+        ask2 = #{ask2,jdbcType=DOUBLE},
+      </if>
+      <if test="ask3 != null" >
+        ask3 = #{ask3,jdbcType=DOUBLE},
+      </if>
+      <if test="ask4 != null" >
+        ask4 = #{ask4,jdbcType=DOUBLE},
+      </if>
+      <if test="ask5 != null" >
+        ask5 = #{ask5,jdbcType=DOUBLE},
+      </if>
+      <if test="askvol1 != null" >
+        askvol1 = #{askvol1,jdbcType=INTEGER},
+      </if>
+      <if test="askvol2 != null" >
+        askvol2 = #{askvol2,jdbcType=INTEGER},
+      </if>
+      <if test="askvol3 != null" >
+        askvol3 = #{askvol3,jdbcType=INTEGER},
+      </if>
+      <if test="askvol4 != null" >
+        askvol4 = #{askvol4,jdbcType=INTEGER},
+      </if>
+      <if test="askvol5 != null" >
+        askvol5 = #{askvol5,jdbcType=INTEGER},
+      </if>
+      <if test="bid1 != null" >
+        bid1 = #{bid1,jdbcType=DOUBLE},
+      </if>
+      <if test="bid2 != null" >
+        bid2 = #{bid2,jdbcType=DOUBLE},
+      </if>
+      <if test="bid3 != null" >
+        bid3 = #{bid3,jdbcType=DOUBLE},
+      </if>
+      <if test="bid4 != null" >
+        bid4 = #{bid4,jdbcType=DOUBLE},
+      </if>
+      <if test="bid5 != null" >
+        bid5 = #{bid5,jdbcType=DOUBLE},
+      </if>
+      <if test="bidvol1 != null" >
+        bidvol1 = #{bidvol1,jdbcType=INTEGER},
+      </if>
+      <if test="bidvol2 != null" >
+        bidvol2 = #{bidvol2,jdbcType=INTEGER},
+      </if>
+      <if test="bidvol3 != null" >
+        bidvol3 = #{bidvol3,jdbcType=INTEGER},
+      </if>
+      <if test="bidvol4 != null" >
+        bidvol4 = #{bidvol4,jdbcType=INTEGER},
+      </if>
+      <if test="bidvol5 != null" >
+        bidvol5 = #{bidvol5,jdbcType=INTEGER},
+      </if>
+      <if test="day != null" >
+        day = #{day,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.stock.model.StockBuySell" >
+    update stock_buy_sell
+    set code = #{code,jdbcType=CHAR},
+      symbol = #{symbol,jdbcType=CHAR},
+      percent = #{percent,jdbcType=DOUBLE},
+      high = #{high,jdbcType=DOUBLE},
+      price = #{price,jdbcType=DOUBLE},
+      open = #{open,jdbcType=DOUBLE},
+      low = #{low,jdbcType=DOUBLE},
+      time = #{time,jdbcType=VARCHAR},
+      yestclose = #{yestclose,jdbcType=DOUBLE},
+      turnover = #{turnover,jdbcType=BIGINT},
+      updown = #{updown,jdbcType=DOUBLE},
+      volume = #{volume,jdbcType=INTEGER},
+      ask1 = #{ask1,jdbcType=DOUBLE},
+      ask2 = #{ask2,jdbcType=DOUBLE},
+      ask3 = #{ask3,jdbcType=DOUBLE},
+      ask4 = #{ask4,jdbcType=DOUBLE},
+      ask5 = #{ask5,jdbcType=DOUBLE},
+      askvol1 = #{askvol1,jdbcType=INTEGER},
+      askvol2 = #{askvol2,jdbcType=INTEGER},
+      askvol3 = #{askvol3,jdbcType=INTEGER},
+      askvol4 = #{askvol4,jdbcType=INTEGER},
+      askvol5 = #{askvol5,jdbcType=INTEGER},
+      bid1 = #{bid1,jdbcType=DOUBLE},
+      bid2 = #{bid2,jdbcType=DOUBLE},
+      bid3 = #{bid3,jdbcType=DOUBLE},
+      bid4 = #{bid4,jdbcType=DOUBLE},
+      bid5 = #{bid5,jdbcType=DOUBLE},
+      bidvol1 = #{bidvol1,jdbcType=INTEGER},
+      bidvol2 = #{bidvol2,jdbcType=INTEGER},
+      bidvol3 = #{bidvol3,jdbcType=INTEGER},
+      bidvol4 = #{bidvol4,jdbcType=INTEGER},
+      bidvol5 = #{bidvol5,jdbcType=INTEGER},
+      day = #{day,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

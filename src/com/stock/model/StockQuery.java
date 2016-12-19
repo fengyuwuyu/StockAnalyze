@@ -13,6 +13,8 @@ public class StockQuery extends PageModel {
 	private Boolean down = true;
 	private String symbol;
 	private Integer type;
+	private float minIncrease;
+	private int minVolume;
 
 	public Integer getType() {
 		return type;
@@ -54,10 +56,28 @@ public class StockQuery extends PageModel {
 		this.symbol = symbol;
 	}
 
+	public float getMinIncrease() {
+		return minIncrease;
+	}
+
+	public void setMinIncrease(float minIncrease) {
+		this.minIncrease = minIncrease;
+	}
+
+	public int getMinVolume() {
+		return minVolume;
+	}
+
+	public void setMinVolume(int minVolume) {
+		this.minVolume = minVolume;
+	}
+
 	@Override
 	public String toString() {
 		return "StockQuery [begin=" + begin + ", end=" + end + ", down=" + down
-				+ ", symbol=" + symbol + ", type=" + type + "]";
+				+ ", symbol=" + symbol + ", type=" + type + ", minIncrease="
+				+ minIncrease + ", minVolume=" + minVolume + "]";
 	}
+	
 
 }

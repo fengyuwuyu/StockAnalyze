@@ -36,9 +36,10 @@ public class DownloadDetail {
 	public void execute(){
 		long time = 20000;
 		log.info("开始下载委卖委买数据，每20s一次");
+		String day = CommonsUtil.formatDateToString1(new Date());
 		while(CommonsUtil.checkTime(holidayMapper)){
 			long begin = System.currentTimeMillis();
-			initStockServiceI.initBuyAndSell();
+			initStockServiceI.initBuyAndSell(day);
 			long remain = System.currentTimeMillis() - begin;
 			long sleep = time-remain;
 			if(sleep>0){

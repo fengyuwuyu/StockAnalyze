@@ -307,7 +307,7 @@ public class StockServiceimpl implements StockServiceI {
 							content,
 							LinkedHashMap.class);
 					LinkedHashMap<String, Object>  o = (LinkedHashMap<String, Object>) detail.get("1002486");
-					StockBuySell s = new StockBuySell(o);
+					StockBuySell s = new StockBuySell(o); 
 					System.out.println(s);
 					
 			}

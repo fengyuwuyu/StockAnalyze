@@ -167,27 +167,40 @@
   </update>
   
   <select id="dataList" parameterType="com.stock.model.StockQuery" resultMap="BaseResultMap">
-  	select c.symbol,c.increase from (select m.symbol,(n.close-m.close)/n.close increase
-		from (select a.symbol,b.close from stock_main_id a
-		LEFT JOIN stock_main b on a.symbol=b.symbol
-		where b.day=#{begin}) m,
-		(select a.symbol,max(b.close) close
-		 from stock_main_id a
-		LEFT JOIN stock_main b on a.symbol=b.symbol
-		where b.day BETWEEN #{begin} and #{end} GROUP BY a.symbol) n
-		where m.symbol=n.symbol) c where c.increase>0 ORDER BY c.increase DESC 
+  	select * from stock_main 
+  	<where>
+  		day=#{begin}
+  		<if test="symbol!=null">
+			and symbol=#{symbol}  		
+  		</if>
+  		<if test="minIncrease!=0">
+  			and increase>#{last}
+  		</if>
+  		<if test="minVolume!=0">
+  			and volume>#{minVolume}
+  		</if>
+  		order by 
+  		<if test="type==1">increase desc</if>
+  		<if test="type==2">volume desc</if>
+  		limit 100
+  	</where>
+		
   </select>
   
   <select id="getTotal" parameterType="com.stock.model.StockQuery" resultType="int">
-  	select count(*) from (select m.symbol,(n.close-m.close)/n.close increase
-		from (select a.symbol,b.close from stock_main_id a
-		LEFT JOIN stock_main b on a.symbol=b.symbol
-		where b.day=#{begin}) m,
-		(select a.symbol,max(b.close) close
-		 from stock_main_id a
-		LEFT JOIN stock_main b on a.symbol=b.symbol
-		where b.day BETWEEN #{begin} and #{end} GROUP BY a.symbol) n
-		where m.symbol=n.symbol) c where c.increase>0 ORDER BY c.increase DESC
+  	select count(*) from stock_main 
+  	<where>
+  		day=#{begin}
+  		<if test="symbol!=null">
+			and symbol=#{symbol}  		
+  		</if>
+  		<if test="minIncrease!=0">
+  			and increase>#{last}
+  		</if>
+  		<if test="minVolume!=0">
+  			and volume>#{minVolume}
+  		</if>
+  	</where>
   </select>
   
    <select id="dataList1" parameterType="com.stock.model.StockQuery" resultMap="BaseResultMap">
@@ -337,11 +350,11 @@
   <insert id="insertStockBuySell" parameterType="map">
   	insert into stock_buy_sell(code,symbol,percent,high,price,open,low,updown,volume,yestclose,time,
   	turnover,ask1,ask2,ask3,ask4,ask5,askvol1,askvol2,askvol3,askvol4,askvol5,
-  	bid1,bid2,bid3,bid4,bid5,bidvol1,bidvol2,bidvol3,bidvol4,bidvol5) values
+  	bid1,bid2,bid3,bid4,bid5,bidvol1,bidvol2,bidvol3,bidvol4,bidvol5,day) values
   	<foreach collection="list" item="item" separator=",">
   		(#{item.code},#{item.symbol},#{item.percent},#{item.high},#{item.price},#{item.open},#{item.low},#{item.updown},#{item.volume},#{item.yestclose},#{item.time},
   		#{item.turnover},#{item.ask1},#{item.ask2},#{item.ask3},#{item.ask4},#{item.ask5},#{item.askvol1},#{item.askvol2},#{item.askvol3},#{item.askvol4},#{item.askvol5},
-  		#{item.bid1},#{item.bid2},#{item.bid3},#{item.bid4},#{item.bid5},#{item.bidvol1},#{item.bidvol2},#{item.bidvol3},#{item.bidvol4},#{item.bidvol5})
+  		#{item.bid1},#{item.bid2},#{item.bid3},#{item.bid4},#{item.bid5},#{item.bidvol1},#{item.bidvol2},#{item.bidvol3},#{item.bidvol4},#{item.bidvol5},#{day})
   	</foreach>
   </insert>
   

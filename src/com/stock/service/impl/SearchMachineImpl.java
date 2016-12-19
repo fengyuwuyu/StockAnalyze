@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.stock.dao.StockMainMapper;
 import com.stock.model.StockAnalyseBase;
-import com.stock.model.StockAnalyseBase;
 import com.stock.model.StockMainAnalyse;
 import com.stock.model.StockQuery;
 import com.stock.service.SearchMachineI;
@@ -36,7 +35,7 @@ public class SearchMachineImpl implements SearchMachineI {
 		if (list != null && list.size() > 0) {
 			for (StockMainAnalyse analyse : list) {
 				boolean insert = analyse.analyse(begin, 0);
-				if (insert && analyse.getLastIncrease() >= 20) {
+				if (insert && analyse.getLastIncrease() >= 15) {
 					inserts.add(analyse);
 				}
 			}

@@ -67,7 +67,7 @@ public class TestController {
 			boolean run = true;
 			for(int i = 20;i>0;i--){
 				while(run){
-					run = this.stockMainServiceI.analyse1(i);
+//					run = this.stockMainServiceI.analyse1(i);
 				}
 			}
 		} catch (Exception e) {
@@ -79,16 +79,16 @@ public class TestController {
 	@RequestMapping("test1.do")
 	@ResponseBody
 	public Map<String, Object> test1() throws Exception {
-//		initStockServiceI.insertCJL();
+		initStockServiceI.initStockEveryDay();
 //		stockAnalyseJobI.initStockAnalyse();
-		List<String> symbols = stockMainMapper.selectAll();
-		int index = 0;
-		if(symbols!=null&&symbols.size()>0){
-			for (String symbol : symbols) {
-				initStockServiceI.initJunX(symbol);
-				log.info("--------------------------"+(++index));
-			}
-		}
+//		List<String> symbols = stockMainMapper.selectAll();
+//		int index = 0;
+//		if(symbols!=null&&symbols.size()>0){
+//			for (String symbol : symbols) {
+//				initStockServiceI.initJunX(symbol);
+//				log.info("--------------------------"+(++index));
+//			}
+//		}
 		return MapUtils.createSuccessMap();
 		// this.detailSaveServiceI.volBigIncrease();
 	}

@@ -29,8 +29,9 @@ YiYa.stockMain = function(){
 			}
 		},
 		initDateBox : function(){
-			$('#begin').datebox('setValue','2000-01-05');
-			$('#end').datebox('setValue','2000-02-26');
+//			$('#begin').datebox('setValue','2000-01-05');
+//			$('#end').datebox('setValue','2000-02-26');
+			$('#type').combobox('setValue',1);
 		},
 		getQueryTime : function(){
 			var begin = $('#begin').datebox('getValue');

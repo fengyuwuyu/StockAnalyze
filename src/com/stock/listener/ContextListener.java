@@ -11,10 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.stock.dao.StockMainMapper;
-import com.stock.task.DownloadBase;
-import com.stock.task.DownloadDetail;
 import com.stock.util.StockCache;
-import com.stock.util.ThreadPool;
 
 /**
  * 系统启动后加载配置文件：stock_interface.properties
@@ -43,29 +40,6 @@ public class ContextListener implements ServletContextListener {
 		
 		StockMainMapper stockMainMapper = ac.getBean(StockMainMapper.class);
 		StockCache.initPrePrices(stockMainMapper);
-
-		final DownloadBase downloadBase = ac.getBean(DownloadBase.class);
-		ThreadPool.execute(new Runnable() {
-			
-			@Override
-			public void run() {
-//				downloadBase.execute();
-			}
-		});
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		final DownloadDetail downloadDetail = ac.getBean(DownloadDetail.class);
-		ThreadPool.execute(new Runnable() {
-			
-			@Override
-			public void run() {
-//				downloadDetail.execute();
-			}
-		});
 		log.info("contextListener启动了");
 	}
 

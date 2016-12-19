@@ -21,7 +21,7 @@
 	</select>
 
 	<delete id="delete" parameterType="map">
-		delete from holiday where holiday_time like '%${param}%'
+		delete from holiday where left(holiday_time,7) = #{param}
 	</delete>
 	
 	<insert id="save" parameterType="java.lang.reflect.Array">

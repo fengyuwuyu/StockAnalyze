@@ -11,7 +11,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     
     <%@include file="commons/resource.jsp" %>
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/commons/YDataGrid.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/js/ux/searchResult1.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/ux/stockQuery.js"></script>
   </head>
   
   <body>

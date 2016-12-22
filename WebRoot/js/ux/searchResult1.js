@@ -36,8 +36,8 @@ YiYa.searcher = function(){
 			}
 		},
 		initDateBox : function(){
-			$('#begin').datebox('setValue','2000-01-05');
-			$('#end').datebox('setValue','2000-02-26');
+//			$('#begin').datebox('setValue','2000-01-05');
+//			$('#end').datebox('setValue','2000-02-26');
 		},
 		getQueryTime : function(){
 			return {"begin" : $('#begin').datebox('getValue'),"end":$('#end').datebox('getValue')};
@@ -52,7 +52,7 @@ YiYa.searcher = function(){
 		init : function(){
 			_box = new YDataGrid(this.config);
 			_box.init();
-			$('#begin').datebox('setValue','2000-01-28');
+//			$('#begin').datebox('setValue','2000-01-28');
 		}
 	};
 	return _this;

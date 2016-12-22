@@ -21445,7 +21445,11 @@
                 increase1,
                 price;
             price = points[0].open;
+            var prePrice;
             each(points, function (point) {
+            	if(!prePrice){
+            		prePrice = point.open;
+            	}
                 graphic = point.graphic;
                 if (point.plotY !== UNDEFINED) {
 
@@ -21473,6 +21477,10 @@
                     bottomBox = mathRound(bottomBox) + crispCorr;
                     bottomBox = 110-min;
                     topBox = bottomBox - math.abs((open1-close1)*300/((open1+close1)/2));
+                    console.log('topBox--'+topBox);
+                    console.log('bottomBox--'+bottomBox);
+                    console.log(math.abs((open1-close1)/((open1+close1)/2)));
+                    console.log('---------------------------------------------------');
                     bottomBox+=300;
                     topBox+=300;
                     // Create the path. Due to a bug in Chrome 49, the path is first instanciated
@@ -21513,6 +21521,7 @@
                     }
 
                 }
+                prePrice = point.close;
             });
 
         }

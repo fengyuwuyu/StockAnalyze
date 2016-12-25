@@ -526,5 +526,43 @@ public class InitStockServiceImpl implements InitStockServiceI {
 		
 	}
 	
+	public Map<String, Object> initCjmxPerWeek() throws Exception {
+		List<String> codes = this.stockMainMapper.selectAllCodes();
+		Date date = new Date();
+		String year = CommonsUtil.formatYYYY(date);
+		String[] days = {"2016-12-20","2016-12-21","2016-12-22","2016-12-23"};
+		for (String day : days) {
+			String direct = "D:/stock_download/cjmx/" + year + "/" + day;
+			File directory = new File(direct);
+			boolean exception = false;
+			if (!directory.exists()) {
+				exception = directory.mkdirs();
+			}
+			if (!exception) {
+				return MapUtils.createFailedMap();
+			}
+			for (String code : codes) {
+				try {
+					File file = new File(direct + "/" + code + ".xls");
+					String url = "http://quotes.money.163.com/cjmx/" + year + "/"
+							+ day + "/" + code + ".xls";
+					HttpEntity entity = HttpClientUtil.get(url);
+					if (entity != null) {
+						InputStream in = entity.getContent();
+						OutputStream output = new FileOutputStream(file);
+						IOUtils.copy(in, output);
+						in.close();
+						output.close();
+					}
+				} catch (Exception e) {
+					log.info("code--" + code + " 下载失败！");
+					log.info("------------------------------------------------------------------------------");
+					log.info(CommonsUtil.join(e.getStackTrace()));
+				}
+			}
+		}
+		
+		return MapUtils.createSuccessMap();
+	}
 	
 }

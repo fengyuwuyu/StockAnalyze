@@ -21441,10 +21441,8 @@
                 graphic,
                 path,
                 halfWidth,
-                increase,
-                increase1,
-                price;
-            price = points[0].open;
+                basePrice;
+            basePrice = points[0].open;
             each(points, function (point) {
                 graphic = point.graphic;
                 if (point.plotY !== UNDEFINED) {
@@ -21452,14 +21450,9 @@
                     pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || seriesPointAttr;
 
                     // crisp vector coordinates
-                    increase = point.increase*2;
-                    var open1 = point.open;
-                    var close1 = point.close;
-                    
-                    var sub1 = open1 - price;
-                    var sub2 = close1 - price;
-//                    var max = math.max(sub1,sub2)*100/price;
-                    var min = math.min(sub1,sub2)*100/price;
+                    var open = point.open,close = point.close;
+                    var increase = (math.max(open,close)-basePrice)*300/basePrice;
+//                    var increase = point.increase;
                     crispCorr = (pointAttr['stroke-width'] % 2) / 2;
                     crispX = mathRound(point.plotX) - crispCorr; // #2596
                     plotOpen = point.plotOpen;
@@ -21471,20 +21464,18 @@
                     hasBottomWhisker = bottomBox !== point.yBottom;
                     topBox = mathRound(topBox) + crispCorr;
                     bottomBox = mathRound(bottomBox) + crispCorr;
-                    bottomBox = 110-min;
-                    topBox = bottomBox - math.abs((open1-close1)*300/((open1+close1)/2));
+                    topBox = 3*topBox - bottomBox*2;
+                    bottomBox+=300-increase*3;
+                    topBox+=300-increase*3;
                     console.log('topBox--'+topBox);
                     console.log('bottomBox--'+bottomBox);
-                    console.log();
                     console.log('---------------------------------------------------');
-                    bottomBox+=300;
-                    topBox+=300;
                     // Create the path. Due to a bug in Chrome 49, the path is first instanciated
                     // with no values, then the values pushed. For unknown reasons, instanciated
                     // the path array with all the values would lead to a crash when updating
                     // frequently (#5193).
-                    var topLine_1 = (point.high-open1)*300/open1;
-                    var topLine_2 = (point.low-close1)*300/close1;
+                    var topLine_1 = (point.high-open)*300/open;
+                    var topLine_2 = (point.low-close)*300/close;
                     path = [];
                     path.push(
                         'M',

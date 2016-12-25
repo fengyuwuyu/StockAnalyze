@@ -34,6 +34,8 @@ public interface SearchMachineI {
 	Map<String,Object> searcher(StockQuery query);
 	
 	List<StockAnalyseBase> findHighVolume(StockQuery query,List<StockAnalyseBase> list);
+
+	Map<String, Object> query(StockQuery query);
 	
 	
 	

@@ -15,7 +15,7 @@ import com.stock.util.CommonsUtil;
  * @author lilei
  * 
  */
-public class StockMainAnalyse implements Serializable {
+public class StockFilterBean implements Serializable {
 
 	/**
 	 * 
@@ -23,7 +23,7 @@ public class StockMainAnalyse implements Serializable {
 	private static final long serialVersionUID = 7325927076713573583L;
 
 	@JsonIgnore
-	private Logger log = Logger.getLogger(StockMainAnalyse.class);
+	private Logger log = Logger.getLogger(StockFilterBean.class);
 
 	private String symbol;
 	/** 当天日期 */
@@ -75,8 +75,8 @@ public class StockMainAnalyse implements Serializable {
 	 * 
 	 * @param now
 	 */
-	public boolean analyse(String n, int c) {
-		this.now = n;
+	public boolean analyse(String day, int c) {
+		this.now = day;
 		if(c!=0){
 			this.remainDays = c;
 		}

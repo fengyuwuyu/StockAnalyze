@@ -356,7 +356,7 @@ public class StockMainServiceImpl implements StockMainServiceI {
 		if(days!=null&&days.size()>0){
 			for (String day : days) {
 				log.info("count -- "+count+"  --day--  "+day);
-				List<StockMainAnalyse> stocks = mainMapper.selectAnalyse(day);
+				List<StockMainAnalyse> stocks = mainMapper.selectAnalyse(MapUtils.createMap("begin",day,"remainDays",10));
 				List<StockMainAnalyse> inserts = new ArrayList<StockMainAnalyse>();
 				if(stocks!=null&&stocks.size()>0){
 					for(StockMainAnalyse analyse : stocks){

@@ -31,4 +31,6 @@ public interface InitStockServiceI {
 	 * 每日计算新增均线
 	 */
 	public void initJunXEveryDay();
+	
+	public Map<String, Object> initCjmxPerWeek() throws Exception;
 }

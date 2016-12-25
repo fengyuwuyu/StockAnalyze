@@ -26,4 +26,10 @@ public class SearchMachineController {
 	public Map<String,Object> find(StockQuery query){
 		return searchMachineI.find(query);
 	}
+	
+	@RequestMapping("query.do")
+	@ResponseBody
+	public Map<String,Object> query(StockQuery query){
+		return searchMachineI.query(query);
+	}
 }

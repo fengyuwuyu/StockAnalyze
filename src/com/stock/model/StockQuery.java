@@ -12,15 +12,17 @@ public class StockQuery extends PageModel {
 	private Date end;
 	private Boolean down = true;
 	private String symbol;
-	private Integer type;
+	private int type;
 	private float minIncrease;
 	private int minVolume;
+	private int remainDays;
+	private int order;
 
-	public Integer getType() {
+	public int getType() {
 		return type;
 	}
 
-	public void setType(Integer type) {
+	public void setType(int type) {
 		this.type = type;
 	}
 
@@ -72,12 +74,28 @@ public class StockQuery extends PageModel {
 		this.minVolume = minVolume;
 	}
 
+	public int getRemainDays() {
+		return remainDays;
+	}
+
+	public void setRemainDays(int remainDays) {
+		this.remainDays = remainDays;
+	}
+
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
 	@Override
 	public String toString() {
 		return "StockQuery [begin=" + begin + ", end=" + end + ", down=" + down
 				+ ", symbol=" + symbol + ", type=" + type + ", minIncrease="
-				+ minIncrease + ", minVolume=" + minVolume + "]";
+				+ minIncrease + ", minVolume=" + minVolume + ", remainDays="
+				+ remainDays + ", order=" + order + "]";
 	}
-	
 
 }

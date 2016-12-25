@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.stock.dao.StockMainMapper;
 import com.stock.model.StockAnalyseBase;
+import com.stock.model.StockFilterBean;
 import com.stock.model.StockMainAnalyse;
 import com.stock.model.StockQuery;
 import com.stock.service.SearchMachineI;
@@ -30,7 +31,7 @@ public class SearchMachineImpl implements SearchMachineI {
 			return MapUtils.createFailedMap("msg", "请选择起始时间。。。");
 		}
 		String begin = CommonsUtil.formatDateToString1(query.getBegin());
-		List<StockMainAnalyse> list = this.stockMainMapper.selectAnalyse(begin);
+		List<StockMainAnalyse> list = this.stockMainMapper.selectAnalyse(MapUtils.createMap("begin",begin,"remainDays",10));
 		List<StockMainAnalyse> inserts = new ArrayList<StockMainAnalyse>();
 		if (list != null && list.size() > 0) {
 			for (StockMainAnalyse analyse : list) {
@@ -100,7 +101,31 @@ public class SearchMachineImpl implements SearchMachineI {
 		}
 		return null;
 	}
+
+	@Override
+	public Map<String, Object> query(StockQuery query) {
+		if (query.getBegin() == null) {
+			return MapUtils.createSuccessMap("rows",new ArrayList<StockMainAnalyse>(),"total",0);
+		}
+		String begin = CommonsUtil.formatDateToString1(query.getBegin());
+		
+		List<StockFilterBean> list = this.stockMainMapper.selectAnalyse1(MapUtils.createMap("begin",begin,"remainDays",(query.getRemainDays()==0?10:query.getRemainDays())));
+		List<StockFilterBean> inserts = new ArrayList<StockFilterBean>();
+		if (list != null && list.size() > 0) {
+			for (StockFilterBean analyse : list) {
+				boolean insert = analyse.analyse(begin, 0);
+				if (insert && analyse.getLastIncrease() >= query.getMinIncrease() && (query.getType()==0||query.getType()==analyse.getType())) {
+					inserts.add(analyse);
+				}
+			}
+		}
+		return MapUtils.createSuccessMap("rows", inserts, "total",
+				inserts.size());
 	
+	}
 	
+	public void initData(String symbol){
+		
+	}
 
 }

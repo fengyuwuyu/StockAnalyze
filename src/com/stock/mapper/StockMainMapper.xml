@@ -39,6 +39,19 @@
   	</collection>
   </resultMap>
   
+  <resultMap type="com.stock.model.StockFilterBean" id="StockFilterBean">
+  	<result column="symbol" property="symbol"/>
+  	<collection property="dayIncreases" ofType="com.stock.model.DayIncrease" javaType="java.util.List">
+  		<result column="day" property="day"/>
+  		<result column="increase" property="increase"/>
+  		<result column="open" property="open"/>
+  		<result column="close" property="close"/>
+  		<result column="max" property="max"/>
+  		<result column="min" property="min"/>
+  		<result column="volume" property="volume"/>
+  	</collection>
+  </resultMap>
+  
   <sql id="Base_Column_List" >
     id, symbol, day, open, close, max, min, volume, increase
   </sql>
@@ -229,6 +242,7 @@
   			day &gt; '2000-03-03'
   		</if>
   	</trim>
+  	order by day
   </select>
   
   <select id="selectStockAnalyse" parameterType="map" resultMap="StockAnalyseBase" >
@@ -300,9 +314,14 @@
   	</foreach>
   </update>
   
-  <select id="selectAnalyse" resultMap="StockMainAnalyse" parameterType="string">
+  <select id="selectAnalyse" resultMap="StockMainAnalyse" parameterType="map">
   		select symbol,increase,day,close from stock_main
-  		   where day BETWEEN DATE_ADD(#{begin},INTERVAL -70 day)  and DATE_ADD(#{begin},INTERVAL 20 day) order by symbol,day
+  		   where day BETWEEN DATE_ADD(#{begin},INTERVAL -70 day)  and DATE_ADD(#{begin},INTERVAL (#{remainDays}*2) day) order by symbol,day
+  </select>
+  
+  <select id="selectAnalyse1" resultMap="StockFilterBean" parameterType="map">
+  		select symbol,increase,day,close from stock_main
+  		   where day BETWEEN DATE_ADD(#{begin},INTERVAL -70 day)  and DATE_ADD(#{begin},INTERVAL (#{remainDays}*2) day) order by symbol,day
   </select>
   
   <insert id="insertStockMainAnalyse" parameterType="java.util.Map">

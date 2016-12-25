@@ -7,6 +7,7 @@ import java.util.Map;
 import com.stock.model.CacheItem;
 import com.stock.model.StockAnalyseBase;
 import com.stock.model.StockAnalyseResult;
+import com.stock.model.StockFilterBean;
 import com.stock.model.StockMain;
 import com.stock.model.StockMainAnalyse;
 import com.stock.model.StockQuery;
@@ -54,7 +55,7 @@ public interface StockMainMapper {
 
 	List<String> selectAllDay(int count);
 
-	List<StockMainAnalyse> selectAnalyse(String day);
+	List<StockMainAnalyse> selectAnalyse(Map<String, Object> map);
 
 	void insertStockMainAnalyse(Map<String, Object> createMap);
 
@@ -77,4 +78,6 @@ public interface StockMainMapper {
 	void insertFBVolume(Map<String, Object> createMap);
 
 	void insertJunXian(StockAnalyseBase analyseBase);
+
+	List<StockFilterBean> selectAnalyse1(Map<String, Object> createMap);
 }

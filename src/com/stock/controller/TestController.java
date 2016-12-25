@@ -79,7 +79,7 @@ public class TestController {
 	@RequestMapping("test1.do")
 	@ResponseBody
 	public Map<String, Object> test1() throws Exception {
-		initStockServiceI.initStockEveryDay();
+		initStockServiceI.initCjmxPerWeek();
 //		stockAnalyseJobI.initStockAnalyse();
 //		List<String> symbols = stockMainMapper.selectAll();
 //		int index = 0;

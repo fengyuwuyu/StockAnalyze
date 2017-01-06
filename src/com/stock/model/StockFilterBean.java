@@ -12,6 +12,8 @@ import com.stock.util.CommonsUtil;
 /**
  * 找出连续5天涨幅大于10%的股票
  * 
+ * 
+ * 
  * @author lilei
  * 
  */
@@ -92,7 +94,6 @@ public class StockFilterBean implements Serializable {
 						rightStock();
 						return true;
 					}
-					return false;
 				}
 			}
 		}

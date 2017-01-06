@@ -33,6 +33,7 @@ import com.stock.model.FBVolume;
 import com.stock.model.StockAnalyseBase;
 import com.stock.model.StockBuySell;
 import com.stock.model.StockConstant;
+import com.stock.model.StockFilterBean;
 import com.stock.service.InitStockServiceI;
 import com.stock.util.CommonsUtil;
 import com.stock.util.MapUtils;
@@ -563,6 +564,21 @@ public class InitStockServiceImpl implements InitStockServiceI {
 		}
 		
 		return MapUtils.createSuccessMap();
+	}
+	
+	/**
+	 * 
+	 * @param day
+	 */
+	public void initStockAnalyse(String day){
+		List<StockFilterBean> list = this.stockMainMapper.selectAnalyse1(MapUtils.createMap("begin",day,"remainDays",30));
+		List<StockFilterBean> inserts = new ArrayList<StockFilterBean>();
+		if (list != null && list.size() > 0) {
+			for (StockFilterBean analyse : list) {
+				analyse.analyse(day, 20);
+				inserts.add(analyse);
+			}
+		}
 	}
 	
 }
